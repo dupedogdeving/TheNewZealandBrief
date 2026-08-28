@@ -678,29 +678,73 @@ async function sha256Hex(text){
    across sessions and reloads for this artifact. Articles are
    stored "shared" so every visitor sees the same front page; the
    owner session flag is stored per-browser (not shared).
+
+   window.storage is only injected by Claude's artifact renderer.
+   If it's missing, or a call to it fails, we fall back to an
+   in-memory store so the page still works for the current session
+   instead of hard-failing, and we warn the user once so it's clear
+   changes won't survive a reload in that case.
    ============================================================ */
+var memoryStore = { shared: {}, local: {} };
+function memoryBucket(shared){ return shared ? memoryStore.shared : memoryStore.local; }
+function memoryGet(key, shared){
+  var b = memoryBucket(shared);
+  return Object.prototype.hasOwnProperty.call(b, key) ? b[key] : null;
+}
+function memorySet(key, value, shared){ memoryBucket(shared)[key] = String(value); }
+function memoryDelete(key, shared){ delete memoryBucket(shared)[key]; }
+
+var warnedNoPersist = false;
+function warnNoPersist(){
+  if (warnedNoPersist) return;
+  warnedNoPersist = true;
+  try { toast('Persistent storage isn\u2019t available right now \u2014 changes will only last for this session.'); } catch(e){ /* toast may not be ready yet */ }
+}
+
+function hasRealStorage(){
+  return !!(window.storage && typeof window.storage.get === 'function' && typeof window.storage.set === 'function');
+}
+
 async function storageGet(key, shared){
+  if (!hasRealStorage()) return memoryGet(key, shared);
   try {
     var res = await window.storage.get(key, shared);
     if (res == null) return null;
     return typeof res === 'object' && 'value' in res ? res.value : String(res);
   } catch(e) {
+    // get() throws for missing keys per the storage API - that's expected
+    // and just means "not set yet", not a real failure.
     return null;
   }
 }
 
 async function storageSet(key, value, shared){
-  var res = await window.storage.set(key, value, shared);
-  if (!res) throw new Error('Storage write failed for key: ' + key);
-  return true;
+  if (!hasRealStorage()) {
+    memorySet(key, value, shared);
+    warnNoPersist();
+    return true;
+  }
+  try {
+    var res = await window.storage.set(key, value, shared);
+    if (!res) throw new Error('window.storage.set returned an empty result for key: ' + key);
+    return true;
+  } catch(e) {
+    console.error('[nz-brief] storage.set failed for key "' + key + '":', e);
+    memorySet(key, value, shared);
+    warnNoPersist();
+    return true;
+  }
 }
 
 async function storageDelete(key, shared){
+  if (!hasRealStorage()) { memoryDelete(key, shared); return true; }
   try {
     await window.storage.delete(key, shared);
     return true;
   } catch(e){
-    return false;
+    console.error('[nz-brief] storage.delete failed for key "' + key + '":', e);
+    memoryDelete(key, shared);
+    return true;
   }
 }
 
