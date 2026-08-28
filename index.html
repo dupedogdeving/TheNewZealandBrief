@@ -649,7 +649,6 @@ function el(tag, className, text){
 }
 
 async function sha256Hex(text){
-  // Web Crypto is preferred when the page is running in a secure context.
   try {
     if (window.crypto && window.crypto.subtle && window.TextEncoder) {
       var enc = new TextEncoder().encode(text);
@@ -659,9 +658,6 @@ async function sha256Hex(text){
     }
   } catch(e) { /* fall through to local fallback */ }
 
-  // Fallback for standalone/file:// pages where crypto.subtle may be absent.
-  // This is only used to keep the local demo functional; localStorage is
-  // still the persistence layer.
   var h1 = 0x811c9dc5;
   var h2 = 0x9e3779b9;
   for (var i = 0; i < text.length; i++) {
@@ -678,89 +674,30 @@ async function sha256Hex(text){
 
 /* ============================================================
    STORAGE HELPERS
+   All reads/writes go through window.storage, which persists data
+   across sessions and reloads for this artifact. Articles are
+   stored "shared" so every visitor sees the same front page; the
+   owner session flag is stored per-browser (not shared).
    ============================================================ */
-/*
- * Standalone storage adapter.
- *
- * Claude's artifact preview provides window.storage, but normal browsers do
- * not. Use it when available, otherwise fall back to the browser's own
- * localStorage/sessionStorage APIs.
- *
- * shared=true  -> localStorage (stories, password, seeded flag)
- * shared=false -> sessionStorage (owner login session)
- */
-function getBrowserStorage(shared){
-  try {
-    var store = shared ? window.localStorage : window.sessionStorage;
-    if (!store) return null;
-
-    // Touch the storage object so browsers that block it throw here.
-    var testKey = '__nzb_storage_test__';
-    store.setItem(testKey, '1');
-    store.removeItem(testKey);
-    return store;
-  } catch(e){
-    return null;
-  }
-}
-
 async function storageGet(key, shared){
-  // Keep Claude artifact compatibility.
-  if (window.storage && typeof window.storage.get === 'function') {
-    try {
-      var res = await window.storage.get(key, shared);
-      if (res == null) return null;
-      return typeof res === 'object' && 'value' in res ? res.value : String(res);
-    } catch(e) { /* use browser storage below */ }
-  }
-
-  var store = getBrowserStorage(shared);
-  if (!store) return null;
-
   try {
-    return store.getItem(key);
-  } catch(e){
+    var res = await window.storage.get(key, shared);
+    if (res == null) return null;
+    return typeof res === 'object' && 'value' in res ? res.value : String(res);
+  } catch(e) {
     return null;
   }
 }
 
 async function storageSet(key, value, shared){
-  // Keep Claude artifact compatibility.
-  if (window.storage && typeof window.storage.set === 'function') {
-    try {
-      await window.storage.set(key, value, shared);
-      return true;
-    } catch(e) { /* use browser storage below */ }
-  }
-
-  var store = getBrowserStorage(shared);
-  if (!store) throw new Error('Browser storage is unavailable.');
-
-  try {
-    store.setItem(key, String(value));
-    // Verify the write so failures are not silently ignored.
-    if (store.getItem(key) !== String(value)) {
-      throw new Error('Browser storage write could not be verified.');
-    }
-    return true;
-  } catch(e){
-    throw e;
-  }
+  var res = await window.storage.set(key, value, shared);
+  if (!res) throw new Error('Storage write failed for key: ' + key);
+  return true;
 }
 
 async function storageDelete(key, shared){
-  if (window.storage && typeof window.storage.delete === 'function') {
-    try {
-      await window.storage.delete(key, shared);
-      return true;
-    } catch(e) { /* use browser storage below */ }
-  }
-
-  var store = getBrowserStorage(shared);
-  if (!store) return false;
-
   try {
-    store.removeItem(key);
+    await window.storage.delete(key, shared);
     return true;
   } catch(e){
     return false;
@@ -1042,8 +979,6 @@ function goHomeSilent(){
   refs.homeView.hidden = false;
   refs.articleView.hidden = true;
 }
-
-refs = refs || {};
 
 /* ============================================================
    FILTERED LIST
@@ -1423,7 +1358,6 @@ function showImagePreview(dataUrl){
 
 async function handleImageFile(file){
   clearFieldError('image');
-  var originalLabel = refs.dropzoneEmpty.innerHTML;
   try {
     refs.dropzone.classList.add('dragover');
     var dataUrl = await compressImageFile(file);
@@ -1578,14 +1512,12 @@ function wireEvents(){
 
   refs.fabAdd.addEventListener('click', function(){ openEditor(null); });
 
-  // Login modal
   refs.loginCancelBtn.addEventListener('click', closeLogin);
   refs.loginCloseBtn.addEventListener('click', closeLogin);
   refs.loginSubmitBtn.addEventListener('click', submitLogin);
   refs.passwordInput.addEventListener('keydown', function(e){ if (e.key === 'Enter') submitLogin(); });
   refs.confirmInput.addEventListener('keydown', function(e){ if (e.key === 'Enter') submitLogin(); });
 
-  // Editor modal
   refs.editorCancelBtn.addEventListener('click', closeEditor);
   refs.editorCloseBtn.addEventListener('click', closeEditor);
   refs.editorSubmitBtn.addEventListener('click', submitEditor);
@@ -1605,7 +1537,6 @@ function wireEvents(){
     if (file) handleImageFile(file);
   });
 
-  // Delete modal
   refs.deleteCancelBtn.addEventListener('click', function(){ state.deletePendingId = null; closeModal(refs.deleteModal); });
   refs.deleteConfirmBtn.addEventListener('click', performDelete);
 }
@@ -1624,9 +1555,14 @@ async function init(){
   } catch(e){ state.isOwner = false; }
 
   try {
-    // Start with an empty publication: remove all existing/seeded stories.
-    state.articles = [];
-    try { await saveArticles([]); await setSeeded(); } catch(e){ /* ignore */ }
+    state.articles = await loadArticles();
+    if (state.articles.length === 0) {
+      var seeded = await getSeeded();
+      if (!seeded) {
+        state.articles = seedArticles();
+        try { await saveArticles(state.articles); await setSeeded(); } catch(e){ /* ignore */ }
+      }
+    }
   } catch(e){
     state.articles = [];
     toast('Couldn\u2019t load stories. Check that browser storage is enabled.');
@@ -1646,4 +1582,4 @@ if (document.readyState === 'loading') {
 })();
 </script>
 </body>
-</html>     
+</html>
