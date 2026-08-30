@@ -1,5 +1,3 @@
-
-The new zealand brief · HTML
 <!DOCTYPE html>
 <html lang="en-NZ">
 <head>
@@ -328,9 +326,9 @@ body.modal-open { overflow: hidden; }
 </style>
 </head>
 <body>
- 
+
 <div class="reading-progress" id="readingProgress" hidden></div>
- 
+
 <header class="masthead" id="masthead">
   <div class="masthead-top">
     <button class="brand" id="logoBtn" aria-label="The New Zealand Brief — go to homepage">
@@ -357,7 +355,7 @@ body.modal-open { overflow: hidden; }
     <input type="text" class="search-input" id="searchInput" placeholder="Search stories" aria-label="Search stories" />
   </div>
 </header>
- 
+
 <main>
   <div class="page-layout">
     <aside class="side-ad side-ad-left" aria-label="Advertisement">
@@ -366,7 +364,7 @@ body.modal-open { overflow: hidden; }
         <small>160 × 600</small>
       </div>
     </aside>
- 
+
     <div class="main-content">
       <div id="homeView">
     <div class="hero" id="heroSlot" hidden></div>
@@ -381,10 +379,10 @@ body.modal-open { overflow: hidden; }
     </div>
     <div class="empty-state" id="emptyState" hidden></div>
   </div>
- 
+
       <div id="articleView" hidden></div>
     </div>
- 
+
     <aside class="side-ad side-ad-right" aria-label="Advertisement">
       <div class="ad-space">
         <span>ADVERTISEMENT</span>
@@ -393,7 +391,7 @@ body.modal-open { overflow: hidden; }
     </aside>
   </div>
 </main>
- 
+
 <footer>
   <div class="footer-inner">
     <div class="footer-brand">
@@ -408,11 +406,11 @@ body.modal-open { overflow: hidden; }
     <span class="footer-note" id="footerNote"></span>
   </div>
 </footer>
- 
+
 <button class="fab" id="fabAdd" hidden aria-label="Publish a new story">
   <span aria-hidden="true">+</span>
 </button>
- 
+
 <div class="modal-overlay" id="loginModal" data-dismissable="true" hidden>
   <div class="modal-card modal-sm" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
     <button class="modal-close" id="loginCloseBtn" aria-label="Close">×</button>
@@ -433,19 +431,19 @@ body.modal-open { overflow: hidden; }
     </div>
   </div>
 </div>
- 
+
 <div class="modal-overlay" id="editorModal" data-dismissable="false" hidden>
   <div class="modal-card modal-md" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
     <button class="modal-close" id="editorCloseBtn" aria-label="Close">×</button>
     <h3 class="modal-title" id="editorTitle">Publish a story</h3>
     <p class="modal-subtitle">Add an image and headline for the front page, then write the story readers see when they open it.</p>
- 
+
     <div class="field">
       <label class="field-label" for="headingInput">Headline <span class="field-hint" id="headingCounter">0/140</span></label>
       <input type="text" id="headingInput" class="text-input" maxlength="140" placeholder="e.g. Harbour Bridge cycleway trial begins next month" />
       <p class="field-error" id="headingError" hidden></p>
     </div>
- 
+
     <div class="field">
       <label class="field-label" for="categorySelect">Category</label>
       <select id="categorySelect" class="select-input">
@@ -460,13 +458,13 @@ body.modal-open { overflow: hidden; }
         <option>Culture</option>
       </select>
     </div>
- 
+
     <div class="field">
       <label class="field-label" for="publishDateInput">Publish date &amp; time</label>
       <input type="datetime-local" id="publishDateInput" class="text-input" />
       <p class="field-note">Set this in the future to schedule the story — it stays hidden from readers until then.</p>
     </div>
- 
+
     <div class="checkbox-row">
       <input type="checkbox" id="draftCheckbox" />
       <label for="draftCheckbox">Save as draft (hidden from readers until you publish it)</label>
@@ -475,7 +473,7 @@ body.modal-open { overflow: hidden; }
       <input type="checkbox" id="featuredCheckbox" />
       <label for="featuredCheckbox">Feature this story in the homepage hero spot</label>
     </div>
- 
+
     <div class="field">
       <label class="field-label">Cover image</label>
       <div class="dropzone" id="dropzone">
@@ -491,22 +489,22 @@ body.modal-open { overflow: hidden; }
       </div>
       <p class="field-error" id="imageError" hidden></p>
     </div>
- 
+
     <div class="field">
       <label class="field-label" for="descInput">Story</label>
       <textarea id="descInput" class="textarea" placeholder="Write the story. Separate paragraphs with a blank line."></textarea>
       <p class="field-error" id="descError" hidden></p>
     </div>
- 
+
     <p class="field-error-general" id="editorGeneralError" hidden></p>
- 
+
     <div class="modal-actions">
       <button class="btn btn-secondary" id="editorCancelBtn">Cancel</button>
       <button class="btn btn-primary" id="editorSubmitBtn">Publish story</button>
     </div>
   </div>
 </div>
- 
+
 <div class="modal-overlay" id="deleteModal" data-dismissable="true" hidden>
   <div class="modal-card modal-sm" role="dialog" aria-modal="true" aria-labelledby="deleteTitle">
     <h3 class="modal-title" id="deleteTitle">Delete this story?</h3>
@@ -517,13 +515,13 @@ body.modal-open { overflow: hidden; }
     </div>
   </div>
 </div>
- 
+
 <div class="toast" id="toast" hidden></div>
- 
+
 <script>
 (function(){
 "use strict";
- 
+
 var KEYS = {
   articles: 'nzb:articles',
   seeded: 'nzb:seeded',
@@ -531,7 +529,7 @@ var KEYS = {
   ownerSession: 'nzb:owner-session'
 };
 var CATEGORIES_DEFAULT_ORDER = ['Local','National','Politics','Business','Sport','World','Environment','Culture','General'];
- 
+
 var state = {
   articles: [],
   isOwner: false,
@@ -543,9 +541,9 @@ var state = {
   pendingImage: null,
   deletePendingId: null
 };
- 
+
 function genId(){ return 'story_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,8); }
- 
+
 function fmtDatePart(iso){
   try {
     return new Intl.DateTimeFormat('en-NZ', { day:'numeric', month:'short', year:'numeric', timeZone:'Pacific/Auckland' }).format(new Date(iso)).toUpperCase();
@@ -557,7 +555,7 @@ function fmtTimePart(iso){
   } catch(e){ return ''; }
 }
 function fmtDateline(iso){ return fmtDatePart(iso) + ' \u00B7 ' + fmtTimePart(iso) + ' NZT'; }
- 
+
 function relativeDate(iso){
   var then = new Date(iso).getTime();
   var now = Date.now();
@@ -572,19 +570,19 @@ function relativeDate(iso){
   if (day < 7) return day + 'd ago';
   return fmtDatePart(iso);
 }
- 
+
 function readTime(text){
   var words = (text || '').trim().split(/\s+/).filter(Boolean).length;
   var mins = Math.max(1, Math.round(words / 200));
   return mins + ' min read';
 }
- 
+
 function teaserText(text){
   var clean = (text || '').trim().split(/\n+/)[0] || '';
   if (clean.length > 150) return clean.slice(0, 147).trimEnd() + '\u2026';
   return clean;
 }
- 
+
 function dot(){
   var s = document.createElement('span');
   s.className = 'meta-dot';
@@ -592,14 +590,14 @@ function dot(){
   s.setAttribute('aria-hidden', 'true');
   return s;
 }
- 
+
 function el(tag, className, text){
   var e = document.createElement(tag);
   if (className) e.className = className;
   if (text !== undefined && text !== null) e.textContent = text;
   return e;
 }
- 
+
 function isPublicVisible(a){
   if (a.draft) return false;
   return new Date(a.date).getTime() <= Date.now();
@@ -622,7 +620,7 @@ function buildStatusBadge(article){
   if (!text) return null;
   return el('span', 'status-badge ' + text.toLowerCase(), text);
 }
- 
+
 function fadeInImage(img){
   img.classList.add('img-fade');
   if (img.complete && img.naturalWidth) {
@@ -631,7 +629,7 @@ function fadeInImage(img){
     img.addEventListener('load', function(){ img.classList.add('loaded'); }, { once: true });
   }
 }
- 
+
 function toLocalDatetimeValue(d){
   var pad = function(n){ return String(n).padStart(2, '0'); };
   return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
@@ -640,7 +638,7 @@ function fromLocalDatetimeValue(v){
   var d = v ? new Date(v) : new Date();
   return isNaN(d.getTime()) ? new Date() : d;
 }
- 
+
 async function sha256Hex(text){
   try {
     if (window.crypto && window.crypto.subtle && window.TextEncoder) {
@@ -650,7 +648,7 @@ async function sha256Hex(text){
       return arr.map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
     }
   } catch(e) { /* fall through to local fallback */ }
- 
+
   var h1 = 0x811c9dc5;
   var h2 = 0x9e3779b9;
   for (var i = 0; i < text.length; i++) {
@@ -664,7 +662,7 @@ async function sha256Hex(text){
   return hex32(h1) + hex32(h2) + hex32(Math.imul(h1 ^ h2, 0xc2b2ae35)) +
          hex32(Math.imul(h1 + h2, 0x27d4eb2d));
 }
- 
+
 // Uses Claude.ai's built-in storage when this page is previewed inside Claude.ai.
 // Falls back to the browser's own localStorage when run standalone (VS Code, a
 // local server, or opened directly as a file) so changes persist across
@@ -672,7 +670,7 @@ async function sha256Hex(text){
 function hasRealStorage(){
   return !!(window.storage && typeof window.storage.get === 'function' && typeof window.storage.set === 'function');
 }
- 
+
 async function storageGet(key, shared){
   try {
     if (hasRealStorage()) {
@@ -685,7 +683,7 @@ async function storageGet(key, shared){
     return null;
   }
 }
- 
+
 async function storageSet(key, value, shared){
   try {
     if (hasRealStorage()) {
@@ -700,7 +698,7 @@ async function storageSet(key, value, shared){
     try { localStorage.setItem(key, value); return true; } catch(e2){ return false; }
   }
 }
- 
+
 async function storageDelete(key, shared){
   try {
     if (hasRealStorage()) { await window.storage.delete(key, shared); return true; }
@@ -712,7 +710,7 @@ async function storageDelete(key, shared){
     return true;
   }
 }
- 
+
 async function loadArticles(){
   var raw = await storageGet(KEYS.articles, true);
   if (!raw) return [];
@@ -740,11 +738,17 @@ async function setOwnerSession(v){
   if (v) await storageSet(KEYS.ownerSession, 'true', false);
   else await storageDelete(KEYS.ownerSession, false);
 }
+// Permanent owner password. This is stored as a SHA-256 hash so the
+// password does not depend on browser/Claude storage surviving a reset.
+// Password: NZBrief!2026#Owner
+var PERMANENT_OWNER_PASSWORD_HASH = '8d9171206d5356d23c83de266f525f5f22129e4a3c8c3800022756bcf9039b52';
+
 async function getOwnerPasswordHash(){
-  return await storageGet(KEYS.ownerPass, true);
+  return PERMANENT_OWNER_PASSWORD_HASH;
 }
 async function setOwnerPasswordHash(hash){
-  await storageSet(KEYS.ownerPass, hash, true);
+  // Keep the permanent password even if site storage is cleared/reset.
+  return true;
 }
 async function loadComments(articleId){
   var raw = await storageGet('nzb:comments:' + articleId, true);
@@ -757,9 +761,9 @@ async function loadComments(articleId){
 async function saveComments(articleId, list){
   await storageSet('nzb:comments:' + articleId, JSON.stringify(list), true);
 }
- 
+
 function svgDataUri(svg){ return 'data:image/svg+xml,' + encodeURIComponent(svg); }
- 
+
 function seedImages(){
   var bridge = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">' +
     '<rect width="800" height="500" fill="#0B1F2A"/>' +
@@ -805,7 +809,7 @@ function seedImages(){
     flight: svgDataUri(flight)
   };
 }
- 
+
 function seedArticles(){
   var img = seedImages();
   var now = Date.now();
@@ -844,7 +848,7 @@ function seedArticles(){
     }
   ];
 }
- 
+
 var $ = function(id){ return document.getElementById(id); };
 var refs = {};
 function cacheRefs(){
@@ -860,7 +864,7 @@ function cacheRefs(){
    'toast'
   ].forEach(function(id){ refs[id] = $(id); });
 }
- 
+
 var toastTimer = null;
 function toast(msg){
   refs.toast.textContent = msg;
@@ -872,7 +876,7 @@ function toast(msg){
     setTimeout(function(){ refs.toast.hidden = true; }, 250);
   }, 2800);
 }
- 
+
 function openModal(elm){
   elm.hidden = false;
   document.body.classList.add('modal-open');
@@ -895,7 +899,7 @@ document.querySelectorAll('.modal-overlay').forEach(function(overlay){
     if (e.target === overlay && overlay.dataset.dismissable !== 'false') closeModal(overlay);
   });
 });
- 
+
 function startClock(){
   function tick(){
     try {
@@ -908,7 +912,7 @@ function startClock(){
   tick();
   setInterval(tick, 30000);
 }
- 
+
 function animateFern(){
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduce) return;
@@ -927,7 +931,7 @@ function animateFern(){
     } catch(e){ /* ignore */ }
   });
 }
- 
+
 function renderOwnerArea(){
   refs.ownerArea.innerHTML = '';
   if (state.isOwner) {
@@ -946,7 +950,7 @@ function renderOwnerArea(){
   }
   refs.fabAdd.hidden = !state.isOwner;
 }
- 
+
 function getCategoriesInUse(){
   var set = {};
   visibleArticles().forEach(function(a){ set[a.category || 'General'] = true; });
@@ -954,7 +958,7 @@ function getCategoriesInUse(){
   Object.keys(set).forEach(function(c){ if (ordered.indexOf(c) === -1) ordered.push(c); });
   return ['All'].concat(ordered);
 }
- 
+
 function renderNav(){
   var cats = getCategoriesInUse();
   refs.navPills.innerHTML = '';
@@ -964,7 +968,7 @@ function renderNav(){
     refs.navPills.appendChild(pill);
   });
 }
- 
+
 function setFilter(cat){
   state.filter = cat;
   goHomeSilent();
@@ -976,7 +980,7 @@ function goHomeSilent(){
   refs.homeView.hidden = false;
   refs.articleView.hidden = true;
 }
- 
+
 function getFiltered(){
   var q = state.search.trim().toLowerCase();
   return visibleArticles().filter(function(a){
@@ -985,13 +989,13 @@ function getFiltered(){
     return matchCat && matchSearch;
   });
 }
- 
+
 function createHero(article){
   var hero = el('div', 'hero');
   hero.tabIndex = 0;
   hero.setAttribute('role', 'button');
   hero.setAttribute('aria-label', 'Open story: ' + article.heading);
- 
+
   var media = el('div', 'hero-media');
   var img = document.createElement('img');
   img.src = article.image; img.alt = article.heading;
@@ -999,7 +1003,7 @@ function createHero(article){
   media.appendChild(img);
   var scrim = el('div', 'hero-scrim');
   media.appendChild(scrim);
- 
+
   var content = el('div', 'hero-content');
   var badge = buildStatusBadge(article);
   if (badge) {
@@ -1012,41 +1016,41 @@ function createHero(article){
   var teaser = el('p', 'hero-teaser', teaserText(article.description));
   var meta = el('p', 'hero-meta', relativeDate(article.date) + '  \u00B7  ' + readTime(article.description));
   content.append(eyebrow, h2, teaser, meta);
- 
+
   media.appendChild(content);
   hero.appendChild(media);
- 
+
   hero.addEventListener('click', function(){ openArticle(article.id); });
   hero.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openArticle(article.id); } });
   return hero;
 }
- 
+
 function createStoryAd(){
   var ad = el('div', 'story-ad');
   ad.setAttribute('aria-label', 'Advertisement');
   ad.innerHTML = '<span>ADVERTISEMENT</span><small>728 × 90</small>';
   return ad;
 }
- 
+
 function createArticleAd(){
   var ad = el('div', 'article-ad');
   ad.setAttribute('aria-label', 'Advertisement');
   ad.innerHTML = '<span>ADVERTISEMENT</span><small>728 × 90</small>';
   return ad;
 }
- 
+
 function createCard(article){
   var card = el('article', 'card');
   card.tabIndex = 0;
   card.setAttribute('role', 'button');
   card.setAttribute('aria-label', 'Open story: ' + article.heading);
- 
+
   var imgWrap = el('div', 'card-img-wrap');
   var img = document.createElement('img');
   img.src = article.image; img.alt = article.heading; img.loading = 'lazy';
   fadeInImage(img);
   imgWrap.appendChild(img);
- 
+
   var body = el('div', 'card-body');
   var badge = buildStatusBadge(article);
   if (badge) {
@@ -1059,9 +1063,9 @@ function createCard(article){
   var teaser = el('p', 'card-teaser', teaserText(article.description));
   var meta = el('p', 'card-meta', relativeDate(article.date) + '  \u00B7  ' + readTime(article.description));
   body.append(eyebrow, h3, teaser, meta);
- 
+
   card.append(imgWrap, body);
- 
+
   if (state.isOwner) {
     var ownerBar = el('div', 'card-owner-bar');
     var editBtn = iconButton('edit');
@@ -1074,12 +1078,12 @@ function createCard(article){
     ownerBar.append(editBtn, delBtn);
     card.appendChild(ownerBar);
   }
- 
+
   card.addEventListener('click', function(){ openArticle(article.id); });
   card.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openArticle(article.id); } });
   return card;
 }
- 
+
 function iconButton(type){
   var btn = document.createElement('button');
   btn.className = 'icon-btn';
@@ -1091,7 +1095,7 @@ function iconButton(type){
   }
   return btn;
 }
- 
+
 function renderEmptyState(isFilterResult){
   refs.emptyState.innerHTML = '';
   var h3 = document.createElement('h3');
@@ -1114,20 +1118,20 @@ function renderEmptyState(isFilterResult){
     refs.emptyState.append(h3, p);
   }
 }
- 
+
 function renderHome(){
   refs.articleView.hidden = true;
   refs.homeView.hidden = false;
- 
+
   renderNav();
- 
+
   var vis = visibleArticles();
   var showHero = state.filter === 'All' && !state.search.trim() && vis.length > 0;
   var heroArticle = showHero ? pickHeroFrom(vis) : null;
   var gridList = showHero
     ? vis.filter(function(a){ return !heroArticle || a.id !== heroArticle.id; })
     : getFiltered();
- 
+
   refs.heroSlot.innerHTML = '';
   if (heroArticle) {
     refs.heroSlot.hidden = false;
@@ -1135,11 +1139,11 @@ function renderHome(){
   } else {
     refs.heroSlot.hidden = true;
   }
- 
+
   var titleText = state.search.trim() ? 'Search results' : (state.filter !== 'All' ? state.filter : 'Latest Stories');
   refs.sectionTitle.textContent = titleText;
   refs.sectionCount.textContent = vis.length ? (gridList.length + (gridList.length === 1 ? ' story' : ' stories')) : '';
- 
+
   refs.grid.innerHTML = '';
   if (vis.length === 0) {
     refs.grid.hidden = true;
@@ -1160,41 +1164,41 @@ function renderHome(){
     });
   }
 }
- 
+
 function renderArticleView(article){
   var c = refs.articleView;
   c.innerHTML = '';
- 
+
   var backBtn = el('button', 'back-link', '\u2190 Back to stories');
   backBtn.addEventListener('click', goHome);
   c.appendChild(backBtn);
- 
+
   var hero = el('div', 'article-hero');
   var img = document.createElement('img');
   img.src = article.image; img.alt = article.heading;
   fadeInImage(img);
   hero.appendChild(img);
   c.appendChild(hero);
- 
+
   var badge = buildStatusBadge(article);
   if (badge) {
     var badgeRow = el('div', 'article-badges');
     badgeRow.appendChild(badge);
     c.appendChild(badgeRow);
   }
- 
+
   var meta = el('div', 'article-meta-row');
   var eyebrow = el('span', 'eyebrow', article.category);
   var dateline = el('span', 'dateline', fmtDateline(article.date));
   var rt = el('span', 'dateline', readTime(article.description));
   meta.append(eyebrow, dot(), dateline, dot(), rt);
   c.appendChild(meta);
- 
+
   var h1 = el('h1', 'article-heading', article.heading);
   c.appendChild(h1);
- 
+
   c.appendChild(buildShareRow(article));
- 
+
   if (state.isOwner) {
     var ownerRow = el('div', 'article-owner-row');
     var editBtn = el('button', 'btn btn-secondary', 'Edit story');
@@ -1204,32 +1208,32 @@ function renderArticleView(article){
     ownerRow.append(editBtn, delBtn);
     c.appendChild(ownerRow);
   }
- 
+
   var body = el('div', 'article-body');
   var paragraphs = article.description.split(/\n+/).map(function(p){ return p.trim(); }).filter(Boolean);
- 
+
   paragraphs.forEach(function(t, index){
     body.appendChild(el('p', null, t));
- 
+
     if ((index + 1) === 2 || (index + 1) === 5) {
       body.appendChild(createArticleAd());
     }
   });
- 
+
   c.appendChild(body);
- 
+
   var related = getRelatedStories(article);
   if (related.length) {
     c.appendChild(buildRelatedSection(related));
   }
- 
+
   var commentsWrap = el('div', 'comments-section');
   commentsWrap.id = 'commentsContainer';
   commentsWrap.appendChild(el('p', 'comments-loading', 'Loading comments\u2026'));
   c.appendChild(commentsWrap);
   refreshComments(article.id);
 }
- 
+
 function buildShareRow(article){
   var row = el('div', 'share-row');
   var label = el('span', 'share-label', 'Share:');
@@ -1239,11 +1243,11 @@ function buildShareRow(article){
   row.append(label, copyBtn);
   return row;
 }
- 
+
 function articleUrl(id){
   return location.origin + location.pathname + '#story=' + encodeURIComponent(id);
 }
- 
+
 async function copyArticleLink(id){
   var url = articleUrl(id);
   try {
@@ -1254,13 +1258,13 @@ async function copyArticleLink(id){
     window.prompt('Copy this link:', url);
   }
 }
- 
+
 function getRelatedStories(article){
   return visibleArticles()
     .filter(function(a){ return a.id !== article.id && a.category === article.category; })
     .slice(0, 3);
 }
- 
+
 function buildRelatedSection(list){
   var wrap = el('div', 'related-section');
   wrap.appendChild(el('h3', 'related-heading', 'Related stories'));
@@ -1269,17 +1273,17 @@ function buildRelatedSection(list){
   wrap.appendChild(grid);
   return wrap;
 }
- 
+
 async function refreshComments(articleId){
   var list = await loadComments(articleId);
   if (state.currentArticleId !== articleId) return;
   var container = document.getElementById('commentsContainer');
   if (!container) return;
- 
+
   container.innerHTML = '';
   container.appendChild(el('h3', 'comments-heading', list.length ? ('Comments (' + list.length + ')') : 'Comments'));
   container.appendChild(buildCommentForm(articleId));
- 
+
   var listEl = el('div', 'comments-list');
   if (!list.length) {
     listEl.appendChild(el('p', 'comments-empty', 'No comments yet \u2014 be the first to share your thoughts.'));
@@ -1288,33 +1292,33 @@ async function refreshComments(articleId){
   }
   container.appendChild(listEl);
 }
- 
+
 function buildCommentForm(articleId){
   var form = document.createElement('form');
   form.className = 'comment-form';
   form.noValidate = true;
- 
+
   var nameInput = document.createElement('input');
   nameInput.type = 'text';
   nameInput.placeholder = 'Your name';
   nameInput.maxLength = 60;
   nameInput.className = 'text-input comment-name-input';
   nameInput.setAttribute('aria-label', 'Your name');
- 
+
   var textInput = document.createElement('textarea');
   textInput.placeholder = 'Add a comment\u2026';
   textInput.maxLength = 600;
   textInput.rows = 3;
   textInput.className = 'textarea';
   textInput.setAttribute('aria-label', 'Your comment');
- 
+
   var submitBtn = document.createElement('button');
   submitBtn.type = 'submit';
   submitBtn.className = 'btn btn-primary btn-sm';
   submitBtn.textContent = 'Post comment';
- 
+
   form.append(nameInput, textInput, submitBtn);
- 
+
   form.addEventListener('submit', function(e){
     e.preventDefault();
     var name = nameInput.value.trim();
@@ -1323,10 +1327,10 @@ function buildCommentForm(articleId){
     submitBtn.disabled = true;
     addComment(articleId, name, text).finally(function(){ submitBtn.disabled = false; });
   });
- 
+
   return form;
 }
- 
+
 function buildCommentItem(articleId, cm){
   var item = el('div', 'comment-item');
   var head = el('div', 'comment-head');
@@ -1344,7 +1348,7 @@ function buildCommentItem(articleId, cm){
   item.append(head, el('p', 'comment-text', cm.text));
   return item;
 }
- 
+
 async function addComment(articleId, name, text){
   try {
     var list = await loadComments(articleId);
@@ -1356,7 +1360,7 @@ async function addComment(articleId, name, text){
     toast('Couldn\u2019t post your comment. Try again.');
   }
 }
- 
+
 async function deleteComment(articleId, commentId){
   try {
     var list = await loadComments(articleId);
@@ -1370,7 +1374,7 @@ async function deleteComment(articleId, commentId){
     toast('Couldn\u2019t delete that comment. Try again.');
   }
 }
- 
+
 function openArticle(id){
   var a = state.articles.find(function(x){ return x.id === id; });
   if (!a) return;
@@ -1383,7 +1387,7 @@ function openArticle(id){
   window.scrollTo({ top: 0, behavior: 'smooth' });
   updateScrollEffects();
 }
- 
+
 function goHome(){
   state.view = 'home';
   state.currentArticleId = null;
@@ -1391,7 +1395,7 @@ function goHome(){
   window.scrollTo({ top: 0, behavior: 'smooth' });
   updateScrollEffects();
 }
- 
+
 function renderCurrentView(){
   if (state.view === 'article' && state.currentArticleId) {
     var a = state.articles.find(function(x){ return x.id === state.currentArticleId; });
@@ -1399,7 +1403,7 @@ function renderCurrentView(){
   }
   renderHome();
 }
- 
+
 var scrollTicking = false;
 function updateScrollEffects(){
   if (refs.masthead) refs.masthead.classList.toggle('scrolled', window.scrollY > 6);
@@ -1421,7 +1425,7 @@ window.addEventListener('scroll', function(){
   scrollTicking = true;
   requestAnimationFrame(function(){ updateScrollEffects(); scrollTicking = false; });
 }, { passive: true });
- 
+
 async function openLogin(){
   refs.loginError.hidden = true;
   refs.passwordInput.value = '';
@@ -1441,12 +1445,12 @@ async function openLogin(){
   openModal(refs.loginModal);
 }
 function closeLogin(){ closeModal(refs.loginModal); }
- 
+
 async function submitLogin(){
   refs.loginError.hidden = true;
   var password = refs.passwordInput.value;
   var existingHash = await getOwnerPasswordHash();
- 
+
   if (!existingHash) {
     var confirmVal = refs.confirmInput.value;
     if (!password || password.length < 4) { showLoginError('Choose a password with at least 4 characters.'); return; }
@@ -1487,7 +1491,7 @@ async function submitLogin(){
   }
 }
 function showLoginError(msg){ refs.loginError.textContent = msg; refs.loginError.hidden = false; }
- 
+
 async function logout(){
   state.isOwner = false;
   await setOwnerSession(false);
@@ -1495,7 +1499,7 @@ async function logout(){
   renderCurrentView();
   toast('Signed out.');
 }
- 
+
 function loadImageFromFile(file){
   return new Promise(function(resolve, reject){
     if (!file || file.type.indexOf('image/') !== 0) { reject(new Error('not-image')); return; }
@@ -1510,7 +1514,7 @@ function loadImageFromFile(file){
     reader.readAsDataURL(file);
   });
 }
- 
+
 async function compressImageFile(file){
   var img = await loadImageFromFile(file);
   var maxW = 1100;
@@ -1529,7 +1533,7 @@ async function compressImageFile(file){
   }
   return dataUrl;
 }
- 
+
 function showImagePreview(dataUrl){
   if (dataUrl) {
     refs.dropzoneEmpty.hidden = true;
@@ -1541,7 +1545,7 @@ function showImagePreview(dataUrl){
     refs.previewImg.src = '';
   }
 }
- 
+
 async function handleImageFile(file){
   clearFieldError('image');
   try {
@@ -1555,7 +1559,7 @@ async function handleImageFile(file){
     refs.dropzone.classList.remove('dragover');
   }
 }
- 
+
 function clearFieldError(field){
   var map = { heading: refs.headingError, image: refs.imageError, desc: refs.descError };
   if (map[field]) map[field].hidden = true;
@@ -1571,11 +1575,11 @@ function clearEditorErrors(){
 function updateHeadingCounter(){
   refs.headingCounter.textContent = refs.headingInput.value.length + '/140';
 }
- 
+
 function openEditor(articleId){
   state.editingId = articleId || null;
   clearEditorErrors();
- 
+
   if (articleId) {
     var a = state.articles.find(function(x){ return x.id === articleId; });
     if (!a) return;
@@ -1609,7 +1613,7 @@ function closeEditor(){
   state.editingId = null;
   state.pendingImage = null;
 }
- 
+
 async function submitEditor(){
   var heading = refs.headingInput.value.trim();
   var description = refs.descInput.value.trim();
@@ -1618,18 +1622,18 @@ async function submitEditor(){
   var isDraft = refs.draftCheckbox.checked;
   var isFeatured = refs.featuredCheckbox.checked;
   var publishDate = fromLocalDatetimeValue(refs.publishDateInput.value).toISOString();
- 
+
   clearEditorErrors();
   var hasError = false;
   if (!heading) { setFieldError('heading', 'Add a headline for this story.'); hasError = true; }
   if (!image) { setFieldError('image', 'Add a cover image.'); hasError = true; }
   if (!description) { setFieldError('desc', 'Add a description for readers to see.'); hasError = true; }
   if (hasError) return;
- 
+
   refs.editorSubmitBtn.disabled = true;
   var originalText = refs.editorSubmitBtn.textContent;
   refs.editorSubmitBtn.innerHTML = '<span class="spinner"></span>Saving\u2026';
- 
+
   try {
     if (state.editingId) {
       var idx = state.articles.findIndex(function(x){ return x.id === state.editingId; });
@@ -1659,7 +1663,7 @@ async function submitEditor(){
     refs.editorSubmitBtn.textContent = originalText;
   }
 }
- 
+
 function confirmDelete(id){
   var a = state.articles.find(function(x){ return x.id === id; });
   if (!a) return;
@@ -1689,13 +1693,13 @@ async function performDelete(){
   }
   state.deletePendingId = null;
 }
- 
+
 function wireEvents(){
   refs.logoBtn.addEventListener('click', function(){
     state.filter = 'All'; state.search = ''; refs.searchInput.value = '';
     goHome();
   });
- 
+
   var searchDebounceTimer = null;
   refs.searchInput.addEventListener('input', function(){
     var val = refs.searchInput.value;
@@ -1706,21 +1710,21 @@ function wireEvents(){
       renderHome();
     }, 180);
   });
- 
+
   refs.fabAdd.addEventListener('click', function(){ openEditor(null); });
- 
+
   refs.loginCancelBtn.addEventListener('click', closeLogin);
   refs.loginCloseBtn.addEventListener('click', closeLogin);
   refs.loginSubmitBtn.addEventListener('click', submitLogin);
   refs.passwordInput.addEventListener('keydown', function(e){ if (e.key === 'Enter') submitLogin(); });
   refs.confirmInput.addEventListener('keydown', function(e){ if (e.key === 'Enter') submitLogin(); });
- 
+
   refs.editorCancelBtn.addEventListener('click', closeEditor);
   refs.editorCloseBtn.addEventListener('click', closeEditor);
   refs.editorSubmitBtn.addEventListener('click', submitEditor);
   refs.headingInput.addEventListener('input', function(){ updateHeadingCounter(); clearFieldError('heading'); });
   refs.descInput.addEventListener('input', function(){ clearFieldError('desc'); });
- 
+
   refs.imageInput.addEventListener('change', function(e){
     var file = e.target.files && e.target.files[0];
     if (file) handleImageFile(file);
@@ -1733,21 +1737,21 @@ function wireEvents(){
     var file = e.dataTransfer.files && e.dataTransfer.files[0];
     if (file) handleImageFile(file);
   });
- 
+
   refs.deleteCancelBtn.addEventListener('click', function(){ state.deletePendingId = null; closeModal(refs.deleteModal); });
   refs.deleteConfirmBtn.addEventListener('click', performDelete);
 }
- 
+
 async function init(){
   cacheRefs();
   wireEvents();
   startClock();
   refs.footerNote.textContent = 'Personal news project \u00B7 \u00A9 ' + new Date().getFullYear();
- 
+
   try {
     state.isOwner = await loadOwnerSession();
   } catch(e){ state.isOwner = false; }
- 
+
   try {
     state.articles = await loadArticles();
     if (state.articles.length === 0) {
@@ -1761,21 +1765,20 @@ async function init(){
     state.articles = [];
     toast('Couldn\u2019t load stories. Check that browser storage is enabled.');
   }
- 
+
   renderOwnerArea();
   renderHome();
   updateScrollEffects();
   animateFern();
 }
- 
+
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', init);
 } else {
   init();
 }
- 
+
 })();
 </script>
 </body>
 </html>
- 
