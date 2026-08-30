@@ -1,3 +1,5 @@
+
+The new zealand brief · HTML
 <!DOCTYPE html>
 <html lang="en-NZ">
 <head>
@@ -10,9 +12,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;0,700;1,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <style>
-/* ============================================================
-   1. RESET & BASE
-   ============================================================ */
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 body {
@@ -30,10 +29,6 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 h1, h2, h3, p { margin: 0; }
 a { color: inherit; }
 ul { list-style: none; margin: 0; padding: 0; }
-
-/* ============================================================
-   2. TOKENS
-   ============================================================ */
 :root {
   --paper: #F5F4EF;
   --paper-dim: #EAE7DE;
@@ -58,12 +53,7 @@ ul { list-style: none; margin: 0; padding: 0; }
   --font-body: 'IBM Plex Sans', -apple-system, sans-serif;
   --font-mono: 'IBM Plex Mono', 'SF Mono', monospace;
 }
-
 .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-
-/* ============================================================
-   3. HEADER / MASTHEAD
-   ============================================================ */
 .masthead { background: var(--navy); color: var(--white); position: sticky; top: 0; z-index: 40; }
 .masthead-top {
   max-width: 1180px; margin: 0 auto; padding: 18px 24px 14px;
@@ -76,16 +66,13 @@ ul { list-style: none; margin: 0; padding: 0; }
 .brand-text { display: flex; flex-direction: column; gap: 2px; }
 .brand-title { font-family: var(--font-display); font-weight: 600; font-size: 24px; letter-spacing: 0.2px; line-height: 1; white-space: nowrap; }
 .brand-tag { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; color: rgba(255,255,255,0.62); text-transform: uppercase; }
-
 .masthead-right { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
 .nz-clock { font-family: var(--font-mono); font-size: 12px; color: rgba(255,255,255,0.7); letter-spacing: 0.03em; white-space: nowrap; }
-
 .owner-area { display: flex; align-items: center; gap: 10px; }
 .owner-badge { display: flex; align-items: center; gap: 7px; font-family: var(--font-mono); font-size: 12px; color: var(--white); background: rgba(255,255,255,0.08); border: 1px solid var(--line-navy); padding: 6px 10px; border-radius: 100px; }
 .owner-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--kowhai); flex-shrink: 0; }
 .link-btn { background: none; border: none; color: rgba(255,255,255,0.75); font-size: 13px; text-decoration: underline; text-underline-offset: 2px; padding: 4px 2px; }
 .link-btn:hover { color: var(--white); }
-
 .btn { border-radius: 100px; border: 1px solid transparent; padding: 9px 18px; font-size: 14px; font-weight: 600; transition: all .18s ease; }
 .btn-sm { padding: 6px 13px; font-size: 13px; }
 .btn-primary { background: var(--jade); color: var(--white); }
@@ -98,7 +85,6 @@ ul { list-style: none; margin: 0; padding: 0; }
 .btn-danger-outline:hover { background: rgba(179,67,45,0.08); }
 .btn-text { background: none; border: none; padding: 8px 4px; font-weight: 600; color: var(--jade); font-size: 14px; }
 .btn:disabled { opacity: 0.55; cursor: default; }
-
 .nav-row {
   background: var(--navy-soft); border-top: 1px solid var(--line-navy);
   display: flex; align-items: center; gap: 10px; padding: 10px 24px;
@@ -111,12 +97,7 @@ ul { list-style: none; margin: 0; padding: 0; }
 .search-input { flex-shrink: 0; width: 200px; max-width: 40vw; background: rgba(255,255,255,0.08); border: 1px solid var(--line-navy); color: var(--white); border-radius: 100px; padding: 8px 14px; font-size: 13px; }
 .search-input::placeholder { color: rgba(255,255,255,0.45); }
 .search-input:focus { outline: none; border-color: var(--kowhai); background: rgba(255,255,255,0.12); }
-
-/* ============================================================
-   4. MAIN / HERO
-   ============================================================ */
 main { max-width: 1180px; margin: 0 auto; padding: 36px 24px 80px; }
-
 .hero { position: relative; border-radius: var(--radius); overflow: hidden; cursor: pointer; background: var(--navy); box-shadow: var(--shadow); margin-bottom: 48px; }
 .hero-media { position: relative; width: 100%; aspect-ratio: 21/10; }
 .hero-media img { width: 100%; height: 100%; object-fit: cover; }
@@ -126,23 +107,16 @@ main { max-width: 1180px; margin: 0 auto; padding: 36px 24px 80px; }
 .hero-heading { font-family: var(--font-display); font-weight: 600; font-size: clamp(26px, 4vw, 42px); line-height: 1.12; margin-bottom: 12px; }
 .hero-teaser { font-size: 16px; color: rgba(255,255,255,0.82); max-width: 620px; margin-bottom: 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .hero-meta { font-family: var(--font-mono); font-size: 12px; color: rgba(255,255,255,0.65); }
-
-/* ============================================================
-   5. GRID & CARDS
-   ============================================================ */
 .section-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 22px; }
 .section-head h2 { font-family: var(--font-display); font-weight: 600; font-size: 22px; }
 .section-count { font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); }
-
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 26px; }
-
 .card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; position: relative; transition: transform .18s ease, box-shadow .18s ease; opacity: 0; animation: cardIn .5s ease forwards; }
 .card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
 .card:focus-visible { outline: 2px solid var(--kowhai); outline-offset: 2px; }
 .card:nth-child(1) { animation-delay: .02s; } .card:nth-child(2) { animation-delay: .06s; } .card:nth-child(3) { animation-delay: .10s; }
 .card:nth-child(4) { animation-delay: .14s; } .card:nth-child(5) { animation-delay: .18s; } .card:nth-child(6) { animation-delay: .22s; }
 @keyframes cardIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
 .card-img-wrap { width: 100%; aspect-ratio: 16/10; overflow: hidden; background: var(--paper-dim); }
 .card-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s ease; }
 .card:hover .card-img-wrap img { transform: scale(1.04); }
@@ -151,44 +125,26 @@ main { max-width: 1180px; margin: 0 auto; padding: 36px 24px 80px; }
 .card-heading { font-family: var(--font-display); font-weight: 600; font-size: 19px; line-height: 1.28; color: var(--ink); }
 .card-teaser { font-size: 14px; color: var(--ink-soft); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .card-meta { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-soft); opacity: 0.85; margin-top: 2px; }
-
 .card-owner-bar { position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; opacity: 0; transform: translateY(-4px); transition: all .15s ease; }
 .card:hover .card-owner-bar, .card:focus-within .card-owner-bar { opacity: 1; transform: translateY(0); }
 .icon-btn { width: 32px; height: 32px; border-radius: 50%; background: rgba(11,31,42,0.86); color: var(--white); border: none; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
 .icon-btn:hover { background: var(--navy); }
 .icon-btn.danger:hover { background: var(--danger); }
-
-/* ============================================================
-   6. ARTICLE DETAIL VIEW
-   ============================================================ */
 .back-link { background: none; border: none; color: var(--jade); font-weight: 600; font-size: 14px; padding: 6px 0; margin-bottom: 22px; }
 .back-link:hover { text-decoration: underline; }
-
 .article-hero { width: 100%; aspect-ratio: 16/9; border-radius: var(--radius); overflow: hidden; background: var(--paper-dim); margin-bottom: 24px; box-shadow: var(--shadow); }
 .article-hero img { width: 100%; height: 100%; object-fit: cover; }
-
 .article-meta-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
 .dateline { font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); letter-spacing: 0.02em; }
 .meta-dot { color: var(--ink-soft); opacity: 0.5; font-size: 12px; }
-
 .article-heading { font-family: var(--font-display); font-weight: 600; font-size: clamp(28px, 4vw, 40px); line-height: 1.15; max-width: 820px; margin-bottom: 20px; }
-
 .article-owner-row { display: flex; gap: 10px; margin-bottom: 28px; }
-
 .article-body { max-width: 700px; display: flex; flex-direction: column; gap: 18px; }
 .article-body p { font-size: 18px; line-height: 1.75; color: var(--ink); }
 .article-body p:first-of-type { font-size: 19px; color: var(--ink); }
-
-/* ============================================================
-   7. EMPTY STATE
-   ============================================================ */
 .empty-state { border: 1.5px dashed var(--line); border-radius: var(--radius); padding: 64px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px; }
 .empty-state h3 { font-family: var(--font-display); font-size: 22px; font-weight: 600; }
 .empty-state p { color: var(--ink-soft); max-width: 380px; font-size: 15px; }
-
-/* ============================================================
-   8. FORMS / FIELDS
-   ============================================================ */
 .field { margin-bottom: 20px; }
 .field-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 7px; color: var(--ink); }
 .field-hint { font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft); float: right; font-weight: 400; }
@@ -201,7 +157,6 @@ main { max-width: 1180px; margin: 0 auto; padding: 36px 24px 80px; }
 .select-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2357626C' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 34px; }
 .field-error { color: var(--danger); font-size: 12.5px; margin-top: 6px; }
 .field-error-general { color: var(--danger); font-size: 13px; margin: 4px 0 14px; }
-
 .dropzone { border: 1.5px dashed var(--line); border-radius: var(--radius-sm); background: var(--paper); transition: border-color .15s ease, background .15s ease; }
 .dropzone.dragover { border-color: var(--jade); background: rgba(28,107,87,0.06); }
 .dropzone-empty { padding: 34px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; }
@@ -211,10 +166,6 @@ main { max-width: 1180px; margin: 0 auto; padding: 36px 24px 80px; }
 .dropzone-preview label { margin: 12px; }
 .spinner { width: 16px; height: 16px; border: 2px solid rgba(20,24,28,0.15); border-top-color: var(--jade); border-radius: 50%; display: inline-block; animation: spin .7s linear infinite; vertical-align: -3px; margin-right: 6px; }
 @keyframes spin { to { transform: rotate(360deg); } }
-
-/* ============================================================
-   9. MODALS
-   ============================================================ */
 .modal-overlay { position: fixed; inset: 0; background: rgba(11,19,24,0.56); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
 .modal-overlay[hidden] { display: none; }
 .modal-card { background: var(--white); border-radius: var(--radius); width: 100%; box-shadow: var(--shadow-lg); position: relative; margin: auto; animation: modalIn .22s ease; }
@@ -227,47 +178,27 @@ main { max-width: 1180px; margin: 0 auto; padding: 36px 24px 80px; }
 .modal-subtitle { font-size: 14px; color: var(--ink-soft); margin-bottom: 22px; line-height: 1.5; }
 .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; }
 .modal-actions.spread { justify-content: space-between; }
-
-/* ============================================================
-   10. FAB & TOAST
-   ============================================================ */
 .fab { position: fixed; right: 26px; bottom: 26px; width: 58px; height: 58px; border-radius: 50%; background: var(--jade); color: var(--white); border: none; font-size: 30px; font-weight: 400; box-shadow: var(--shadow-lg); z-index: 30; display: flex; align-items: center; justify-content: center; transition: transform .18s ease, background .18s ease; line-height: 0; }
 .fab span { margin-top: -3px; }
 .fab:hover { background: var(--jade-dark); transform: scale(1.06); }
 .fab:focus-visible { outline: 2px solid var(--kowhai); outline-offset: 3px; }
 .fab[hidden] { display: none; }
-
 .toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%) translateY(12px); background: var(--navy); color: var(--white); padding: 12px 22px; border-radius: 100px; font-size: 13.5px; box-shadow: var(--shadow-lg); z-index: 200; opacity: 0; transition: opacity .22s ease, transform .22s ease; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 .toast[hidden] { display: none; }
-
-/* ============================================================
-   11. FOOTER
-   ============================================================ */
 footer { background: var(--navy); color: rgba(255,255,255,0.65); padding: 42px 24px; margin-top: 40px; }
 .footer-inner { max-width: 1180px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 .footer-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 15px; color: var(--white); }
 .footer-brand .fern-mark { width: 20px; height: 20px; color: var(--kowhai); }
 .footer-note { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.02em; }
-
-/* ============================================================
-   AD SPACES
-   ============================================================ */
 .page-layout {
   display: grid;
   grid-template-columns: 160px minmax(0, 1fr) 160px;
   gap: 24px;
   align-items: start;
 }
-
-.main-content {
-  min-width: 0;
-}
-
-.side-ad {
-  min-width: 0;
-}
-
+.main-content { min-width: 0; }
+.side-ad { min-width: 0; }
 .ad-space {
   width: 160px;
   min-height: 600px;
@@ -286,17 +217,8 @@ footer { background: var(--navy); color: rgba(255,255,255,0.65); padding: 42px 2
   position: sticky;
   top: 150px;
 }
-
-.ad-space span {
-  opacity: 0.7;
-}
-
-.ad-space small {
-  font-size: 9px;
-  letter-spacing: 0.03em;
-  opacity: 0.55;
-}
-
+.ad-space span { opacity: 0.7; }
+.ad-space small { font-size: 9px; letter-spacing: 0.03em; opacity: 0.55; }
 .story-ad {
   grid-column: 1 / -1;
   min-height: 120px;
@@ -313,13 +235,7 @@ footer { background: var(--navy); color: rgba(255,255,255,0.65); padding: 42px 2
   font-size: 9px;
   letter-spacing: 0.08em;
 }
-
-.story-ad small {
-  font-size: 9px;
-  letter-spacing: 0.03em;
-  opacity: 0.55;
-}
-
+.story-ad small { font-size: 9px; letter-spacing: 0.03em; opacity: 0.55; }
 .article-ad {
   width: 100%;
   min-height: 110px;
@@ -337,26 +253,11 @@ footer { background: var(--navy); color: rgba(255,255,255,0.65); padding: 42px 2
   font-size: 9px;
   letter-spacing: 0.08em;
 }
-
-.article-ad small {
-  font-size: 9px;
-  letter-spacing: 0.03em;
-  opacity: 0.55;
-}
-
-/* ============================================================
-   12. RESPONSIVE
-   ============================================================ */
+.article-ad small { font-size: 9px; letter-spacing: 0.03em; opacity: 0.55; }
 @media (max-width: 1120px) {
-  .page-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .side-ad {
-    display: none;
-  }
+  .page-layout { grid-template-columns: 1fr; }
+  .side-ad { display: none; }
 }
-
 @media (max-width: 720px) {
   .masthead-top { padding: 16px 18px 12px; }
   .brand-title { font-size: 20px; }
@@ -376,10 +277,49 @@ footer { background: var(--navy); color: rgba(255,255,255,0.65); padding: 42px 2
   .grid { grid-template-columns: 1fr; }
   .search-input { max-width: 44vw; }
 }
-
-/* ============================================================
-   13. ACCESSIBILITY & MOTION
-   ============================================================ */
+.status-badge { display: inline-block; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 9px; border-radius: 100px; font-weight: 600; margin-right: 8px; }
+.status-badge.draft { background: rgba(179,67,45,0.12); color: var(--danger); }
+.status-badge.scheduled { background: rgba(232,163,61,0.2); color: var(--kowhai-dark); }
+.status-badge.featured { background: rgba(28,107,87,0.12); color: var(--jade); }
+.card-badges { display: flex; align-items: center; gap: 0; margin-bottom: 2px; }
+.hero-badges, .article-badges { display: flex; align-items: center; margin-bottom: 8px; }
+.img-fade { opacity: 0; transition: opacity .4s ease; }
+.img-fade.loaded { opacity: 1; }
+.reading-progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--kowhai); z-index: 55; width: 0%; }
+.reading-progress[hidden] { display: none; }
+.masthead.scrolled { box-shadow: 0 8px 20px rgba(11,31,42,0.28); }
+.skeleton-block, .skeleton-line {
+  background: linear-gradient(90deg, var(--paper-dim) 25%, #ddd8cb 37%, var(--paper-dim) 63%);
+  background-size: 400% 100%;
+  animation: skeletonShimmer 1.4s ease infinite;
+  border-radius: 6px;
+}
+.skeleton-line { height: 12px; margin: 7px 0; }
+.skeleton-line.w-40 { width: 40%; }
+.skeleton-line.w-70 { width: 70%; }
+.skeleton-line.w-90 { width: 90%; }
+@keyframes skeletonShimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+.share-row { display: flex; align-items: center; gap: 10px; margin: 4px 0 30px; }
+.share-label { font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); letter-spacing: 0.03em; }
+.related-section { max-width: 940px; margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--line); }
+.related-heading { font-family: var(--font-display); font-weight: 600; font-size: 19px; margin-bottom: 18px; }
+.related-grid { gap: 20px; }
+.comments-section { max-width: 700px; margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--line); }
+.comments-heading { font-family: var(--font-display); font-weight: 600; font-size: 19px; margin-bottom: 16px; }
+.comment-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+.comment-name-input { max-width: 260px; }
+.comments-list { display: flex; flex-direction: column; gap: 14px; }
+.comments-empty { color: var(--ink-soft); font-size: 14px; }
+.comment-item { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 14px 16px; }
+.comment-head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.comment-name { font-weight: 600; font-size: 13.5px; }
+.comment-date { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-soft); }
+.comment-delete { margin-left: auto; background: none; border: none; color: var(--danger); font-size: 12px; text-decoration: underline; padding: 2px 4px; }
+.comment-text { font-size: 14.5px; line-height: 1.55; color: var(--ink); white-space: pre-wrap; }
+.checkbox-row { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+.checkbox-row input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--jade); flex-shrink: 0; }
+.checkbox-row label { font-size: 14px; color: var(--ink); }
+.field-note { font-size: 12px; color: var(--ink-soft); margin-top: 6px; }
 :focus-visible { outline: 2px solid var(--kowhai); outline-offset: 2px; }
 body.modal-open { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
@@ -388,8 +328,10 @@ body.modal-open { overflow: hidden; }
 </style>
 </head>
 <body>
-
-<header class="masthead">
+ 
+<div class="reading-progress" id="readingProgress" hidden></div>
+ 
+<header class="masthead" id="masthead">
   <div class="masthead-top">
     <button class="brand" id="logoBtn" aria-label="The New Zealand Brief — go to homepage">
       <svg class="fern-mark" width="30" height="30" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -415,7 +357,7 @@ body.modal-open { overflow: hidden; }
     <input type="text" class="search-input" id="searchInput" placeholder="Search stories" aria-label="Search stories" />
   </div>
 </header>
-
+ 
 <main>
   <div class="page-layout">
     <aside class="side-ad side-ad-left" aria-label="Advertisement">
@@ -424,7 +366,7 @@ body.modal-open { overflow: hidden; }
         <small>160 × 600</small>
       </div>
     </aside>
-
+ 
     <div class="main-content">
       <div id="homeView">
     <div class="hero" id="heroSlot" hidden></div>
@@ -432,13 +374,17 @@ body.modal-open { overflow: hidden; }
       <h2 id="sectionTitle">Latest Stories</h2>
       <span class="section-count" id="sectionCount"></span>
     </div>
-    <div class="grid" id="grid"></div>
+    <div class="grid" id="grid">
+      <article class="card skeleton-card" aria-hidden="true"><div class="card-img-wrap skeleton-block"></div><div class="card-body"><div class="skeleton-line w-40"></div><div class="skeleton-line w-90"></div><div class="skeleton-line w-70"></div></div></article>
+      <article class="card skeleton-card" aria-hidden="true"><div class="card-img-wrap skeleton-block"></div><div class="card-body"><div class="skeleton-line w-40"></div><div class="skeleton-line w-90"></div><div class="skeleton-line w-70"></div></div></article>
+      <article class="card skeleton-card" aria-hidden="true"><div class="card-img-wrap skeleton-block"></div><div class="card-body"><div class="skeleton-line w-40"></div><div class="skeleton-line w-90"></div><div class="skeleton-line w-70"></div></div></article>
+    </div>
     <div class="empty-state" id="emptyState" hidden></div>
   </div>
-
+ 
       <div id="articleView" hidden></div>
     </div>
-
+ 
     <aside class="side-ad side-ad-right" aria-label="Advertisement">
       <div class="ad-space">
         <span>ADVERTISEMENT</span>
@@ -447,7 +393,7 @@ body.modal-open { overflow: hidden; }
     </aside>
   </div>
 </main>
-
+ 
 <footer>
   <div class="footer-inner">
     <div class="footer-brand">
@@ -462,12 +408,11 @@ body.modal-open { overflow: hidden; }
     <span class="footer-note" id="footerNote"></span>
   </div>
 </footer>
-
+ 
 <button class="fab" id="fabAdd" hidden aria-label="Publish a new story">
   <span aria-hidden="true">+</span>
 </button>
-
-<!-- Login / Owner setup modal -->
+ 
 <div class="modal-overlay" id="loginModal" data-dismissable="true" hidden>
   <div class="modal-card modal-sm" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
     <button class="modal-close" id="loginCloseBtn" aria-label="Close">×</button>
@@ -488,20 +433,19 @@ body.modal-open { overflow: hidden; }
     </div>
   </div>
 </div>
-
-<!-- Editor modal -->
+ 
 <div class="modal-overlay" id="editorModal" data-dismissable="false" hidden>
   <div class="modal-card modal-md" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
     <button class="modal-close" id="editorCloseBtn" aria-label="Close">×</button>
     <h3 class="modal-title" id="editorTitle">Publish a story</h3>
     <p class="modal-subtitle">Add an image and headline for the front page, then write the story readers see when they open it.</p>
-
+ 
     <div class="field">
       <label class="field-label" for="headingInput">Headline <span class="field-hint" id="headingCounter">0/140</span></label>
       <input type="text" id="headingInput" class="text-input" maxlength="140" placeholder="e.g. Harbour Bridge cycleway trial begins next month" />
       <p class="field-error" id="headingError" hidden></p>
     </div>
-
+ 
     <div class="field">
       <label class="field-label" for="categorySelect">Category</label>
       <select id="categorySelect" class="select-input">
@@ -516,7 +460,22 @@ body.modal-open { overflow: hidden; }
         <option>Culture</option>
       </select>
     </div>
-
+ 
+    <div class="field">
+      <label class="field-label" for="publishDateInput">Publish date &amp; time</label>
+      <input type="datetime-local" id="publishDateInput" class="text-input" />
+      <p class="field-note">Set this in the future to schedule the story — it stays hidden from readers until then.</p>
+    </div>
+ 
+    <div class="checkbox-row">
+      <input type="checkbox" id="draftCheckbox" />
+      <label for="draftCheckbox">Save as draft (hidden from readers until you publish it)</label>
+    </div>
+    <div class="checkbox-row">
+      <input type="checkbox" id="featuredCheckbox" />
+      <label for="featuredCheckbox">Feature this story in the homepage hero spot</label>
+    </div>
+ 
     <div class="field">
       <label class="field-label">Cover image</label>
       <div class="dropzone" id="dropzone">
@@ -532,23 +491,22 @@ body.modal-open { overflow: hidden; }
       </div>
       <p class="field-error" id="imageError" hidden></p>
     </div>
-
+ 
     <div class="field">
       <label class="field-label" for="descInput">Story</label>
       <textarea id="descInput" class="textarea" placeholder="Write the story. Separate paragraphs with a blank line."></textarea>
       <p class="field-error" id="descError" hidden></p>
     </div>
-
+ 
     <p class="field-error-general" id="editorGeneralError" hidden></p>
-
+ 
     <div class="modal-actions">
       <button class="btn btn-secondary" id="editorCancelBtn">Cancel</button>
       <button class="btn btn-primary" id="editorSubmitBtn">Publish story</button>
     </div>
   </div>
 </div>
-
-<!-- Delete confirm modal -->
+ 
 <div class="modal-overlay" id="deleteModal" data-dismissable="true" hidden>
   <div class="modal-card modal-sm" role="dialog" aria-modal="true" aria-labelledby="deleteTitle">
     <h3 class="modal-title" id="deleteTitle">Delete this story?</h3>
@@ -559,16 +517,13 @@ body.modal-open { overflow: hidden; }
     </div>
   </div>
 </div>
-
+ 
 <div class="toast" id="toast" hidden></div>
-
+ 
 <script>
 (function(){
 "use strict";
-
-/* ============================================================
-   CONSTANTS & STATE
-   ============================================================ */
+ 
 var KEYS = {
   articles: 'nzb:articles',
   seeded: 'nzb:seeded',
@@ -576,7 +531,7 @@ var KEYS = {
   ownerSession: 'nzb:owner-session'
 };
 var CATEGORIES_DEFAULT_ORDER = ['Local','National','Politics','Business','Sport','World','Environment','Culture','General'];
-
+ 
 var state = {
   articles: [],
   isOwner: false,
@@ -588,12 +543,9 @@ var state = {
   pendingImage: null,
   deletePendingId: null
 };
-
-/* ============================================================
-   UTILITIES
-   ============================================================ */
+ 
 function genId(){ return 'story_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,8); }
-
+ 
 function fmtDatePart(iso){
   try {
     return new Intl.DateTimeFormat('en-NZ', { day:'numeric', month:'short', year:'numeric', timeZone:'Pacific/Auckland' }).format(new Date(iso)).toUpperCase();
@@ -605,7 +557,7 @@ function fmtTimePart(iso){
   } catch(e){ return ''; }
 }
 function fmtDateline(iso){ return fmtDatePart(iso) + ' \u00B7 ' + fmtTimePart(iso) + ' NZT'; }
-
+ 
 function relativeDate(iso){
   var then = new Date(iso).getTime();
   var now = Date.now();
@@ -620,19 +572,19 @@ function relativeDate(iso){
   if (day < 7) return day + 'd ago';
   return fmtDatePart(iso);
 }
-
+ 
 function readTime(text){
   var words = (text || '').trim().split(/\s+/).filter(Boolean).length;
   var mins = Math.max(1, Math.round(words / 200));
   return mins + ' min read';
 }
-
+ 
 function teaserText(text){
   var clean = (text || '').trim().split(/\n+/)[0] || '';
   if (clean.length > 150) return clean.slice(0, 147).trimEnd() + '\u2026';
   return clean;
 }
-
+ 
 function dot(){
   var s = document.createElement('span');
   s.className = 'meta-dot';
@@ -640,14 +592,55 @@ function dot(){
   s.setAttribute('aria-hidden', 'true');
   return s;
 }
-
+ 
 function el(tag, className, text){
   var e = document.createElement(tag);
   if (className) e.className = className;
   if (text !== undefined && text !== null) e.textContent = text;
   return e;
 }
-
+ 
+function isPublicVisible(a){
+  if (a.draft) return false;
+  return new Date(a.date).getTime() <= Date.now();
+}
+function visibleArticles(){
+  return state.isOwner ? state.articles.slice() : state.articles.filter(isPublicVisible);
+}
+function pickHeroFrom(list){
+  var featured = list.find(function(a){ return a.featured && !a.draft; });
+  return featured || list[0] || null;
+}
+function statusBadgeText(article){
+  if (!state.isOwner) return null;
+  if (article.draft) return 'Draft';
+  if (new Date(article.date).getTime() > Date.now()) return 'Scheduled';
+  return null;
+}
+function buildStatusBadge(article){
+  var text = statusBadgeText(article);
+  if (!text) return null;
+  return el('span', 'status-badge ' + text.toLowerCase(), text);
+}
+ 
+function fadeInImage(img){
+  img.classList.add('img-fade');
+  if (img.complete && img.naturalWidth) {
+    img.classList.add('loaded');
+  } else {
+    img.addEventListener('load', function(){ img.classList.add('loaded'); }, { once: true });
+  }
+}
+ 
+function toLocalDatetimeValue(d){
+  var pad = function(n){ return String(n).padStart(2, '0'); };
+  return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+function fromLocalDatetimeValue(v){
+  var d = v ? new Date(v) : new Date();
+  return isNaN(d.getTime()) ? new Date() : d;
+}
+ 
 async function sha256Hex(text){
   try {
     if (window.crypto && window.crypto.subtle && window.TextEncoder) {
@@ -657,7 +650,7 @@ async function sha256Hex(text){
       return arr.map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
     }
   } catch(e) { /* fall through to local fallback */ }
-
+ 
   var h1 = 0x811c9dc5;
   var h2 = 0x9e3779b9;
   for (var i = 0; i < text.length; i++) {
@@ -671,83 +664,55 @@ async function sha256Hex(text){
   return hex32(h1) + hex32(h2) + hex32(Math.imul(h1 ^ h2, 0xc2b2ae35)) +
          hex32(Math.imul(h1 + h2, 0x27d4eb2d));
 }
-
-/* ============================================================
-   STORAGE HELPERS
-   All reads/writes go through window.storage, which persists data
-   across sessions and reloads for this artifact. Articles are
-   stored "shared" so every visitor sees the same front page; the
-   owner session flag is stored per-browser (not shared).
-
-   window.storage is only injected by Claude's artifact renderer.
-   If it's missing, or a call to it fails, we fall back to an
-   in-memory store so the page still works for the current session
-   instead of hard-failing, and we warn the user once so it's clear
-   changes won't survive a reload in that case.
-   ============================================================ */
-var memoryStore = { shared: {}, local: {} };
-function memoryBucket(shared){ return shared ? memoryStore.shared : memoryStore.local; }
-function memoryGet(key, shared){
-  var b = memoryBucket(shared);
-  return Object.prototype.hasOwnProperty.call(b, key) ? b[key] : null;
-}
-function memorySet(key, value, shared){ memoryBucket(shared)[key] = String(value); }
-function memoryDelete(key, shared){ delete memoryBucket(shared)[key]; }
-
-var warnedNoPersist = false;
-function warnNoPersist(){
-  if (warnedNoPersist) return;
-  warnedNoPersist = true;
-  try { toast('Persistent storage isn\u2019t available right now \u2014 changes will only last for this session.'); } catch(e){ /* toast may not be ready yet */ }
-}
-
+ 
+// Uses Claude.ai's built-in storage when this page is previewed inside Claude.ai.
+// Falls back to the browser's own localStorage when run standalone (VS Code, a
+// local server, or opened directly as a file) so changes persist across
+// reloads either way, instead of silently vanishing.
 function hasRealStorage(){
   return !!(window.storage && typeof window.storage.get === 'function' && typeof window.storage.set === 'function');
 }
-
+ 
 async function storageGet(key, shared){
-  if (!hasRealStorage()) return memoryGet(key, shared);
   try {
-    var res = await window.storage.get(key, shared);
-    if (res == null) return null;
-    return typeof res === 'object' && 'value' in res ? res.value : String(res);
+    if (hasRealStorage()) {
+      var res = await window.storage.get(key, shared);
+      if (res == null) return null;
+      return typeof res === 'object' && 'value' in res ? res.value : String(res);
+    }
+    return localStorage.getItem(key);
   } catch(e) {
-    // get() throws for missing keys per the storage API - that's expected
-    // and just means "not set yet", not a real failure.
     return null;
   }
 }
-
+ 
 async function storageSet(key, value, shared){
-  if (!hasRealStorage()) {
-    memorySet(key, value, shared);
-    warnNoPersist();
-    return true;
-  }
   try {
-    var res = await window.storage.set(key, value, shared);
-    if (!res) throw new Error('window.storage.set returned an empty result for key: ' + key);
+    if (hasRealStorage()) {
+      var res = await window.storage.set(key, value, shared);
+      if (!res) throw new Error('window.storage.set returned an empty result for key: ' + key);
+      return true;
+    }
+    localStorage.setItem(key, value);
     return true;
   } catch(e) {
     console.error('[nz-brief] storage.set failed for key "' + key + '":', e);
-    memorySet(key, value, shared);
-    warnNoPersist();
-    return true;
+    try { localStorage.setItem(key, value); return true; } catch(e2){ return false; }
   }
 }
-
+ 
 async function storageDelete(key, shared){
-  if (!hasRealStorage()) { memoryDelete(key, shared); return true; }
   try {
-    await window.storage.delete(key, shared);
+    if (hasRealStorage()) { await window.storage.delete(key, shared); return true; }
+    localStorage.removeItem(key);
     return true;
   } catch(e){
     console.error('[nz-brief] storage.delete failed for key "' + key + '":', e);
-    memoryDelete(key, shared);
+    try { localStorage.removeItem(key); } catch(e2){ /* ignore */ }
     return true;
   }
 }
-
+ 
 async function loadArticles(){
   var raw = await storageGet(KEYS.articles, true);
   if (!raw) return [];
@@ -767,12 +732,6 @@ async function getSeeded(){
 async function setSeeded(){
   await storageSet(KEYS.seeded, 'true', true);
 }
-async function getOwnerPasswordHash(){
-  return await storageGet(KEYS.ownerPass, true);
-}
-async function setOwnerPasswordHash(hash){
-  await storageSet(KEYS.ownerPass, hash, true);
-}
 async function loadOwnerSession(){
   var raw = await storageGet(KEYS.ownerSession, false);
   return raw === 'true';
@@ -781,12 +740,26 @@ async function setOwnerSession(v){
   if (v) await storageSet(KEYS.ownerSession, 'true', false);
   else await storageDelete(KEYS.ownerSession, false);
 }
-
-/* ============================================================
-   SEED DATA (shown once, before the owner publishes anything)
-   ============================================================ */
+async function getOwnerPasswordHash(){
+  return await storageGet(KEYS.ownerPass, true);
+}
+async function setOwnerPasswordHash(hash){
+  await storageSet(KEYS.ownerPass, hash, true);
+}
+async function loadComments(articleId){
+  var raw = await storageGet('nzb:comments:' + articleId, true);
+  if (!raw) return [];
+  try {
+    var parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch(e){ return []; }
+}
+async function saveComments(articleId, list){
+  await storageSet('nzb:comments:' + articleId, JSON.stringify(list), true);
+}
+ 
 function svgDataUri(svg){ return 'data:image/svg+xml,' + encodeURIComponent(svg); }
-
+ 
 function seedImages(){
   var bridge = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">' +
     '<rect width="800" height="500" fill="#0B1F2A"/>' +
@@ -832,7 +805,7 @@ function seedImages(){
     flight: svgDataUri(flight)
   };
 }
-
+ 
 function seedArticles(){
   var img = seedImages();
   var now = Date.now();
@@ -871,28 +844,23 @@ function seedArticles(){
     }
   ];
 }
-
-/* ============================================================
-   DOM REFERENCES
-   ============================================================ */
+ 
 var $ = function(id){ return document.getElementById(id); };
 var refs = {};
 function cacheRefs(){
   ['ownerArea','navPills','searchInput','heroSlot','sectionTitle','sectionCount','grid','emptyState',
-   'homeView','articleView','fabAdd','logoBtn','nzClock','footerNote',
+   'homeView','articleView','fabAdd','logoBtn','nzClock','footerNote','masthead','readingProgress',
    'loginModal','loginTitle','loginSubtitle','passwordInput','confirmField','confirmInput','loginError',
    'loginCancelBtn','loginSubmitBtn','loginCloseBtn',
    'editorModal','editorTitle','headingInput','headingCounter','headingError','categorySelect',
+   'publishDateInput','draftCheckbox','featuredCheckbox',
    'dropzone','imageInput','dropzoneEmpty','dropzonePreview','previewImg','imageError',
    'descInput','descError','editorGeneralError','editorCancelBtn','editorSubmitBtn','editorCloseBtn',
    'deleteModal','deleteSubtitle','deleteCancelBtn','deleteConfirmBtn',
    'toast'
   ].forEach(function(id){ refs[id] = $(id); });
 }
-
-/* ============================================================
-   TOAST
-   ============================================================ */
+ 
 var toastTimer = null;
 function toast(msg){
   refs.toast.textContent = msg;
@@ -904,10 +872,7 @@ function toast(msg){
     setTimeout(function(){ refs.toast.hidden = true; }, 250);
   }, 2800);
 }
-
-/* ============================================================
-   MODAL HELPERS
-   ============================================================ */
+ 
 function openModal(elm){
   elm.hidden = false;
   document.body.classList.add('modal-open');
@@ -930,10 +895,7 @@ document.querySelectorAll('.modal-overlay').forEach(function(overlay){
     if (e.target === overlay && overlay.dataset.dismissable !== 'false') closeModal(overlay);
   });
 });
-
-/* ============================================================
-   CLOCK
-   ============================================================ */
+ 
 function startClock(){
   function tick(){
     try {
@@ -946,10 +908,7 @@ function startClock(){
   tick();
   setInterval(tick, 30000);
 }
-
-/* ============================================================
-   FERN UNFURL ANIMATION (signature moment)
-   ============================================================ */
+ 
 function animateFern(){
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduce) return;
@@ -968,10 +927,7 @@ function animateFern(){
     } catch(e){ /* ignore */ }
   });
 }
-
-/* ============================================================
-   OWNER UI (header)
-   ============================================================ */
+ 
 function renderOwnerArea(){
   refs.ownerArea.innerHTML = '';
   if (state.isOwner) {
@@ -990,18 +946,15 @@ function renderOwnerArea(){
   }
   refs.fabAdd.hidden = !state.isOwner;
 }
-
-/* ============================================================
-   NAV / FILTER / SEARCH
-   ============================================================ */
+ 
 function getCategoriesInUse(){
   var set = {};
-  state.articles.forEach(function(a){ set[a.category || 'General'] = true; });
+  visibleArticles().forEach(function(a){ set[a.category || 'General'] = true; });
   var ordered = CATEGORIES_DEFAULT_ORDER.filter(function(c){ return set[c]; });
   Object.keys(set).forEach(function(c){ if (ordered.indexOf(c) === -1) ordered.push(c); });
   return ['All'].concat(ordered);
 }
-
+ 
 function renderNav(){
   var cats = getCategoriesInUse();
   refs.navPills.innerHTML = '';
@@ -1011,7 +964,7 @@ function renderNav(){
     refs.navPills.appendChild(pill);
   });
 }
-
+ 
 function setFilter(cat){
   state.filter = cat;
   goHomeSilent();
@@ -1023,84 +976,92 @@ function goHomeSilent(){
   refs.homeView.hidden = false;
   refs.articleView.hidden = true;
 }
-
-/* ============================================================
-   FILTERED LIST
-   ============================================================ */
+ 
 function getFiltered(){
   var q = state.search.trim().toLowerCase();
-  return state.articles.filter(function(a){
+  return visibleArticles().filter(function(a){
     var matchCat = state.filter === 'All' || a.category === state.filter;
     var matchSearch = !q || a.heading.toLowerCase().indexOf(q) !== -1 || a.description.toLowerCase().indexOf(q) !== -1;
     return matchCat && matchSearch;
   });
 }
-
-/* ============================================================
-   RENDER: HOME (hero + grid)
-   ============================================================ */
+ 
 function createHero(article){
   var hero = el('div', 'hero');
   hero.tabIndex = 0;
   hero.setAttribute('role', 'button');
   hero.setAttribute('aria-label', 'Open story: ' + article.heading);
-
+ 
   var media = el('div', 'hero-media');
   var img = document.createElement('img');
   img.src = article.image; img.alt = article.heading;
+  fadeInImage(img);
   media.appendChild(img);
   var scrim = el('div', 'hero-scrim');
   media.appendChild(scrim);
-
+ 
   var content = el('div', 'hero-content');
+  var badge = buildStatusBadge(article);
+  if (badge) {
+    var badgeRow = el('div', 'hero-badges');
+    badgeRow.appendChild(badge);
+    content.appendChild(badgeRow);
+  }
   var eyebrow = el('span', 'hero-eyebrow', article.category);
   var h2 = el('h2', 'hero-heading', article.heading);
   var teaser = el('p', 'hero-teaser', teaserText(article.description));
   var meta = el('p', 'hero-meta', relativeDate(article.date) + '  \u00B7  ' + readTime(article.description));
   content.append(eyebrow, h2, teaser, meta);
-
+ 
   media.appendChild(content);
   hero.appendChild(media);
-
+ 
   hero.addEventListener('click', function(){ openArticle(article.id); });
   hero.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openArticle(article.id); } });
   return hero;
 }
-
+ 
 function createStoryAd(){
   var ad = el('div', 'story-ad');
   ad.setAttribute('aria-label', 'Advertisement');
   ad.innerHTML = '<span>ADVERTISEMENT</span><small>728 × 90</small>';
   return ad;
 }
-
+ 
 function createArticleAd(){
   var ad = el('div', 'article-ad');
   ad.setAttribute('aria-label', 'Advertisement');
   ad.innerHTML = '<span>ADVERTISEMENT</span><small>728 × 90</small>';
   return ad;
 }
-
+ 
 function createCard(article){
   var card = el('article', 'card');
   card.tabIndex = 0;
   card.setAttribute('role', 'button');
   card.setAttribute('aria-label', 'Open story: ' + article.heading);
-
+ 
   var imgWrap = el('div', 'card-img-wrap');
   var img = document.createElement('img');
   img.src = article.image; img.alt = article.heading; img.loading = 'lazy';
+  fadeInImage(img);
   imgWrap.appendChild(img);
-
+ 
   var body = el('div', 'card-body');
+  var badge = buildStatusBadge(article);
+  if (badge) {
+    var badgeRow = el('div', 'card-badges');
+    badgeRow.appendChild(badge);
+    body.appendChild(badgeRow);
+  }
   var eyebrow = el('p', 'eyebrow', article.category);
   var h3 = el('h3', 'card-heading', article.heading);
   var teaser = el('p', 'card-teaser', teaserText(article.description));
   var meta = el('p', 'card-meta', relativeDate(article.date) + '  \u00B7  ' + readTime(article.description));
   body.append(eyebrow, h3, teaser, meta);
-
+ 
   card.append(imgWrap, body);
-
+ 
   if (state.isOwner) {
     var ownerBar = el('div', 'card-owner-bar');
     var editBtn = iconButton('edit');
@@ -1113,12 +1074,12 @@ function createCard(article){
     ownerBar.append(editBtn, delBtn);
     card.appendChild(ownerBar);
   }
-
+ 
   card.addEventListener('click', function(){ openArticle(article.id); });
   card.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openArticle(article.id); } });
   return card;
 }
-
+ 
 function iconButton(type){
   var btn = document.createElement('button');
   btn.className = 'icon-btn';
@@ -1130,7 +1091,7 @@ function iconButton(type){
   }
   return btn;
 }
-
+ 
 function renderEmptyState(isFilterResult){
   refs.emptyState.innerHTML = '';
   var h3 = document.createElement('h3');
@@ -1153,17 +1114,20 @@ function renderEmptyState(isFilterResult){
     refs.emptyState.append(h3, p);
   }
 }
-
+ 
 function renderHome(){
   refs.articleView.hidden = true;
   refs.homeView.hidden = false;
-
+ 
   renderNav();
-
-  var showHero = state.filter === 'All' && !state.search.trim() && state.articles.length > 0;
-  var heroArticle = showHero ? state.articles[0] : null;
-  var gridList = showHero ? state.articles.slice(1) : getFiltered();
-
+ 
+  var vis = visibleArticles();
+  var showHero = state.filter === 'All' && !state.search.trim() && vis.length > 0;
+  var heroArticle = showHero ? pickHeroFrom(vis) : null;
+  var gridList = showHero
+    ? vis.filter(function(a){ return !heroArticle || a.id !== heroArticle.id; })
+    : getFiltered();
+ 
   refs.heroSlot.innerHTML = '';
   if (heroArticle) {
     refs.heroSlot.hidden = false;
@@ -1171,13 +1135,13 @@ function renderHome(){
   } else {
     refs.heroSlot.hidden = true;
   }
-
+ 
   var titleText = state.search.trim() ? 'Search results' : (state.filter !== 'All' ? state.filter : 'Latest Stories');
   refs.sectionTitle.textContent = titleText;
-  refs.sectionCount.textContent = state.articles.length ? (gridList.length + (gridList.length === 1 ? ' story' : ' stories')) : '';
-
+  refs.sectionCount.textContent = vis.length ? (gridList.length + (gridList.length === 1 ? ' story' : ' stories')) : '';
+ 
   refs.grid.innerHTML = '';
-  if (state.articles.length === 0) {
+  if (vis.length === 0) {
     refs.grid.hidden = true;
     refs.emptyState.hidden = false;
     renderEmptyState(false);
@@ -1196,34 +1160,41 @@ function renderHome(){
     });
   }
 }
-
-/* ============================================================
-   RENDER: ARTICLE DETAIL
-   ============================================================ */
+ 
 function renderArticleView(article){
   var c = refs.articleView;
   c.innerHTML = '';
-
+ 
   var backBtn = el('button', 'back-link', '\u2190 Back to stories');
   backBtn.addEventListener('click', goHome);
   c.appendChild(backBtn);
-
+ 
   var hero = el('div', 'article-hero');
   var img = document.createElement('img');
   img.src = article.image; img.alt = article.heading;
+  fadeInImage(img);
   hero.appendChild(img);
   c.appendChild(hero);
-
+ 
+  var badge = buildStatusBadge(article);
+  if (badge) {
+    var badgeRow = el('div', 'article-badges');
+    badgeRow.appendChild(badge);
+    c.appendChild(badgeRow);
+  }
+ 
   var meta = el('div', 'article-meta-row');
   var eyebrow = el('span', 'eyebrow', article.category);
   var dateline = el('span', 'dateline', fmtDateline(article.date));
   var rt = el('span', 'dateline', readTime(article.description));
   meta.append(eyebrow, dot(), dateline, dot(), rt);
   c.appendChild(meta);
-
+ 
   var h1 = el('h1', 'article-heading', article.heading);
   c.appendChild(h1);
-
+ 
+  c.appendChild(buildShareRow(article));
+ 
   if (state.isOwner) {
     var ownerRow = el('div', 'article-owner-row');
     var editBtn = el('button', 'btn btn-secondary', 'Edit story');
@@ -1233,39 +1204,194 @@ function renderArticleView(article){
     ownerRow.append(editBtn, delBtn);
     c.appendChild(ownerRow);
   }
-
+ 
   var body = el('div', 'article-body');
   var paragraphs = article.description.split(/\n+/).map(function(p){ return p.trim(); }).filter(Boolean);
-
+ 
   paragraphs.forEach(function(t, index){
     body.appendChild(el('p', null, t));
-
+ 
     if ((index + 1) === 2 || (index + 1) === 5) {
       body.appendChild(createArticleAd());
     }
   });
-
+ 
   c.appendChild(body);
+ 
+  var related = getRelatedStories(article);
+  if (related.length) {
+    c.appendChild(buildRelatedSection(related));
+  }
+ 
+  var commentsWrap = el('div', 'comments-section');
+  commentsWrap.id = 'commentsContainer';
+  commentsWrap.appendChild(el('p', 'comments-loading', 'Loading comments\u2026'));
+  c.appendChild(commentsWrap);
+  refreshComments(article.id);
 }
-
+ 
+function buildShareRow(article){
+  var row = el('div', 'share-row');
+  var label = el('span', 'share-label', 'Share:');
+  var copyBtn = el('button', 'btn btn-secondary btn-sm', 'Copy link');
+  copyBtn.type = 'button';
+  copyBtn.addEventListener('click', function(){ copyArticleLink(article.id); });
+  row.append(label, copyBtn);
+  return row;
+}
+ 
+function articleUrl(id){
+  return location.origin + location.pathname + '#story=' + encodeURIComponent(id);
+}
+ 
+async function copyArticleLink(id){
+  var url = articleUrl(id);
+  try {
+    if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error('no-clipboard-api');
+    await navigator.clipboard.writeText(url);
+    toast('Link copied.');
+  } catch(e){
+    window.prompt('Copy this link:', url);
+  }
+}
+ 
+function getRelatedStories(article){
+  return visibleArticles()
+    .filter(function(a){ return a.id !== article.id && a.category === article.category; })
+    .slice(0, 3);
+}
+ 
+function buildRelatedSection(list){
+  var wrap = el('div', 'related-section');
+  wrap.appendChild(el('h3', 'related-heading', 'Related stories'));
+  var grid = el('div', 'grid related-grid');
+  list.forEach(function(a){ grid.appendChild(createCard(a)); });
+  wrap.appendChild(grid);
+  return wrap;
+}
+ 
+async function refreshComments(articleId){
+  var list = await loadComments(articleId);
+  if (state.currentArticleId !== articleId) return;
+  var container = document.getElementById('commentsContainer');
+  if (!container) return;
+ 
+  container.innerHTML = '';
+  container.appendChild(el('h3', 'comments-heading', list.length ? ('Comments (' + list.length + ')') : 'Comments'));
+  container.appendChild(buildCommentForm(articleId));
+ 
+  var listEl = el('div', 'comments-list');
+  if (!list.length) {
+    listEl.appendChild(el('p', 'comments-empty', 'No comments yet \u2014 be the first to share your thoughts.'));
+  } else {
+    list.slice().reverse().forEach(function(cm){ listEl.appendChild(buildCommentItem(articleId, cm)); });
+  }
+  container.appendChild(listEl);
+}
+ 
+function buildCommentForm(articleId){
+  var form = document.createElement('form');
+  form.className = 'comment-form';
+  form.noValidate = true;
+ 
+  var nameInput = document.createElement('input');
+  nameInput.type = 'text';
+  nameInput.placeholder = 'Your name';
+  nameInput.maxLength = 60;
+  nameInput.className = 'text-input comment-name-input';
+  nameInput.setAttribute('aria-label', 'Your name');
+ 
+  var textInput = document.createElement('textarea');
+  textInput.placeholder = 'Add a comment\u2026';
+  textInput.maxLength = 600;
+  textInput.rows = 3;
+  textInput.className = 'textarea';
+  textInput.setAttribute('aria-label', 'Your comment');
+ 
+  var submitBtn = document.createElement('button');
+  submitBtn.type = 'submit';
+  submitBtn.className = 'btn btn-primary btn-sm';
+  submitBtn.textContent = 'Post comment';
+ 
+  form.append(nameInput, textInput, submitBtn);
+ 
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var name = nameInput.value.trim();
+    var text = textInput.value.trim();
+    if (!name || !text) { toast('Add your name and a comment first.'); return; }
+    submitBtn.disabled = true;
+    addComment(articleId, name, text).finally(function(){ submitBtn.disabled = false; });
+  });
+ 
+  return form;
+}
+ 
+function buildCommentItem(articleId, cm){
+  var item = el('div', 'comment-item');
+  var head = el('div', 'comment-head');
+  head.append(el('span', 'comment-name', cm.name), el('span', 'comment-date', relativeDate(cm.date)));
+  if (state.isOwner) {
+    var delBtn = el('button', 'comment-delete', 'Remove');
+    delBtn.type = 'button';
+    delBtn.addEventListener('click', function(){
+      if (window.confirm('Remove this comment from ' + cm.name + '? This can\u2019t be undone.')) {
+        deleteComment(articleId, cm.id);
+      }
+    });
+    head.appendChild(delBtn);
+  }
+  item.append(head, el('p', 'comment-text', cm.text));
+  return item;
+}
+ 
+async function addComment(articleId, name, text){
+  try {
+    var list = await loadComments(articleId);
+    list.push({ id: genId(), name: name, text: text, date: new Date().toISOString() });
+    await saveComments(articleId, list);
+    await refreshComments(articleId);
+    toast('Comment posted.');
+  } catch(e){
+    toast('Couldn\u2019t post your comment. Try again.');
+  }
+}
+ 
+async function deleteComment(articleId, commentId){
+  try {
+    var list = await loadComments(articleId);
+    var idx = list.findIndex(function(c){ return c.id === commentId; });
+    if (idx === -1) return;
+    list.splice(idx, 1);
+    await saveComments(articleId, list);
+    await refreshComments(articleId);
+    toast('Comment deleted.');
+  } catch(e){
+    toast('Couldn\u2019t delete that comment. Try again.');
+  }
+}
+ 
 function openArticle(id){
   var a = state.articles.find(function(x){ return x.id === id; });
   if (!a) return;
+  if (!state.isOwner && !isPublicVisible(a)) return;
   state.view = 'article';
   state.currentArticleId = id;
   refs.homeView.hidden = true;
   refs.articleView.hidden = false;
   renderArticleView(a);
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  updateScrollEffects();
 }
-
+ 
 function goHome(){
   state.view = 'home';
   state.currentArticleId = null;
   renderHome();
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  updateScrollEffects();
 }
-
+ 
 function renderCurrentView(){
   if (state.view === 'article' && state.currentArticleId) {
     var a = state.articles.find(function(x){ return x.id === state.currentArticleId; });
@@ -1273,10 +1399,29 @@ function renderCurrentView(){
   }
   renderHome();
 }
-
-/* ============================================================
-   LOGIN FLOW
-   ============================================================ */
+ 
+var scrollTicking = false;
+function updateScrollEffects(){
+  if (refs.masthead) refs.masthead.classList.toggle('scrolled', window.scrollY > 6);
+  if (refs.readingProgress) {
+    if (state.view !== 'article') {
+      refs.readingProgress.hidden = true;
+    } else {
+      var doc = document.documentElement;
+      var scrollTop = window.scrollY || doc.scrollTop;
+      var scrollable = doc.scrollHeight - doc.clientHeight;
+      var pct = scrollable > 0 ? Math.min(100, Math.max(0, (scrollTop / scrollable) * 100)) : 0;
+      refs.readingProgress.hidden = false;
+      refs.readingProgress.style.width = pct + '%';
+    }
+  }
+}
+window.addEventListener('scroll', function(){
+  if (scrollTicking) return;
+  scrollTicking = true;
+  requestAnimationFrame(function(){ updateScrollEffects(); scrollTicking = false; });
+}, { passive: true });
+ 
 async function openLogin(){
   refs.loginError.hidden = true;
   refs.passwordInput.value = '';
@@ -1296,16 +1441,16 @@ async function openLogin(){
   openModal(refs.loginModal);
 }
 function closeLogin(){ closeModal(refs.loginModal); }
-
+ 
 async function submitLogin(){
   refs.loginError.hidden = true;
   var password = refs.passwordInput.value;
   var existingHash = await getOwnerPasswordHash();
-
+ 
   if (!existingHash) {
-    var confirm = refs.confirmInput.value;
+    var confirmVal = refs.confirmInput.value;
     if (!password || password.length < 4) { showLoginError('Choose a password with at least 4 characters.'); return; }
-    if (password !== confirm) { showLoginError('Passwords don\u2019t match.'); return; }
+    if (password !== confirmVal) { showLoginError('Passwords don\u2019t match.'); return; }
     refs.loginSubmitBtn.disabled = true;
     try {
       var hash = await sha256Hex(password);
@@ -1342,7 +1487,7 @@ async function submitLogin(){
   }
 }
 function showLoginError(msg){ refs.loginError.textContent = msg; refs.loginError.hidden = false; }
-
+ 
 async function logout(){
   state.isOwner = false;
   await setOwnerSession(false);
@@ -1350,10 +1495,7 @@ async function logout(){
   renderCurrentView();
   toast('Signed out.');
 }
-
-/* ============================================================
-   IMAGE HANDLING
-   ============================================================ */
+ 
 function loadImageFromFile(file){
   return new Promise(function(resolve, reject){
     if (!file || file.type.indexOf('image/') !== 0) { reject(new Error('not-image')); return; }
@@ -1368,7 +1510,7 @@ function loadImageFromFile(file){
     reader.readAsDataURL(file);
   });
 }
-
+ 
 async function compressImageFile(file){
   var img = await loadImageFromFile(file);
   var maxW = 1100;
@@ -1387,7 +1529,7 @@ async function compressImageFile(file){
   }
   return dataUrl;
 }
-
+ 
 function showImagePreview(dataUrl){
   if (dataUrl) {
     refs.dropzoneEmpty.hidden = true;
@@ -1399,7 +1541,7 @@ function showImagePreview(dataUrl){
     refs.previewImg.src = '';
   }
 }
-
+ 
 async function handleImageFile(file){
   clearFieldError('image');
   try {
@@ -1413,10 +1555,7 @@ async function handleImageFile(file){
     refs.dropzone.classList.remove('dragover');
   }
 }
-
-/* ============================================================
-   EDITOR FLOW
-   ============================================================ */
+ 
 function clearFieldError(field){
   var map = { heading: refs.headingError, image: refs.imageError, desc: refs.descError };
   if (map[field]) map[field].hidden = true;
@@ -1432,11 +1571,11 @@ function clearEditorErrors(){
 function updateHeadingCounter(){
   refs.headingCounter.textContent = refs.headingInput.value.length + '/140';
 }
-
+ 
 function openEditor(articleId){
   state.editingId = articleId || null;
   clearEditorErrors();
-
+ 
   if (articleId) {
     var a = state.articles.find(function(x){ return x.id === articleId; });
     if (!a) return;
@@ -1444,6 +1583,9 @@ function openEditor(articleId){
     refs.headingInput.value = a.heading;
     refs.categorySelect.value = a.category || 'General';
     refs.descInput.value = a.description;
+    refs.publishDateInput.value = toLocalDatetimeValue(new Date(a.date));
+    refs.draftCheckbox.checked = !!a.draft;
+    refs.featuredCheckbox.checked = !!a.featured;
     state.pendingImage = a.image;
     showImagePreview(a.image);
     refs.editorSubmitBtn.textContent = 'Save changes';
@@ -1452,6 +1594,9 @@ function openEditor(articleId){
     refs.headingInput.value = '';
     refs.categorySelect.value = 'General';
     refs.descInput.value = '';
+    refs.publishDateInput.value = toLocalDatetimeValue(new Date());
+    refs.draftCheckbox.checked = false;
+    refs.featuredCheckbox.checked = false;
     state.pendingImage = null;
     showImagePreview(null);
     refs.editorSubmitBtn.textContent = 'Publish story';
@@ -1464,39 +1609,48 @@ function closeEditor(){
   state.editingId = null;
   state.pendingImage = null;
 }
-
+ 
 async function submitEditor(){
   var heading = refs.headingInput.value.trim();
   var description = refs.descInput.value.trim();
   var category = refs.categorySelect.value;
   var image = state.pendingImage;
-
+  var isDraft = refs.draftCheckbox.checked;
+  var isFeatured = refs.featuredCheckbox.checked;
+  var publishDate = fromLocalDatetimeValue(refs.publishDateInput.value).toISOString();
+ 
   clearEditorErrors();
   var hasError = false;
   if (!heading) { setFieldError('heading', 'Add a headline for this story.'); hasError = true; }
   if (!image) { setFieldError('image', 'Add a cover image.'); hasError = true; }
   if (!description) { setFieldError('desc', 'Add a description for readers to see.'); hasError = true; }
   if (hasError) return;
-
+ 
   refs.editorSubmitBtn.disabled = true;
   var originalText = refs.editorSubmitBtn.textContent;
   refs.editorSubmitBtn.innerHTML = '<span class="spinner"></span>Saving\u2026';
-
+ 
   try {
     if (state.editingId) {
       var idx = state.articles.findIndex(function(x){ return x.id === state.editingId; });
       if (idx > -1) {
-        state.articles[idx] = Object.assign({}, state.articles[idx], { heading: heading, description: description, category: category, image: image });
+        state.articles[idx] = Object.assign({}, state.articles[idx], {
+          heading: heading, description: description, category: category, image: image,
+          draft: isDraft, featured: isFeatured, date: publishDate
+        });
       }
     } else {
-      state.articles.unshift({ id: genId(), heading: heading, description: description, category: category, image: image, date: new Date().toISOString() });
+      state.articles.unshift({
+        id: genId(), heading: heading, description: description, category: category, image: image,
+        draft: isDraft, featured: isFeatured, date: publishDate
+      });
     }
     await saveArticles(state.articles);
     var wasEditing = !!state.editingId;
     closeEditor();
     renderOwnerArea();
     renderCurrentView();
-    toast(wasEditing ? 'Story updated.' : 'Story published.');
+    toast(wasEditing ? 'Story updated.' : (isDraft ? 'Draft saved.' : 'Story published.'));
   } catch(e){
     refs.editorGeneralError.textContent = 'Couldn\u2019t save this story \u2014 it may be too large. Try a smaller image or shorter text.';
     refs.editorGeneralError.hidden = false;
@@ -1505,10 +1659,7 @@ async function submitEditor(){
     refs.editorSubmitBtn.textContent = originalText;
   }
 }
-
-/* ============================================================
-   DELETE FLOW
-   ============================================================ */
+ 
 function confirmDelete(id){
   var a = state.articles.find(function(x){ return x.id === id; });
   if (!a) return;
@@ -1538,36 +1689,38 @@ async function performDelete(){
   }
   state.deletePendingId = null;
 }
-
-/* ============================================================
-   EVENT WIRING
-   ============================================================ */
+ 
 function wireEvents(){
   refs.logoBtn.addEventListener('click', function(){
     state.filter = 'All'; state.search = ''; refs.searchInput.value = '';
     goHome();
   });
-
+ 
+  var searchDebounceTimer = null;
   refs.searchInput.addEventListener('input', function(){
-    state.search = refs.searchInput.value;
-    goHomeSilent();
-    renderHome();
+    var val = refs.searchInput.value;
+    clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = setTimeout(function(){
+      state.search = val;
+      goHomeSilent();
+      renderHome();
+    }, 180);
   });
-
+ 
   refs.fabAdd.addEventListener('click', function(){ openEditor(null); });
-
+ 
   refs.loginCancelBtn.addEventListener('click', closeLogin);
   refs.loginCloseBtn.addEventListener('click', closeLogin);
   refs.loginSubmitBtn.addEventListener('click', submitLogin);
   refs.passwordInput.addEventListener('keydown', function(e){ if (e.key === 'Enter') submitLogin(); });
   refs.confirmInput.addEventListener('keydown', function(e){ if (e.key === 'Enter') submitLogin(); });
-
+ 
   refs.editorCancelBtn.addEventListener('click', closeEditor);
   refs.editorCloseBtn.addEventListener('click', closeEditor);
   refs.editorSubmitBtn.addEventListener('click', submitEditor);
   refs.headingInput.addEventListener('input', function(){ updateHeadingCounter(); clearFieldError('heading'); });
   refs.descInput.addEventListener('input', function(){ clearFieldError('desc'); });
-
+ 
   refs.imageInput.addEventListener('change', function(e){
     var file = e.target.files && e.target.files[0];
     if (file) handleImageFile(file);
@@ -1580,24 +1733,21 @@ function wireEvents(){
     var file = e.dataTransfer.files && e.dataTransfer.files[0];
     if (file) handleImageFile(file);
   });
-
+ 
   refs.deleteCancelBtn.addEventListener('click', function(){ state.deletePendingId = null; closeModal(refs.deleteModal); });
   refs.deleteConfirmBtn.addEventListener('click', performDelete);
 }
-
-/* ============================================================
-   INIT
-   ============================================================ */
+ 
 async function init(){
   cacheRefs();
   wireEvents();
   startClock();
   refs.footerNote.textContent = 'Personal news project \u00B7 \u00A9 ' + new Date().getFullYear();
-
+ 
   try {
     state.isOwner = await loadOwnerSession();
   } catch(e){ state.isOwner = false; }
-
+ 
   try {
     state.articles = await loadArticles();
     if (state.articles.length === 0) {
@@ -1611,19 +1761,21 @@ async function init(){
     state.articles = [];
     toast('Couldn\u2019t load stories. Check that browser storage is enabled.');
   }
-
+ 
   renderOwnerArea();
   renderHome();
+  updateScrollEffects();
   animateFern();
 }
-
+ 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', init);
 } else {
   init();
 }
-
+ 
 })();
 </script>
 </body>
 </html>
+ 
