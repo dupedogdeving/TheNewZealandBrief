@@ -429,22 +429,6 @@ footer { background: var(--navy); color: rgba(255,255,255,0.65); padding: 42px 2
 .related-grid { gap: 20px; }
 
 /* ============================================================
-   20. COMMENTS
-   ============================================================ */
-.comments-section { max-width: 700px; margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--line); }
-.comments-heading { font-family: var(--font-display); font-weight: 600; font-size: 19px; margin-bottom: 16px; }
-.comment-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
-.comment-name-input { max-width: 260px; }
-.comments-list { display: flex; flex-direction: column; gap: 14px; }
-.comments-empty { color: var(--ink-soft); font-size: 14px; }
-.comment-item { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 14px 16px; }
-.comment-head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
-.comment-name { font-weight: 600; font-size: 13.5px; }
-.comment-date { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-soft); }
-.comment-delete { margin-left: auto; background: none; border: none; color: var(--danger); font-size: 12px; text-decoration: underline; padding: 2px 4px; }
-.comment-text { font-size: 14.5px; line-height: 1.55; color: var(--ink); white-space: pre-wrap; }
-
-/* ============================================================
    21. EDITOR CHECKBOX / SCHEDULE FIELDS
    ============================================================ */
 .checkbox-row { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
@@ -654,6 +638,8 @@ body.modal-open { overflow: hidden; }
 
 <div class="toast" id="toast" hidden></div>
 
+<script type="application/json" id="articlesData"></script>
+
 <script>
 (function(){
 "use strict";
@@ -661,11 +647,6 @@ body.modal-open { overflow: hidden; }
 /* ============================================================
    CONSTANTS & STATE
    ============================================================ */
-var KEYS = {
-  articles: 'nzb:articles',
-  seeded: 'nzb:seeded',
-  ownerSession: 'nzb:owner-session'
-};
 // Fixed owner password, stored only as a SHA-256 hash so the plaintext
 // never appears in the source. This is the ONLY valid owner password -
 // nobody can create or change it from the UI.
@@ -814,118 +795,52 @@ async function sha256Hex(text){
 }
 
 /* ============================================================
-   STORAGE HELPERS
-   All reads/writes go through window.storage, which persists data
-   across sessions and reloads for this artifact. Articles are
-   stored "shared" so every visitor sees the same front page; the
-   owner session flag is stored per-browser (not shared).
-
-   window.storage is only injected by Claude's artifact renderer.
-   If it's missing, or a call to it fails, we fall back to an
-   in-memory store so the page still works for the current session
-   instead of hard-failing, and we warn the user once so it's clear
-   changes won't survive a reload in that case.
+   DATA MODEL
+   This site has no backend at all. The story list lives right in
+   this HTML file, inside the <script type="application/json"
+   id="articlesData"> tag near the end of <body>. Publishing, editing,
+   and deleting stories only changes the in-memory copy you're
+   looking at (a live preview) - nothing is public until you use
+   "Download updated site" to get a new copy of this file with your
+   changes baked in, then commit + push that file to GitHub. Once
+   GitHub Pages serves the new file, everyone who visits sees the
+   update - permanently, until you repeat the process.
    ============================================================ */
-var memoryStore = { shared: {}, local: {} };
-function memoryBucket(shared){ return shared ? memoryStore.shared : memoryStore.local; }
-function memoryGet(key, shared){
-  var b = memoryBucket(shared);
-  return Object.prototype.hasOwnProperty.call(b, key) ? b[key] : null;
-}
-function memorySet(key, value, shared){ memoryBucket(shared)[key] = String(value); }
-function memoryDelete(key, shared){ delete memoryBucket(shared)[key]; }
-
-var warnedNoPersist = false;
-function warnNoPersist(){
-  if (warnedNoPersist) return;
-  warnedNoPersist = true;
-  try { toast('Persistent storage isn\u2019t available right now \u2014 changes will only last for this session.'); } catch(e){ /* toast may not be ready yet */ }
-}
-
-function hasRealStorage(){
-  return !!(window.storage && typeof window.storage.get === 'function' && typeof window.storage.set === 'function');
-}
-
-async function storageGet(key, shared){
-  if (!hasRealStorage()) return memoryGet(key, shared);
+function readEmbeddedArticles(){
+  var node = document.getElementById('articlesData');
+  var raw = node ? node.textContent.trim() : '';
+  if (!raw) return null;
   try {
-    var res = await window.storage.get(key, shared);
-    if (res == null) return null;
-    return typeof res === 'object' && 'value' in res ? res.value : String(res);
-  } catch(e) {
-    // get() throws for missing keys per the storage API - that's expected
-    // and just means "not set yet", not a real failure.
-    return null;
-  }
+    var parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : null;
+  } catch(e){ return null; }
 }
 
-async function storageSet(key, value, shared){
-  if (!hasRealStorage()) {
-    memorySet(key, value, shared);
-    warnNoPersist();
-    return true;
-  }
+async function exportSite(){
   try {
-    var res = await window.storage.set(key, value, shared);
-    if (!res) throw new Error('window.storage.set returned an empty result for key: ' + key);
-    return true;
-  } catch(e) {
-    console.error('[nz-brief] storage.set failed for key "' + key + '":', e);
-    memorySet(key, value, shared);
-    warnNoPersist();
-    return true;
-  }
-}
+    var res = await fetch(location.href, { cache: 'no-store' });
+    if (!res.ok) throw new Error('fetch-failed: ' + res.status);
+    var html = await res.text();
+    var jsonStr = JSON.stringify(state.articles, null, 2)
+      .replace(/</g, '\\u003c'); // keep </script> etc. from breaking the embedded block
+    var marker = /(<script type="application\/json" id="articlesData">)[\s\S]*?(<\/script>)/;
+    if (!marker.test(html)) throw new Error('articlesData block not found in fetched source');
+    var updated = html.replace(marker, function(_, open, close){ return open + '\n' + jsonStr + '\n' + close; });
 
-async function storageDelete(key, shared){
-  if (!hasRealStorage()) { memoryDelete(key, shared); return true; }
-  try {
-    await window.storage.delete(key, shared);
-    return true;
+    var blob = new Blob([updated], { type: 'text/html' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'index.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+    toast('Downloaded \u2014 commit this file to GitHub to publish it live.');
   } catch(e){
-    console.error('[nz-brief] storage.delete failed for key "' + key + '":', e);
-    memoryDelete(key, shared);
-    return true;
+    console.error('[nz-brief] export failed:', e);
+    toast('Couldn\u2019t generate the file here. This only works once the page is actually hosted over http(s) (e.g. GitHub Pages) \u2014 not in an offline preview.');
   }
-}
-
-async function loadArticles(){
-  var raw = await storageGet(KEYS.articles, true);
-  if (!raw) return [];
-  try {
-    var parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch(e){ return []; }
-}
-async function saveArticles(list){
-  var value = JSON.stringify(list);
-  await storageSet(KEYS.articles, value, true);
-}
-async function getSeeded(){
-  var raw = await storageGet(KEYS.seeded, true);
-  return raw === 'true';
-}
-async function setSeeded(){
-  await storageSet(KEYS.seeded, 'true', true);
-}
-async function loadOwnerSession(){
-  var raw = await storageGet(KEYS.ownerSession, false);
-  return raw === 'true';
-}
-async function setOwnerSession(v){
-  if (v) await storageSet(KEYS.ownerSession, 'true', false);
-  else await storageDelete(KEYS.ownerSession, false);
-}
-async function loadComments(articleId){
-  var raw = await storageGet('nzb:comments:' + articleId, true);
-  if (!raw) return [];
-  try {
-    var parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch(e){ return []; }
-}
-async function saveComments(articleId, list){
-  await storageSet('nzb:comments:' + articleId, JSON.stringify(list), true);
 }
 
 /* ============================================================
@@ -1126,9 +1041,13 @@ function renderOwnerArea(){
     var dotEl = el('span', 'owner-dot');
     badge.appendChild(dotEl);
     badge.appendChild(document.createTextNode('Editing as Owner'));
+    var downloadBtn = el('button', 'btn btn-primary btn-sm', 'Download updated site');
+    downloadBtn.type = 'button';
+    downloadBtn.addEventListener('click', exportSite);
     var signOut = el('button', 'link-btn', 'Sign out');
     signOut.addEventListener('click', logout);
     refs.ownerArea.appendChild(badge);
+    refs.ownerArea.appendChild(downloadBtn);
     refs.ownerArea.appendChild(signOut);
   } else {
     var signIn = el('button', 'btn btn-outline-invert btn-sm', 'Sign in as owner');
@@ -1425,12 +1344,6 @@ function renderArticleView(article){
   if (related.length) {
     c.appendChild(buildRelatedSection(related));
   }
-
-  var commentsWrap = el('div', 'comments-section');
-  commentsWrap.id = 'commentsContainer';
-  commentsWrap.appendChild(el('p', 'comments-loading', 'Loading comments\u2026'));
-  c.appendChild(commentsWrap);
-  refreshComments(article.id);
 }
 
 function buildShareRow(article){
@@ -1484,104 +1397,6 @@ function buildRelatedSection(list){
   list.forEach(function(a){ grid.appendChild(createCard(a)); });
   wrap.appendChild(grid);
   return wrap;
-}
-
-/* ---- comments ---- */
-async function refreshComments(articleId){
-  var list = await loadComments(articleId);
-  if (state.currentArticleId !== articleId) return;
-  var container = document.getElementById('commentsContainer');
-  if (!container) return;
-
-  container.innerHTML = '';
-  container.appendChild(el('h3', 'comments-heading', list.length ? ('Comments (' + list.length + ')') : 'Comments'));
-  container.appendChild(buildCommentForm(articleId));
-
-  var listEl = el('div', 'comments-list');
-  if (!list.length) {
-    listEl.appendChild(el('p', 'comments-empty', 'No comments yet \u2014 be the first to share your thoughts.'));
-  } else {
-    list.slice().reverse().forEach(function(cm){ listEl.appendChild(buildCommentItem(articleId, cm)); });
-  }
-  container.appendChild(listEl);
-}
-
-function buildCommentForm(articleId){
-  var form = document.createElement('form');
-  form.className = 'comment-form';
-  form.noValidate = true;
-
-  var nameInput = document.createElement('input');
-  nameInput.type = 'text';
-  nameInput.placeholder = 'Your name';
-  nameInput.maxLength = 60;
-  nameInput.className = 'text-input comment-name-input';
-  nameInput.setAttribute('aria-label', 'Your name');
-
-  var textInput = document.createElement('textarea');
-  textInput.placeholder = 'Add a comment\u2026';
-  textInput.maxLength = 600;
-  textInput.rows = 3;
-  textInput.className = 'textarea';
-  textInput.setAttribute('aria-label', 'Your comment');
-
-  var submitBtn = document.createElement('button');
-  submitBtn.type = 'submit';
-  submitBtn.className = 'btn btn-primary btn-sm';
-  submitBtn.textContent = 'Post comment';
-
-  form.append(nameInput, textInput, submitBtn);
-
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-    var name = nameInput.value.trim();
-    var text = textInput.value.trim();
-    if (!name || !text) { toast('Add your name and a comment first.'); return; }
-    submitBtn.disabled = true;
-    addComment(articleId, name, text).finally(function(){ submitBtn.disabled = false; });
-  });
-
-  return form;
-}
-
-function buildCommentItem(articleId, cm){
-  var item = el('div', 'comment-item');
-  var head = el('div', 'comment-head');
-  head.append(el('span', 'comment-name', cm.name), el('span', 'comment-date', relativeDate(cm.date)));
-  if (state.isOwner) {
-    var delBtn = el('button', 'comment-delete', 'Remove');
-    delBtn.type = 'button';
-    delBtn.addEventListener('click', function(){ deleteComment(articleId, cm.id); });
-    head.appendChild(delBtn);
-  }
-  item.append(head, el('p', 'comment-text', cm.text));
-  return item;
-}
-
-async function addComment(articleId, name, text){
-  try {
-    var list = await loadComments(articleId);
-    list.push({ id: genId(), name: name, text: text, date: new Date().toISOString() });
-    await saveComments(articleId, list);
-    await refreshComments(articleId);
-    toast('Comment posted.');
-  } catch(e){
-    toast('Couldn\u2019t post your comment. Try again.');
-  }
-}
-
-async function deleteComment(articleId, commentId){
-  try {
-    var list = await loadComments(articleId);
-    var idx = list.findIndex(function(c){ return c.id === commentId; });
-    if (idx === -1) return;
-    list.splice(idx, 1);
-    await saveComments(articleId, list);
-    await refreshComments(articleId);
-    toast('Comment deleted.');
-  } catch(e){
-    toast('Couldn\u2019t delete that comment. Try again.');
-  }
 }
 
 function openArticle(id){
@@ -1638,13 +1453,13 @@ window.addEventListener('scroll', function(){
 
 /* ============================================================
    LOGIN FLOW
-   ============================================================ */
-/* ============================================================
-   LOGIN FLOW
    Owner access is a single fixed password (its SHA-256 hash is
    OWNER_PASSWORD_HASH above). There is no sign-up flow and no way
    to change it from the UI - only whoever edits the source code
-   can change the password.
+   can change the password. Owner status is kept in memory only
+   (not persisted), since this file has no storage backend at all -
+   you sign in again each time you reload, which keeps the file
+   fully self-contained and portable.
    ============================================================ */
 function openLogin(){
   refs.loginError.hidden = true;
@@ -1666,7 +1481,6 @@ async function submitLogin(){
     var hash = await sha256Hex(password);
     if (hash === OWNER_PASSWORD_HASH) {
       state.isOwner = true;
-      await setOwnerSession(true);
       closeLogin();
       renderOwnerArea();
       renderCurrentView();
@@ -1680,9 +1494,8 @@ async function submitLogin(){
 }
 function showLoginError(msg){ refs.loginError.textContent = msg; refs.loginError.hidden = false; }
 
-async function logout(){
+function logout(){
   state.isOwner = false;
-  await setOwnerSession(false);
   renderOwnerArea();
   renderCurrentView();
   toast('Signed out.');
@@ -1808,7 +1621,7 @@ function closeEditor(){
   state.pendingImage = null;
 }
 
-async function submitEditor(){
+function submitEditor(){
   var heading = refs.headingInput.value.trim();
   var description = refs.descInput.value.trim();
   var category = refs.categorySelect.value;
@@ -1824,38 +1637,25 @@ async function submitEditor(){
   if (!description) { setFieldError('desc', 'Add a description for readers to see.'); hasError = true; }
   if (hasError) return;
 
-  refs.editorSubmitBtn.disabled = true;
-  var originalText = refs.editorSubmitBtn.textContent;
-  refs.editorSubmitBtn.innerHTML = '<span class="spinner"></span>Saving\u2026';
-
-  try {
-    if (state.editingId) {
-      var idx = state.articles.findIndex(function(x){ return x.id === state.editingId; });
-      if (idx > -1) {
-        state.articles[idx] = Object.assign({}, state.articles[idx], {
-          heading: heading, description: description, category: category, image: image,
-          draft: isDraft, featured: isFeatured, date: publishDate
-        });
-      }
-    } else {
-      state.articles.unshift({
-        id: genId(), heading: heading, description: description, category: category, image: image,
+  if (state.editingId) {
+    var idx = state.articles.findIndex(function(x){ return x.id === state.editingId; });
+    if (idx > -1) {
+      state.articles[idx] = Object.assign({}, state.articles[idx], {
+        heading: heading, description: description, category: category, image: image,
         draft: isDraft, featured: isFeatured, date: publishDate
       });
     }
-    await saveArticles(state.articles);
-    var wasEditing = !!state.editingId;
-    closeEditor();
-    renderOwnerArea();
-    renderCurrentView();
-    toast(wasEditing ? 'Story updated.' : (isDraft ? 'Draft saved.' : 'Story published.'));
-  } catch(e){
-    refs.editorGeneralError.textContent = 'Couldn\u2019t save this story \u2014 it may be too large. Try a smaller image or shorter text.';
-    refs.editorGeneralError.hidden = false;
-  } finally {
-    refs.editorSubmitBtn.disabled = false;
-    refs.editorSubmitBtn.textContent = originalText;
+  } else {
+    state.articles.unshift({
+      id: genId(), heading: heading, description: description, category: category, image: image,
+      draft: isDraft, featured: isFeatured, date: publishDate
+    });
   }
+  var wasEditing = !!state.editingId;
+  closeEditor();
+  renderOwnerArea();
+  renderCurrentView();
+  toast((wasEditing ? 'Story updated' : (isDraft ? 'Draft saved' : 'Story published')) + ' in preview \u2014 download the site to make it live.');
 }
 
 /* ============================================================
@@ -1868,26 +1668,19 @@ function confirmDelete(id){
   refs.deleteSubtitle.textContent = '\u201c' + a.heading + '\u201d will be removed from The New Zealand Brief. This can\u2019t be undone.';
   openModal(refs.deleteModal);
 }
-async function performDelete(){
+function performDelete(){
   var id = state.deletePendingId;
   if (!id) return;
   var idx = state.articles.findIndex(function(x){ return x.id === id; });
   if (idx === -1) { closeModal(refs.deleteModal); return; }
-  var removed = state.articles.splice(idx, 1)[0];
-  try {
-    await saveArticles(state.articles);
-    closeModal(refs.deleteModal);
-    if (state.view === 'article' && state.currentArticleId === id) {
-      goHome();
-    } else {
-      renderCurrentView();
-    }
-    toast('Story deleted.');
-  } catch(e){
-    state.articles.splice(idx, 0, removed);
-    closeModal(refs.deleteModal);
-    toast('Couldn\u2019t delete that story. Try again.');
+  state.articles.splice(idx, 1);
+  closeModal(refs.deleteModal);
+  if (state.view === 'article' && state.currentArticleId === id) {
+    goHome();
+  } else {
+    renderCurrentView();
   }
+  toast('Story deleted in preview \u2014 download the site to make it live.');
   state.deletePendingId = null;
 }
 
@@ -1944,29 +1737,15 @@ function wireEvents(){
 /* ============================================================
    INIT
    ============================================================ */
-async function init(){
+function init(){
   cacheRefs();
   wireEvents();
   startClock();
   refs.footerNote.textContent = 'Personal news project \u00B7 \u00A9 ' + new Date().getFullYear();
 
-  try {
-    state.isOwner = await loadOwnerSession();
-  } catch(e){ state.isOwner = false; }
-
-  try {
-    state.articles = await loadArticles();
-    if (state.articles.length === 0) {
-      var seeded = await getSeeded();
-      if (!seeded) {
-        state.articles = seedArticles();
-        try { await saveArticles(state.articles); await setSeeded(); } catch(e){ /* ignore */ }
-      }
-    }
-  } catch(e){
-    state.articles = [];
-    toast('Couldn\u2019t load stories. Check that browser storage is enabled.');
-  }
+  state.isOwner = false;
+  var embedded = readEmbeddedArticles();
+  state.articles = embedded && embedded.length ? embedded : seedArticles();
 
   renderOwnerArea();
   renderHome();
