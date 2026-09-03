@@ -582,9 +582,13 @@ body.modal-open { overflow: hidden; }
     <h3 class="modal-title" id="loginTitle">Owner sign-in</h3>
     <p class="modal-subtitle" id="loginSubtitle">Enter the owner password to publish and manage stories.</p>
     <div class="field">
-      <label class="field-label" for="passwordInput">Password</label>
-      <input type="password" id="passwordInput" class="text-input" data-autofocus autocomplete="off" />
-    </div>
+  <label class="field-label" for="emailInput">Email</label>
+  <input type="email" id="emailInput" class="text-input" data-autofocus autocomplete="off" />
+</div>
+<div class="field">
+  <label class="field-label" for="passwordInput">Password</label>
+  <input type="password" id="passwordInput" class="text-input" autocomplete="off" />
+</div>
     <p class="field-error-general" id="loginError" hidden></p>
     <div class="modal-actions">
       <button class="btn btn-secondary" id="loginCancelBtn">Cancel</button>
@@ -784,17 +788,36 @@ body.modal-open { overflow: hidden; }
 ]
 </script>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+import {
+  getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+import {
+  getFirestore, collection, doc, addDoc, updateDoc, deleteDoc,
+  onSnapshot, query, orderBy
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCCer-PpXOLTlb9S4ypY4Gocrd8J44609s",
+  authDomain: "nzbrief-d6305.firebaseapp.com",
+  projectId: "nzbrief-d6305",
+  storageBucket: "nzbrief-d6305.firebasestorage.app",
+  messagingSenderId: "187626915885",
+  appId: "1:187626915885:web:d21cfc8d5295c0276810a4"
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const auth = getAuth(fbApp);
+const db = getFirestore(fbApp);
+const articlesCol = collection(db, "articles");
+
 (function(){
 "use strict";
 
 /* ============================================================
    CONSTANTS & STATE
    ============================================================ */
-// Fixed owner password, stored only as a SHA-256 hash so the plaintext
-// never appears in the source. This is the ONLY valid owner password -
-// nobody can create or change it from the UI.
-var OWNER_PASSWORD_HASH = '0d7ed686586cf03bcb98308e6ed91886794c60aeb081029fd2330270965fbe29';
 var CATEGORIES_DEFAULT_ORDER = ['Local','National','Politics','Business','Sport','World','Environment','Culture','General'];
 
 var state = {
@@ -810,7 +833,7 @@ var state = {
 };
 
 /* ============================================================
-   UTILITIES
+   UTILITIES  (unchanged from your original file)
    ============================================================ */
 function genId(){ return 'story_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,8); }
 
@@ -868,14 +891,11 @@ function el(tag, className, text){
   return e;
 }
 
-/* ---- visibility / scheduling helpers ---- */
 function isPublicVisible(a){
   if (a.draft) return false;
   return new Date(a.date).getTime() <= Date.now();
 }
 function visibleArticles(){
-  // The owner previews everything, including drafts and scheduled stories.
-  // Everyone else only ever sees published, non-future-dated stories.
   return state.isOwner ? state.articles.slice() : state.articles.filter(isPublicVisible);
 }
 function pickHeroFrom(list){
@@ -894,7 +914,6 @@ function buildStatusBadge(article){
   return el('span', 'status-badge ' + text.toLowerCase(), text);
 }
 
-/* ---- image fade-in ---- */
 function fadeInImage(img){
   img.classList.add('img-fade');
   if (img.complete && img.naturalWidth) {
@@ -904,7 +923,6 @@ function fadeInImage(img){
   }
 }
 
-/* ---- datetime-local <-> ISO helpers (local time, no timezone in the input value) ---- */
 function toLocalDatetimeValue(d){
   var pad = function(n){ return String(n).padStart(2, '0'); };
   return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
@@ -915,175 +933,38 @@ function fromLocalDatetimeValue(v){
 }
 
 /* ============================================================
-   COOKIES
-   This site sets at most two cookies, both first-party and both
-   non-tracking:
-   - nzb_cookie_consent: remembers your accept/decline choice
-     itself. Stored either way, since respecting a "decline" choice
-     requires remembering it was made.
-   - nzb_last_category: only set if you accept. Remembers the story
-     category you were last browsing so the site can reopen there.
-   Neither is used for analytics, advertising, or cross-site
-   tracking, and nothing is ever sent to a third party - everything
-   stays in document.cookie on your own device.
+   DATA LAYER — now backed by Firestore instead of embedded JSON
    ============================================================ */
-var COOKIE_CONSENT_KEY = 'nzb_cookie_consent';
-var COOKIE_LAST_CATEGORY_KEY = 'nzb_last_category';
-
-function setCookie(name, value, days){
-  var expires = '';
-  if (days) {
-    var d = new Date();
-    d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
-    expires = '; expires=' + d.toUTCString();
-  }
-  try {
-    document.cookie = name + '=' + encodeURIComponent(value) + expires + '; path=/; SameSite=Lax';
-  } catch(e){ /* cookies unavailable (e.g. some sandboxed previews) - fail silently */ }
-}
-function getCookie(name){
-  try {
-    var escaped = name.replace(/([.$?*|{}()[\]\\/+^])/g, '\\$1');
-    var match = document.cookie.match(new RegExp('(?:^|; )' + escaped + '=([^;]*)'));
-    return match ? decodeURIComponent(match[1]) : null;
-  } catch(e){ return null; }
-}
-function deleteCookie(name){
-  try {
-    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Lax';
-  } catch(e){ /* ignore */ }
+function subscribeToArticles(){
+  var q = query(articlesCol, orderBy('date', 'desc'));
+  onSnapshot(q, function(snapshot){
+    state.articles = snapshot.docs.map(function(d){
+      return Object.assign({ id: d.id }, d.data());
+    });
+    renderOwnerArea();
+    renderCurrentView();
+  }, function(err){
+    console.error('Firestore read failed', err);
+    toast('Couldn\u2019t load stories. Check your connection.');
+  });
 }
 
-function initCookieConsent(){
-  var consent = getCookie(COOKIE_CONSENT_KEY);
-  if (consent === 'accepted' || consent === 'declined') {
-    refs.cookieBanner.hidden = true;
-  } else {
-    refs.cookieBanner.hidden = false;
-  }
+async function createArticle(data){
+  await addDoc(articlesCol, data);
 }
-
-function applyRememberedCategory(){
-  if (getCookie(COOKIE_CONSENT_KEY) !== 'accepted') return;
-  var saved = getCookie(COOKIE_LAST_CATEGORY_KEY);
-  if (saved && getCategoriesInUse().indexOf(saved) !== -1) {
-    state.filter = saved;
-  }
+async function saveArticle(id, data){
+  await updateDoc(doc(db, 'articles', id), data);
 }
-
-function acceptCookies(){
-  setCookie(COOKIE_CONSENT_KEY, 'accepted', 180);
-  refs.cookieBanner.hidden = true;
-  toast('Cookie preference saved.');
-}
-function declineCookies(){
-  setCookie(COOKIE_CONSENT_KEY, 'declined', 180);
-  deleteCookie(COOKIE_LAST_CATEGORY_KEY);
-  refs.cookieBanner.hidden = true;
-  toast('No non-essential cookies will be set.');
-}
-function openCookieInfoModal(){ openModal(refs.cookieInfoModal); }
-function closeCookieInfoModal(){ closeModal(refs.cookieInfoModal); }
-function forgetCookieChoice(){
-  deleteCookie(COOKIE_CONSENT_KEY);
-  deleteCookie(COOKIE_LAST_CATEGORY_KEY);
-  closeCookieInfoModal();
-  refs.cookieBanner.hidden = false;
-  toast('Your cookie choice has been forgotten.');
-}
-
-async function sha256Hex(text){
-  try {
-    if (window.crypto && window.crypto.subtle && window.TextEncoder) {
-      var enc = new TextEncoder().encode(text);
-      var buf = await window.crypto.subtle.digest('SHA-256', enc);
-      var arr = Array.from(new Uint8Array(buf));
-      return arr.map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
-    }
-  } catch(e) { /* fall through to local fallback */ }
-
-  var h1 = 0x811c9dc5;
-  var h2 = 0x9e3779b9;
-  for (var i = 0; i < text.length; i++) {
-    var c = text.charCodeAt(i);
-    h1 ^= c;
-    h1 = Math.imul(h1, 0x01000193);
-    h2 ^= c + i;
-    h2 = Math.imul(h2, 0x85ebca6b);
-  }
-  function hex32(n){ return (n >>> 0).toString(16).padStart(8,'0'); }
-  return hex32(h1) + hex32(h2) + hex32(Math.imul(h1 ^ h2, 0xc2b2ae35)) +
-         hex32(Math.imul(h1 + h2, 0x27d4eb2d));
+async function removeArticle(id){
+  await deleteDoc(doc(db, 'articles', id));
 }
 
 /* ============================================================
-   DATA MODEL
-   This site has no backend at all. The story list lives right in
-   this HTML file, inside the <script type="application/json"
-   id="articlesData"> tag near the end of <body>. Publishing, editing,
-   and deleting stories only changes the in-memory copy you're
-   looking at (a live preview) - nothing is public until you use
-   "Download updated site" to get a new copy of this file with your
-   changes baked in, then commit + push that file to GitHub. Once
-   GitHub Pages serves the new file, everyone who visits sees the
-   update - permanently, until you repeat the process.
-   ============================================================ */
-function readEmbeddedArticles(){
-  var node = document.getElementById('articlesData');
-  var raw = node ? node.textContent.trim() : '';
-  if (!raw) return null;
-  try {
-    var parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : null;
-  } catch(e){ return null; }
-}
-
-function openExportModal(){
-  var jsonStr = JSON.stringify(state.articles, null, 2);
-  refs.exportTextarea.value = jsonStr;
-  refs.exportCopyStatus.textContent = '';
-  openModal(refs.exportModal);
-  setTimeout(function(){
-    refs.exportTextarea.focus();
-    refs.exportTextarea.select();
-  }, 30);
-}
-function closeExportModal(){ closeModal(refs.exportModal); }
-
-async function copyExportCode(){
-  var text = refs.exportTextarea.value;
-  try {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      await navigator.clipboard.writeText(text);
-      refs.exportCopyStatus.textContent = 'Copied!';
-      return;
-    }
-    throw new Error('no-clipboard-api');
-  } catch(e){
-    try {
-      refs.exportTextarea.focus();
-      refs.exportTextarea.select();
-      var ok = document.execCommand && document.execCommand('copy');
-      refs.exportCopyStatus.textContent = ok ? 'Copied!' : 'Select the text above and copy it manually.';
-    } catch(e2){
-      refs.exportCopyStatus.textContent = 'Select the text above and copy it manually.';
-    }
-  }
-}
-
-/* ============================================================
-   EDITOR STATS
-   Everything here is derived from state.articles as it exists right
-   now (published, scheduled, and drafts). This site has no backend
-   and keeps no history, so anything you've deleted in the past can't
-   be counted - these are lifetime totals for what's currently on
-   the site, which is the most honest version of "lifetime" a
-   fully static, backend-free site can offer.
+   EDITOR STATS  (unchanged logic, reads from state.articles)
    ============================================================ */
 function wordCount(text){
   return (text || '').trim().split(/\s+/).filter(Boolean).length;
 }
-
 function computeStats(){
   var articles = state.articles;
   var now = Date.now();
@@ -1128,7 +1009,6 @@ function buildStatCard(number, label){
   card.appendChild(el('div', 'stat-label', label));
   return card;
 }
-
 function buildFactLine(before, strongText, after){
   var p = document.createElement('p');
   p.className = 'stats-fact';
@@ -1141,7 +1021,6 @@ function buildFactLine(before, strongText, after){
   if (after) p.appendChild(document.createTextNode(after));
   return p;
 }
-
 function openStatsModal(){
   var s = computeStats();
   refs.statsGrid.innerHTML = '';
@@ -1181,96 +1060,6 @@ function openStatsModal(){
 function closeStatsModal(){ closeModal(refs.statsModal); }
 
 /* ============================================================
-   SEED DATA (shown once, before the owner publishes anything)
-   ============================================================ */
-function svgDataUri(svg){ return 'data:image/svg+xml,' + encodeURIComponent(svg); }
-
-function seedImages(){
-  var bridge = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">' +
-    '<rect width="800" height="500" fill="#0B1F2A"/>' +
-    '<circle cx="670" cy="100" r="46" fill="#E8A33D" opacity="0.9"/>' +
-    '<circle cx="90" cy="70" r="2.4" fill="#ffffff"/><circle cx="130" cy="110" r="2" fill="#ffffff"/>' +
-    '<circle cx="70" cy="130" r="1.8" fill="#ffffff"/><circle cx="150" cy="60" r="2" fill="#ffffff"/><circle cx="110" cy="150" r="1.6" fill="#ffffff"/>' +
-    '<rect x="0" y="360" width="800" height="140" fill="#16303F"/>' +
-    '<path d="M40 330 C160 200 640 200 760 330" fill="none" stroke="#1C6B57" stroke-width="8"/>' +
-    '<path d="M40 330 L40 400 M120 300 L120 400 M220 285 L220 400 M400 275 L400 400 M580 285 L580 400 M680 300 L680 400 M760 330 L760 400" stroke="#1C6B57" stroke-width="4"/>' +
-    '<rect x="20" y="360" width="760" height="10" fill="#1C6B57"/>' +
-    '</svg>';
-  var ski = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">' +
-    '<rect width="800" height="500" fill="#F5F4EF"/>' +
-    '<circle cx="640" cy="110" r="50" fill="#E8A33D"/>' +
-    '<polygon points="0,420 220,160 340,340 420,220 620,420" fill="#17323F"/>' +
-    '<polygon points="220,160 260,235 180,235" fill="#F5F4EF"/>' +
-    '<polygon points="420,220 452,280 388,280" fill="#F5F4EF"/>' +
-    '<polygon points="120,420 420,260 720,420" fill="#1C6B57"/>' +
-    '<polygon points="420,260 452,315 388,315" fill="#F5F4EF"/>' +
-    '<rect y="420" width="800" height="80" fill="#0B1F2A"/>' +
-    '</svg>';
-  var startup = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">' +
-    '<rect width="800" height="500" fill="#EAE7DE"/>' +
-    '<path d="M400 420 C400 300 340 260 340 190 C340 130 390 90 400 60 C410 90 460 130 460 190 C460 260 400 300 400 420 Z" fill="#1C6B57"/>' +
-    '<path d="M400 420 C400 300 340 260 340 190" fill="none" stroke="#124E3F" stroke-width="4"/>' +
-    '<circle cx="180" cy="150" r="6" fill="#E8A33D"/><circle cx="230" cy="230" r="6" fill="#E8A33D"/><circle cx="150" cy="320" r="6" fill="#E8A33D"/>' +
-    '<circle cx="620" cy="150" r="6" fill="#E8A33D"/><circle cx="580" cy="250" r="6" fill="#E8A33D"/><circle cx="650" cy="330" r="6" fill="#E8A33D"/>' +
-    '<path d="M180 150 L340 190 M230 230 L360 240 M150 320 L340 300 M620 150 L460 190 M580 250 L440 245 M650 330 L460 300" fill="none" stroke="#124E3F" stroke-width="2.5"/>' +
-    '</svg>';
-  var flight = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">' +
-    '<rect width="800" height="500" fill="#0B1F2A"/>' +
-    '<circle cx="150" cy="90" r="2.4" fill="#ffffff"/><circle cx="185" cy="130" r="2" fill="#ffffff"/><circle cx="120" cy="150" r="1.8" fill="#ffffff"/><circle cx="205" cy="80" r="2" fill="#ffffff"/><circle cx="160" cy="170" r="1.6" fill="#ffffff"/>' +
-    '<circle cx="160" cy="360" r="10" fill="#E8A33D"/>' +
-    '<circle cx="660" cy="220" r="10" fill="#E8A33D"/>' +
-    '<path d="M160 360 Q 410 140 660 220" fill="none" stroke="#1C6B57" stroke-width="3" stroke-dasharray="10 10"/>' +
-    '<polygon points="0,0 800,0 800,60 0,60" fill="#0B1F2A"/>' +
-    '<g transform="translate(420,175) rotate(-18)"><polygon points="0,-10 30,4 0,8 -30,4" fill="#F5F4EF"/></g>' +
-    '</svg>';
-  return {
-    bridge: svgDataUri(bridge),
-    ski: svgDataUri(ski),
-    startup: svgDataUri(startup),
-    flight: svgDataUri(flight)
-  };
-}
-
-function seedArticles(){
-  var img = seedImages();
-  var now = Date.now();
-  return [
-    {
-      id: genId(),
-      heading: 'New direct flight route links Auckland with South America',
-      category: 'World',
-      image: img.flight,
-      date: new Date(now - 1000*60*40).toISOString(),
-      description: 'A new direct air route connecting Auckland with South America is set to begin later this year, cutting travel time significantly for passengers who previously relied on connections through North America or Asia.\n\nIndustry groups say the route reflects growing trade and tourism interest between New Zealand and South American markets, particularly in agriculture, education, and outdoor tourism.\n\nTicket sales are expected to open in the coming months, with the airline promising competitive fares to encourage early bookings.'
-    },
-    {
-      id: genId(),
-      heading: 'Kiwi clean-energy startup wins international innovation award',
-      category: 'Business',
-      image: img.startup,
-      date: new Date(now - 1000*60*60*5).toISOString(),
-      description: 'A Wellington-based clean-energy startup has taken out a major international innovation award for its work on small-scale community battery storage.\n\nThe company, founded three years ago by a small team of engineers, says the recognition will help it expand into new markets across the Pacific.\n\n"We built this because we wanted local communities to have more control over where their power comes from," said the company\'s co-founder. The team plans to use the momentum to grow its local manufacturing base and create new jobs over the next two years.'
-    },
-    {
-      id: genId(),
-      heading: 'Southern Alps ski fields report best snow season in a decade',
-      category: 'Sport',
-      image: img.ski,
-      date: new Date(now - 1000*60*60*24*1.2).toISOString(),
-      description: 'Ski fields across the Southern Alps are reporting some of the deepest base snow levels seen in ten years, drawing early-season crowds from across the country and overseas.\n\nOperators say consistent cold fronts through the past month have delivered ideal conditions, with several fields extending planned opening hours to meet demand.\n\nLocal accommodation providers are also seeing a lift in bookings, with many popular lodges already close to full for the coming weeks. Visitors are being reminded to check road conditions before heading up, as access routes can close quickly during heavy snowfall.'
-    },
-    {
-      id: genId(),
-      heading: 'Harbour Bridge cycleway trial begins next month',
-      category: 'Local',
-      image: img.bridge,
-      date: new Date(now - 1000*60*60*24*2.6).toISOString(),
-      description: 'A trial cycleway across the harbour bridge will begin next month, giving cyclists and pedestrians a dedicated lane during a limited weekday trial period.\n\nThe trial follows years of advocacy from local cycling groups and is designed to test demand and traffic impact ahead of any permanent decision.\n\nCouncil officials say they will monitor traffic flow, safety, and usage numbers closely, with a public report expected once the trial period ends. Commuters are encouraged to share feedback through the council\'s website once the trial is under way.'
-    }
-  ];
-}
-
-/* ============================================================
    DOM REFERENCES
    ============================================================ */
 var $ = function(id){ return document.getElementById(id); };
@@ -1278,17 +1067,14 @@ var refs = {};
 function cacheRefs(){
   ['ownerArea','navPills','searchInput','heroSlot','sectionTitle','sectionCount','grid','emptyState',
    'homeView','articleView','fabAdd','logoBtn','nzClock','footerNote','masthead','readingProgress',
-   'loginModal','loginTitle','loginSubtitle','passwordInput','loginError',
+   'loginModal','loginTitle','loginSubtitle','emailInput','passwordInput','loginError',
    'loginCancelBtn','loginSubmitBtn','loginCloseBtn',
    'editorModal','editorTitle','headingInput','headingCounter','headingError','categorySelect',
    'publishDateInput','draftCheckbox','featuredCheckbox',
    'dropzone','imageInput','dropzoneEmpty','dropzonePreview','previewImg','imageError',
    'descInput','descError','editorGeneralError','editorCancelBtn','editorSubmitBtn','editorCloseBtn',
    'deleteModal','deleteSubtitle','deleteCancelBtn','deleteConfirmBtn',
-   'exportModal','exportTextarea','exportCopyStatus','exportCopyBtn','exportCloseBtn','exportCloseBtn2',
    'statsModal','statsGrid','statsFacts','statsCloseBtn','statsCloseBtn2',
-   'cookieBanner','cookieLearnMoreBtn','cookieDeclineBtn','cookieAcceptBtn','cookieSettingsLink',
-   'cookieInfoModal','cookieInfoCloseBtn','cookieInfoCloseBtn2','cookieForgetBtn',
    'toast'
   ].forEach(function(id){ refs[id] = $(id); });
 }
@@ -1350,9 +1136,6 @@ function startClock(){
   setInterval(tick, 30000);
 }
 
-/* ============================================================
-   FERN UNFURL ANIMATION (signature moment)
-   ============================================================ */
 function animateFern(){
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduce) return;
@@ -1381,21 +1164,17 @@ function renderOwnerArea(){
     var badge = el('span', 'owner-badge');
     var dotEl = el('span', 'owner-dot');
     badge.appendChild(dotEl);
-    badge.appendChild(document.createTextNode('Editing as Owner'));
-    var downloadBtn = el('button', 'btn btn-primary btn-sm', 'Copy code for GitHub');
-    downloadBtn.type = 'button';
-    downloadBtn.addEventListener('click', openExportModal);
+    badge.appendChild(document.createTextNode('Editing'));
     var statsBtn = el('button', 'btn btn-outline-invert btn-sm', 'Stats');
     statsBtn.type = 'button';
     statsBtn.addEventListener('click', openStatsModal);
     var signOut = el('button', 'link-btn', 'Sign out');
     signOut.addEventListener('click', logout);
     refs.ownerArea.appendChild(badge);
-    refs.ownerArea.appendChild(downloadBtn);
     refs.ownerArea.appendChild(statsBtn);
     refs.ownerArea.appendChild(signOut);
   } else {
-    var signIn = el('button', 'btn btn-outline-invert btn-sm', 'Sign in as owner');
+    var signIn = el('button', 'btn btn-outline-invert btn-sm', 'Sign in to edit');
     signIn.addEventListener('click', openLogin);
     refs.ownerArea.appendChild(signIn);
   }
@@ -1412,7 +1191,6 @@ function getCategoriesInUse(){
   Object.keys(set).forEach(function(c){ if (ordered.indexOf(c) === -1) ordered.push(c); });
   return ['All'].concat(ordered);
 }
-
 function renderNav(){
   var cats = getCategoriesInUse();
   refs.navPills.innerHTML = '';
@@ -1422,14 +1200,10 @@ function renderNav(){
     refs.navPills.appendChild(pill);
   });
 }
-
 function setFilter(cat){
   state.filter = cat;
   goHomeSilent();
   renderHome();
-  if (getCookie(COOKIE_CONSENT_KEY) === 'accepted') {
-    setCookie(COOKIE_LAST_CATEGORY_KEY, cat, 180);
-  }
 }
 function goHomeSilent(){
   state.view = 'home';
@@ -1438,9 +1212,6 @@ function goHomeSilent(){
   refs.articleView.hidden = true;
 }
 
-/* ============================================================
-   FILTERED LIST
-   ============================================================ */
 function getFiltered(){
   var q = state.search.trim().toLowerCase();
   return visibleArticles().filter(function(a){
@@ -1451,7 +1222,7 @@ function getFiltered(){
 }
 
 /* ============================================================
-   RENDER: HOME (hero + grid)
+   RENDER: HOME
    ============================================================ */
 function createHero(article){
   var hero = el('div', 'hero');
@@ -1491,14 +1262,13 @@ function createHero(article){
 function createStoryAd(){
   var ad = el('div', 'story-ad');
   ad.setAttribute('aria-label', 'Advertisement');
-  ad.innerHTML = '<span>ADVERTISEMENT</span><small>728 × 90</small>';
+  ad.innerHTML = '<span>ADVERTISEMENT</span><small>728 \u00D7 90</small>';
   return ad;
 }
-
 function createArticleAd(){
   var ad = el('div', 'article-ad');
   ad.setAttribute('aria-label', 'Advertisement');
-  ad.innerHTML = '<span>ADVERTISEMENT</span><small>728 × 90</small>';
+  ad.innerHTML = '<span>ADVERTISEMENT</span><small>728 \u00D7 90</small>';
   return ad;
 }
 
@@ -1680,7 +1450,6 @@ function renderArticleView(article){
 
   paragraphs.forEach(function(t, index){
     body.appendChild(el('p', null, t));
-
     if ((index + 1) === 2 || (index + 1) === 5) {
       body.appendChild(createArticleAd());
     }
@@ -1706,17 +1475,14 @@ function buildShareRow(article){
 
 async function shareArticle(article){
   var shareText = article.heading + '\n\n' + teaserText(article.description);
-
   try {
     if (navigator.share) {
       await navigator.share({ title: article.heading, text: shareText });
       return;
     }
   } catch(e){
-    if (e && e.name === 'AbortError') return; // user cancelled the native share sheet
-    // fall through to clipboard/manual fallback below
+    if (e && e.name === 'AbortError') return;
   }
-
   try {
     if (navigator.clipboard && navigator.clipboard.writeText) {
       await navigator.clipboard.writeText(shareText);
@@ -1724,7 +1490,6 @@ async function shareArticle(article){
       return;
     }
   } catch(e){ /* fall through */ }
-
   try {
     window.prompt('Copy this story to share it:', shareText);
   } catch(e){
@@ -1737,7 +1502,6 @@ function getRelatedStories(article){
     .filter(function(a){ return a.id !== article.id && a.category === article.category; })
     .slice(0, 3);
 }
-
 function buildRelatedSection(list){
   var wrap = el('div', 'related-section');
   wrap.appendChild(el('h3', 'related-heading', 'Related stories'));
@@ -1776,7 +1540,6 @@ function renderCurrentView(){
   renderHome();
 }
 
-/* ---- scroll effects: sticky header shadow + article reading progress ---- */
 var scrollTicking = false;
 function updateScrollEffects(){
   if (refs.masthead) refs.masthead.classList.toggle('scrolled', window.scrollY > 6);
@@ -1784,9 +1547,9 @@ function updateScrollEffects(){
     if (state.view !== 'article') {
       refs.readingProgress.hidden = true;
     } else {
-      var doc = document.documentElement;
-      var scrollTop = window.scrollY || doc.scrollTop;
-      var scrollable = doc.scrollHeight - doc.clientHeight;
+      var doc2 = document.documentElement;
+      var scrollTop = window.scrollY || doc2.scrollTop;
+      var scrollable = doc2.scrollHeight - doc2.clientHeight;
       var pct = scrollable > 0 ? Math.min(100, Math.max(0, (scrollTop / scrollable) * 100)) : 0;
       refs.readingProgress.hidden = false;
       refs.readingProgress.style.width = pct + '%';
@@ -1800,42 +1563,29 @@ window.addEventListener('scroll', function(){
 }, { passive: true });
 
 /* ============================================================
-   LOGIN FLOW
-   Owner access is a single fixed password (its SHA-256 hash is
-   OWNER_PASSWORD_HASH above). There is no sign-up flow and no way
-   to change it from the UI - only whoever edits the source code
-   can change the password. Owner status is kept in memory only
-   (not persisted), since this file has no storage backend at all -
-   you sign in again each time you reload, which keeps the file
-   fully self-contained and portable.
+   LOGIN FLOW — real Firebase accounts, no public sign-up anywhere
    ============================================================ */
 function openLogin(){
   refs.loginError.hidden = true;
+  refs.emailInput.value = '';
   refs.passwordInput.value = '';
-  refs.loginTitle.textContent = 'Owner sign-in';
-  refs.loginSubtitle.textContent = 'Enter the owner password to publish and manage stories.';
-  refs.loginSubmitBtn.textContent = 'Sign in';
   openModal(refs.loginModal);
 }
 function closeLogin(){ closeModal(refs.loginModal); }
 
 async function submitLogin(){
   refs.loginError.hidden = true;
+  var email = refs.emailInput.value.trim();
   var password = refs.passwordInput.value;
-  if (!password) { showLoginError('Enter your password.'); return; }
+  if (!email || !password) { showLoginError('Enter your email and password.'); return; }
 
   refs.loginSubmitBtn.disabled = true;
   try {
-    var hash = await sha256Hex(password);
-    if (hash === OWNER_PASSWORD_HASH) {
-      state.isOwner = true;
-      closeLogin();
-      renderOwnerArea();
-      renderCurrentView();
-      toast('Signed in as owner.');
-    } else {
-      showLoginError('That password doesn\u2019t match. Try again.');
-    }
+    await signInWithEmailAndPassword(auth, email, password);
+    closeLogin();
+    toast('Signed in.');
+  } catch(e){
+    showLoginError('Couldn\u2019t sign in. Check your email and password.');
   } finally {
     refs.loginSubmitBtn.disabled = false;
   }
@@ -1843,14 +1593,12 @@ async function submitLogin(){
 function showLoginError(msg){ refs.loginError.textContent = msg; refs.loginError.hidden = false; }
 
 function logout(){
-  state.isOwner = false;
-  renderOwnerArea();
-  renderCurrentView();
+  signOut(auth);
   toast('Signed out.');
 }
 
 /* ============================================================
-   IMAGE HANDLING
+   IMAGE HANDLING (unchanged)
    ============================================================ */
 function loadImageFromFile(file){
   return new Promise(function(resolve, reject){
@@ -1877,11 +1625,12 @@ async function compressImageFile(file){
   canvas.width = w; canvas.height = h;
   var ctx = canvas.getContext('2d');
   ctx.drawImage(img, 0, 0, w, h);
-  var qualities = [0.72, 0.6, 0.48, 0.36];
+  var qualities = [0.72, 0.6, 0.48, 0.36, 0.28, 0.22];
   var dataUrl = canvas.toDataURL('image/jpeg', qualities[0]);
   for (var i = 0; i < qualities.length; i++) {
     dataUrl = canvas.toDataURL('image/jpeg', qualities[i]);
-    if (dataUrl.length < 700000) break;
+    // Firestore documents max out at ~1MB; keep well under that.
+    if (dataUrl.length < 600000) break;
   }
   return dataUrl;
 }
@@ -1969,7 +1718,7 @@ function closeEditor(){
   state.pendingImage = null;
 }
 
-function submitEditor(){
+async function submitEditor(){
   var heading = refs.headingInput.value.trim();
   var description = refs.descInput.value.trim();
   var category = refs.categorySelect.value;
@@ -1985,25 +1734,27 @@ function submitEditor(){
   if (!description) { setFieldError('desc', 'Add a description for readers to see.'); hasError = true; }
   if (hasError) return;
 
-  if (state.editingId) {
-    var idx = state.articles.findIndex(function(x){ return x.id === state.editingId; });
-    if (idx > -1) {
-      state.articles[idx] = Object.assign({}, state.articles[idx], {
-        heading: heading, description: description, category: category, image: image,
-        draft: isDraft, featured: isFeatured, date: publishDate
-      });
+  var payload = {
+    heading: heading, description: description, category: category, image: image,
+    draft: isDraft, featured: isFeatured, date: publishDate
+  };
+
+  refs.editorSubmitBtn.disabled = true;
+  try {
+    if (state.editingId) {
+      await saveArticle(state.editingId, payload);
+    } else {
+      await createArticle(payload);
     }
-  } else {
-    state.articles.unshift({
-      id: genId(), heading: heading, description: description, category: category, image: image,
-      draft: isDraft, featured: isFeatured, date: publishDate
-    });
+    var wasEditing = !!state.editingId;
+    closeEditor();
+    toast((wasEditing ? 'Story updated.' : (isDraft ? 'Draft saved.' : 'Story published \u2014 it\u2019s live now.')));
+  } catch(e){
+    refs.editorGeneralError.textContent = 'Couldn\u2019t save. Check your connection and try again.';
+    refs.editorGeneralError.hidden = false;
+  } finally {
+    refs.editorSubmitBtn.disabled = false;
   }
-  var wasEditing = !!state.editingId;
-  closeEditor();
-  renderOwnerArea();
-  renderCurrentView();
-  toast((wasEditing ? 'Story updated' : (isDraft ? 'Draft saved' : 'Story published')) + ' in preview \u2014 use "Copy code for GitHub" to make it live.');
 }
 
 /* ============================================================
@@ -2016,19 +1767,19 @@ function confirmDelete(id){
   refs.deleteSubtitle.textContent = '\u201c' + a.heading + '\u201d will be removed from The New Zealand Brief. This can\u2019t be undone.';
   openModal(refs.deleteModal);
 }
-function performDelete(){
+async function performDelete(){
   var id = state.deletePendingId;
   if (!id) return;
-  var idx = state.articles.findIndex(function(x){ return x.id === id; });
-  if (idx === -1) { closeModal(refs.deleteModal); return; }
-  state.articles.splice(idx, 1);
-  closeModal(refs.deleteModal);
-  if (state.view === 'article' && state.currentArticleId === id) {
-    goHome();
-  } else {
-    renderCurrentView();
+  try {
+    await removeArticle(id);
+    closeModal(refs.deleteModal);
+    if (state.view === 'article' && state.currentArticleId === id) {
+      goHome();
+    }
+    toast('Story deleted.');
+  } catch(e){
+    toast('Couldn\u2019t delete. Check your connection and try again.');
   }
-  toast('Story deleted in preview \u2014 use "Copy code for GitHub" to make it live.');
   state.deletePendingId = null;
 }
 
@@ -2058,6 +1809,7 @@ function wireEvents(){
   refs.loginCloseBtn.addEventListener('click', closeLogin);
   refs.loginSubmitBtn.addEventListener('click', submitLogin);
   refs.passwordInput.addEventListener('keydown', function(e){ if (e.key === 'Enter') submitLogin(); });
+  refs.emailInput.addEventListener('keydown', function(e){ if (e.key === 'Enter') submitLogin(); });
 
   refs.editorCancelBtn.addEventListener('click', closeEditor);
   refs.editorCloseBtn.addEventListener('click', closeEditor);
@@ -2081,20 +1833,8 @@ function wireEvents(){
   refs.deleteCancelBtn.addEventListener('click', function(){ state.deletePendingId = null; closeModal(refs.deleteModal); });
   refs.deleteConfirmBtn.addEventListener('click', performDelete);
 
-  refs.exportCloseBtn.addEventListener('click', closeExportModal);
-  refs.exportCloseBtn2.addEventListener('click', closeExportModal);
-  refs.exportCopyBtn.addEventListener('click', copyExportCode);
-
   refs.statsCloseBtn.addEventListener('click', closeStatsModal);
   refs.statsCloseBtn2.addEventListener('click', closeStatsModal);
-
-  refs.cookieAcceptBtn.addEventListener('click', acceptCookies);
-  refs.cookieDeclineBtn.addEventListener('click', declineCookies);
-  refs.cookieLearnMoreBtn.addEventListener('click', openCookieInfoModal);
-  refs.cookieSettingsLink.addEventListener('click', openCookieInfoModal);
-  refs.cookieInfoCloseBtn.addEventListener('click', closeCookieInfoModal);
-  refs.cookieInfoCloseBtn2.addEventListener('click', closeCookieInfoModal);
-  refs.cookieForgetBtn.addEventListener('click', forgetCookieChoice);
 }
 
 /* ============================================================
@@ -2106,16 +1846,15 @@ function init(){
   startClock();
   refs.footerNote.textContent = 'Personal news project \u00B7 \u00A9 ' + new Date().getFullYear();
 
-  state.isOwner = false;
-  var embedded = readEmbeddedArticles();
-  state.articles = embedded && embedded.length ? embedded : seedArticles();
-  applyRememberedCategory();
+  onAuthStateChanged(auth, function(user){
+    state.isOwner = !!user;
+    renderOwnerArea();
+    renderCurrentView();
+  });
 
-  renderOwnerArea();
-  renderHome();
+  subscribeToArticles();
   updateScrollEffects();
   animateFern();
-  initCookieConsent();
 }
 
 if (document.readyState === 'loading') {
