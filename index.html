@@ -636,6 +636,28 @@ body.modal-open { overflow: hidden; }
   </div>
 </div>
 
+<!-- Export / copy-code modal -->
+<div class="modal-overlay" id="exportModal" data-dismissable="true" hidden>
+  <div class="modal-card modal-md" role="dialog" aria-modal="true" aria-labelledby="exportTitle">
+    <button class="modal-close" id="exportCloseBtn" aria-label="Close">×</button>
+    <h3 class="modal-title" id="exportTitle">Copy your updated stories</h3>
+    <p class="modal-subtitle">
+      Copy the code below. Then in your <code>index.html</code> file on GitHub, find the block that starts with
+      <code>&lt;script type="application/json" id="articlesData"&gt;</code> and replace everything between that tag
+      and the matching <code>&lt;/script&gt;</code> with what you copied. Save, commit, and push \u2014 GitHub Pages
+      will rebuild and everyone visiting the site will see your changes.
+    </p>
+    <textarea id="exportTextarea" class="textarea" readonly spellcheck="false" style="min-height:280px; font-family:var(--font-mono); font-size:12.5px; line-height:1.5;"></textarea>
+    <div class="modal-actions spread">
+      <span class="field-note" id="exportCopyStatus"></span>
+      <div style="display:flex; gap:10px;">
+        <button class="btn btn-secondary" id="exportCloseBtn2">Close</button>
+        <button class="btn btn-primary" id="exportCopyBtn">Copy code</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast" hidden></div>
 
 <script type="application/json" id="articlesData"></script>
@@ -816,30 +838,36 @@ function readEmbeddedArticles(){
   } catch(e){ return null; }
 }
 
-async function exportSite(){
-  try {
-    var res = await fetch(location.href, { cache: 'no-store' });
-    if (!res.ok) throw new Error('fetch-failed: ' + res.status);
-    var html = await res.text();
-    var jsonStr = JSON.stringify(state.articles, null, 2)
-      .replace(/</g, '\\u003c'); // keep </script> etc. from breaking the embedded block
-    var marker = /(<script type="application\/json" id="articlesData">)[\s\S]*?(<\/script>)/;
-    if (!marker.test(html)) throw new Error('articlesData block not found in fetched source');
-    var updated = html.replace(marker, function(_, open, close){ return open + '\n' + jsonStr + '\n' + close; });
+function openExportModal(){
+  var jsonStr = JSON.stringify(state.articles, null, 2);
+  refs.exportTextarea.value = jsonStr;
+  refs.exportCopyStatus.textContent = '';
+  openModal(refs.exportModal);
+  setTimeout(function(){
+    refs.exportTextarea.focus();
+    refs.exportTextarea.select();
+  }, 30);
+}
+function closeExportModal(){ closeModal(refs.exportModal); }
 
-    var blob = new Blob([updated], { type: 'text/html' });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = 'index.html';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
-    toast('Downloaded \u2014 commit this file to GitHub to publish it live.');
+async function copyExportCode(){
+  var text = refs.exportTextarea.value;
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(text);
+      refs.exportCopyStatus.textContent = 'Copied!';
+      return;
+    }
+    throw new Error('no-clipboard-api');
   } catch(e){
-    console.error('[nz-brief] export failed:', e);
-    toast('Couldn\u2019t generate the file here. This only works once the page is actually hosted over http(s) (e.g. GitHub Pages) \u2014 not in an offline preview.');
+    try {
+      refs.exportTextarea.focus();
+      refs.exportTextarea.select();
+      var ok = document.execCommand && document.execCommand('copy');
+      refs.exportCopyStatus.textContent = ok ? 'Copied!' : 'Select the text above and copy it manually.';
+    } catch(e2){
+      refs.exportCopyStatus.textContent = 'Select the text above and copy it manually.';
+    }
   }
 }
 
@@ -948,6 +976,7 @@ function cacheRefs(){
    'dropzone','imageInput','dropzoneEmpty','dropzonePreview','previewImg','imageError',
    'descInput','descError','editorGeneralError','editorCancelBtn','editorSubmitBtn','editorCloseBtn',
    'deleteModal','deleteSubtitle','deleteCancelBtn','deleteConfirmBtn',
+   'exportModal','exportTextarea','exportCopyStatus','exportCopyBtn','exportCloseBtn','exportCloseBtn2',
    'toast'
   ].forEach(function(id){ refs[id] = $(id); });
 }
@@ -1041,9 +1070,9 @@ function renderOwnerArea(){
     var dotEl = el('span', 'owner-dot');
     badge.appendChild(dotEl);
     badge.appendChild(document.createTextNode('Editing as Owner'));
-    var downloadBtn = el('button', 'btn btn-primary btn-sm', 'Download updated site');
+    var downloadBtn = el('button', 'btn btn-primary btn-sm', 'Copy code for GitHub');
     downloadBtn.type = 'button';
-    downloadBtn.addEventListener('click', exportSite);
+    downloadBtn.addEventListener('click', openExportModal);
     var signOut = el('button', 'link-btn', 'Sign out');
     signOut.addEventListener('click', logout);
     refs.ownerArea.appendChild(badge);
@@ -1655,7 +1684,7 @@ function submitEditor(){
   closeEditor();
   renderOwnerArea();
   renderCurrentView();
-  toast((wasEditing ? 'Story updated' : (isDraft ? 'Draft saved' : 'Story published')) + ' in preview \u2014 download the site to make it live.');
+  toast((wasEditing ? 'Story updated' : (isDraft ? 'Draft saved' : 'Story published')) + ' in preview \u2014 use "Copy code for GitHub" to make it live.');
 }
 
 /* ============================================================
@@ -1680,7 +1709,7 @@ function performDelete(){
   } else {
     renderCurrentView();
   }
-  toast('Story deleted in preview \u2014 download the site to make it live.');
+  toast('Story deleted in preview \u2014 use "Copy code for GitHub" to make it live.');
   state.deletePendingId = null;
 }
 
@@ -1732,6 +1761,10 @@ function wireEvents(){
 
   refs.deleteCancelBtn.addEventListener('click', function(){ state.deletePendingId = null; closeModal(refs.deleteModal); });
   refs.deleteConfirmBtn.addEventListener('click', performDelete);
+
+  refs.exportCloseBtn.addEventListener('click', closeExportModal);
+  refs.exportCloseBtn2.addEventListener('click', closeExportModal);
+  refs.exportCopyBtn.addEventListener('click', copyExportCode);
 }
 
 /* ============================================================
