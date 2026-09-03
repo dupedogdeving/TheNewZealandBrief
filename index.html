@@ -449,6 +449,34 @@ footer { background: var(--navy); color: rgba(255,255,255,0.65); padding: 42px 2
 .stats-empty { color: var(--ink-soft); font-size: 14px; }
 
 /* ============================================================
+   23. COOKIE CONSENT BANNER
+   ============================================================ */
+.cookie-banner {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 300;
+  background: var(--navy); color: #fff; border-top: 1px solid var(--line-navy);
+  box-shadow: 0 -8px 24px rgba(11,31,42,0.28);
+}
+.cookie-banner[hidden] { display: none; }
+.cookie-banner-inner {
+  max-width: 1180px; margin: 0 auto; padding: 18px 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+}
+.cookie-banner-text { font-size: 13.5px; line-height: 1.55; color: rgba(255,255,255,0.85); max-width: 720px; margin: 0; }
+.cookie-learn-more { background: none; border: none; padding: 0; margin-left: 4px; color: var(--kowhai); font-size: 13.5px; text-decoration: underline; text-underline-offset: 2px; font-weight: 600; }
+.cookie-banner-actions { display: flex; gap: 10px; flex-shrink: 0; }
+.cookie-settings-link { background: none; border: none; color: rgba(255,255,255,0.6); font-family: var(--font-mono); font-size: 11px; text-decoration: underline; text-underline-offset: 2px; padding: 2px; }
+.cookie-settings-link:hover { color: #fff; }
+.cookie-info-list { display: flex; flex-direction: column; gap: 14px; margin-bottom: 22px; }
+.cookie-info-item { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 14px 16px; }
+.cookie-info-name { font-family: var(--font-mono); font-size: 12px; color: var(--jade); font-weight: 600; margin-bottom: 4px; }
+.cookie-info-desc { font-size: 13.5px; color: var(--ink); line-height: 1.5; }
+.cookie-info-meta { font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft); margin-top: 6px; }
+@media (max-width: 720px) {
+  .cookie-banner-inner { padding: 16px 18px; }
+  .cookie-banner-actions { width: 100%; justify-content: flex-end; }
+}
+
+/* ============================================================
    13. ACCESSIBILITY & MOTION
    ============================================================ */
 :focus-visible { outline: 2px solid var(--kowhai); outline-offset: 2px; }
@@ -536,7 +564,10 @@ body.modal-open { overflow: hidden; }
       </svg>
       The New Zealand Brief
     </div>
-    <span class="footer-note" id="footerNote"></span>
+    <div style="display:flex; align-items:center; gap:16px;">
+      <span class="footer-note" id="footerNote"></span>
+      <button class="cookie-settings-link" id="cookieSettingsLink" type="button">Cookie settings</button>
+    </div>
   </div>
 </footer>
 
@@ -686,8 +717,50 @@ body.modal-open { overflow: hidden; }
 
 <div class="toast" id="toast" hidden></div>
 
+<!-- Cookie consent banner -->
+<div class="cookie-banner" id="cookieBanner" hidden role="region" aria-label="Cookie notice">
+  <div class="cookie-banner-inner">
+    <p class="cookie-banner-text">
+      This site can remember which story category you were browsing, using one small cookie stored in your
+      browser for up to 180 days. It isn't used for tracking, advertising, or analytics, and nothing is shared
+      with anyone else.
+      <button class="cookie-learn-more" id="cookieLearnMoreBtn" type="button">Learn more</button>
+    </p>
+    <div class="cookie-banner-actions">
+      <button class="btn btn-secondary btn-sm" id="cookieDeclineBtn">Decline</button>
+      <button class="btn btn-primary btn-sm" id="cookieAcceptBtn">Accept</button>
+    </div>
+  </div>
+</div>
+
+<!-- Cookie info modal -->
+<div class="modal-overlay" id="cookieInfoModal" data-dismissable="true" hidden>
+  <div class="modal-card modal-md" role="dialog" aria-modal="true" aria-labelledby="cookieInfoTitle">
+    <button class="modal-close" id="cookieInfoCloseBtn" aria-label="Close">×</button>
+    <h3 class="modal-title" id="cookieInfoTitle">Cookies on this site</h3>
+    <p class="modal-subtitle">Here's exactly what this site can store in your browser, and why.</p>
+    <div class="cookie-info-list">
+      <div class="cookie-info-item">
+        <div class="cookie-info-name">nzb_cookie_consent</div>
+        <div class="cookie-info-desc">Remembers whether you accepted or declined cookies, so you're not asked again every visit.</div>
+        <div class="cookie-info-meta">Stored regardless of your choice \u2014 needed to respect it \u00B7 expires in 180 days</div>
+      </div>
+      <div class="cookie-info-item">
+        <div class="cookie-info-name">nzb_last_category</div>
+        <div class="cookie-info-desc">Remembers the last story category you were browsing, so the site can open there next time.</div>
+        <div class="cookie-info-meta">Only set if you accept \u00B7 expires in 180 days \u00B7 never leaves your browser</div>
+      </div>
+    </div>
+    <p class="modal-subtitle" style="margin-bottom:18px;">No cookie on this site is used for advertising, cross-site tracking, or analytics, and no data is ever sent to a third party.</p>
+    <div class="modal-actions spread">
+      <button class="btn btn-danger-outline" id="cookieForgetBtn">Forget my choice</button>
+      <button class="btn btn-primary" id="cookieInfoCloseBtn2">Close</button>
+    </div>
+  </div>
+</div>
+
 <script type="application/json" id="articlesData">
-[
+   [
   {
     "id": "story_mtm1cxwc_4sy05a",
     "heading": "El Niño could bring warmer and drier conditions to New Zealand",
@@ -839,6 +912,84 @@ function toLocalDatetimeValue(d){
 function fromLocalDatetimeValue(v){
   var d = v ? new Date(v) : new Date();
   return isNaN(d.getTime()) ? new Date() : d;
+}
+
+/* ============================================================
+   COOKIES
+   This site sets at most two cookies, both first-party and both
+   non-tracking:
+   - nzb_cookie_consent: remembers your accept/decline choice
+     itself. Stored either way, since respecting a "decline" choice
+     requires remembering it was made.
+   - nzb_last_category: only set if you accept. Remembers the story
+     category you were last browsing so the site can reopen there.
+   Neither is used for analytics, advertising, or cross-site
+   tracking, and nothing is ever sent to a third party - everything
+   stays in document.cookie on your own device.
+   ============================================================ */
+var COOKIE_CONSENT_KEY = 'nzb_cookie_consent';
+var COOKIE_LAST_CATEGORY_KEY = 'nzb_last_category';
+
+function setCookie(name, value, days){
+  var expires = '';
+  if (days) {
+    var d = new Date();
+    d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
+    expires = '; expires=' + d.toUTCString();
+  }
+  try {
+    document.cookie = name + '=' + encodeURIComponent(value) + expires + '; path=/; SameSite=Lax';
+  } catch(e){ /* cookies unavailable (e.g. some sandboxed previews) - fail silently */ }
+}
+function getCookie(name){
+  try {
+    var escaped = name.replace(/([.$?*|{}()[\]\\/+^])/g, '\\$1');
+    var match = document.cookie.match(new RegExp('(?:^|; )' + escaped + '=([^;]*)'));
+    return match ? decodeURIComponent(match[1]) : null;
+  } catch(e){ return null; }
+}
+function deleteCookie(name){
+  try {
+    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Lax';
+  } catch(e){ /* ignore */ }
+}
+
+function initCookieConsent(){
+  var consent = getCookie(COOKIE_CONSENT_KEY);
+  if (consent === 'accepted' || consent === 'declined') {
+    refs.cookieBanner.hidden = true;
+  } else {
+    refs.cookieBanner.hidden = false;
+  }
+}
+
+function applyRememberedCategory(){
+  if (getCookie(COOKIE_CONSENT_KEY) !== 'accepted') return;
+  var saved = getCookie(COOKIE_LAST_CATEGORY_KEY);
+  if (saved && getCategoriesInUse().indexOf(saved) !== -1) {
+    state.filter = saved;
+  }
+}
+
+function acceptCookies(){
+  setCookie(COOKIE_CONSENT_KEY, 'accepted', 180);
+  refs.cookieBanner.hidden = true;
+  toast('Cookie preference saved.');
+}
+function declineCookies(){
+  setCookie(COOKIE_CONSENT_KEY, 'declined', 180);
+  deleteCookie(COOKIE_LAST_CATEGORY_KEY);
+  refs.cookieBanner.hidden = true;
+  toast('No non-essential cookies will be set.');
+}
+function openCookieInfoModal(){ openModal(refs.cookieInfoModal); }
+function closeCookieInfoModal(){ closeModal(refs.cookieInfoModal); }
+function forgetCookieChoice(){
+  deleteCookie(COOKIE_CONSENT_KEY);
+  deleteCookie(COOKIE_LAST_CATEGORY_KEY);
+  closeCookieInfoModal();
+  refs.cookieBanner.hidden = false;
+  toast('Your cookie choice has been forgotten.');
 }
 
 async function sha256Hex(text){
@@ -1136,6 +1287,8 @@ function cacheRefs(){
    'deleteModal','deleteSubtitle','deleteCancelBtn','deleteConfirmBtn',
    'exportModal','exportTextarea','exportCopyStatus','exportCopyBtn','exportCloseBtn','exportCloseBtn2',
    'statsModal','statsGrid','statsFacts','statsCloseBtn','statsCloseBtn2',
+   'cookieBanner','cookieLearnMoreBtn','cookieDeclineBtn','cookieAcceptBtn','cookieSettingsLink',
+   'cookieInfoModal','cookieInfoCloseBtn','cookieInfoCloseBtn2','cookieForgetBtn',
    'toast'
   ].forEach(function(id){ refs[id] = $(id); });
 }
@@ -1274,6 +1427,9 @@ function setFilter(cat){
   state.filter = cat;
   goHomeSilent();
   renderHome();
+  if (getCookie(COOKIE_CONSENT_KEY) === 'accepted') {
+    setCookie(COOKIE_LAST_CATEGORY_KEY, cat, 180);
+  }
 }
 function goHomeSilent(){
   state.view = 'home';
@@ -1931,6 +2087,14 @@ function wireEvents(){
 
   refs.statsCloseBtn.addEventListener('click', closeStatsModal);
   refs.statsCloseBtn2.addEventListener('click', closeStatsModal);
+
+  refs.cookieAcceptBtn.addEventListener('click', acceptCookies);
+  refs.cookieDeclineBtn.addEventListener('click', declineCookies);
+  refs.cookieLearnMoreBtn.addEventListener('click', openCookieInfoModal);
+  refs.cookieSettingsLink.addEventListener('click', openCookieInfoModal);
+  refs.cookieInfoCloseBtn.addEventListener('click', closeCookieInfoModal);
+  refs.cookieInfoCloseBtn2.addEventListener('click', closeCookieInfoModal);
+  refs.cookieForgetBtn.addEventListener('click', forgetCookieChoice);
 }
 
 /* ============================================================
@@ -1945,11 +2109,13 @@ function init(){
   state.isOwner = false;
   var embedded = readEmbeddedArticles();
   state.articles = embedded && embedded.length ? embedded : seedArticles();
+  applyRememberedCategory();
 
   renderOwnerArea();
   renderHome();
   updateScrollEffects();
   animateFern();
+  initCookieConsent();
 }
 
 if (document.readyState === 'loading') {
