@@ -5,6 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="color-scheme" content="light" />
 <title>The New Zealand Brief</title>
+<meta name="description" content="Clear-eyed, independent news from around Aotearoa — local, national, politics, business, sport, world, environment and culture." />
+<meta name="theme-color" content="#0B1F2A" id="themeColorMeta" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="The New Zealand Brief" />
+<meta property="og:title" content="The New Zealand Brief" id="ogTitleMeta" />
+<meta property="og:description" content="Clear-eyed, independent news from around Aotearoa." id="ogDescMeta" />
+<meta property="og:image" content="" id="ogImageMeta" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="The New Zealand Brief" id="twTitleMeta" />
+<meta name="twitter:description" content="Clear-eyed, independent news from around Aotearoa." id="twDescMeta" />
+<meta name="twitter:image" content="" id="twImageMeta" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%230B1F2A'/%3E%3Cpath d='M32 50 C29 40 27 30 28 20 C28.6 15 31 11 35 9.5' stroke='%23E8A33D' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3Cpath d='M29 34 C24 33 20 30 18 25' stroke='%23E8A33D' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3Cpath d='M30 25 C35 23 39 19 41 14' stroke='%23E8A33D' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -57,7 +68,37 @@ ul { list-style: none; margin: 0; padding: 0; }
   --font-display: 'Fraunces', Georgia, serif;
   --font-body: 'IBM Plex Sans', -apple-system, sans-serif;
   --font-mono: 'IBM Plex Mono', 'SF Mono', monospace;
+  --user-font-scale: 1;
 }
+
+html[data-theme="dark"] {
+  --paper: #12181D;
+  --paper-dim: #1B232A;
+  --ink: #EDEEEC;
+  --ink-soft: #9DA8B0;
+  --navy: #08141C;
+  --navy-soft: #101E27;
+  --navy-soft-2: #16303C;
+  --white: #1B232A;
+  --line: rgba(255,255,255,0.10);
+  --shadow: 0 10px 28px rgba(0,0,0,0.4);
+  --shadow-lg: 0 20px 48px rgba(0,0,0,0.55);
+}
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .modal-card,
+html[data-theme="dark"] footer,
+html[data-theme="dark"] .stat-card { background: #1B232A; color: var(--ink); }
+html[data-theme="dark"] .text-input,
+html[data-theme="dark"] .textarea,
+html[data-theme="dark"] .select-input { background: #12181D; color: var(--ink); }
+html[data-theme="dark"] .icon-toggle-btn { color: rgba(255,255,255,0.8); }
+html[data-theme="dark"] .ad-space,
+html[data-theme="dark"] .story-ad,
+html[data-theme="dark"] .article-ad { background: rgba(255,255,255,0.03); }
+html { transition: background-color .2s ease; }
+body { font-size: calc(16px * var(--user-font-scale)); }
+.article-body p { font-size: calc(18px * var(--user-font-scale)); }
+.article-body p:first-of-type { font-size: calc(19px * var(--user-font-scale)); }
 
 .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
@@ -529,6 +570,114 @@ footer { background: var(--white); color: var(--ink-soft); padding: 0; margin-to
 }
 
 /* ============================================================
+   26. READER TOOLS (theme / text size / skip link)
+   ============================================================ */
+.skip-link {
+  position: absolute; left: 12px; top: -60px; z-index: 500;
+  background: var(--kowhai); color: var(--navy); padding: 10px 16px;
+  border-radius: 8px; font-weight: 600; font-size: 13px; transition: top .15s ease;
+}
+.skip-link:focus { top: 12px; }
+
+.reader-tools { display: flex; align-items: center; gap: 4px; }
+.icon-toggle-btn {
+  background: rgba(255,255,255,0.08); border: 1px solid var(--line-navy); color: rgba(255,255,255,0.85);
+  width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-family: var(--font-mono); font-weight: 600; transition: background .15s ease;
+}
+.icon-toggle-btn:hover { background: rgba(255,255,255,0.16); }
+.icon-toggle-btn.saved-active { background: var(--kowhai); color: var(--navy); border-color: var(--kowhai); }
+.icon-toggle-btn svg { width: 16px; height: 16px; }
+.text-size-group { display: flex; align-items: center; gap: 2px; background: rgba(255,255,255,0.08); border: 1px solid var(--line-navy); border-radius: 100px; padding: 2px; }
+.text-size-group button { background: none; border: none; color: rgba(255,255,255,0.8); width: 26px; height: 26px; border-radius: 50%; font-size: 12px; font-weight: 700; }
+.text-size-group button:hover { background: rgba(255,255,255,0.15); color: #fff; }
+
+/* ============================================================
+   27. BOOKMARK / SAVE BUTTON
+   ============================================================ */
+.bookmark-btn {
+  background: rgba(11,31,42,0.86); color: var(--white); border: none; width: 32px; height: 32px;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(2px);
+  flex-shrink: 0;
+}
+.bookmark-btn:hover { background: var(--navy); }
+.bookmark-btn.saved { background: var(--kowhai); color: var(--navy); }
+.bookmark-btn svg { width: 15px; height: 15px; }
+.article-owner-row.with-bookmark, .share-row { flex-wrap: wrap; }
+.bookmark-btn-inline { display: inline-flex; align-items: center; gap: 7px; background: var(--paper-dim); border: none; color: var(--ink); border-radius: 100px; padding: 8px 15px; font-size: 13px; font-weight: 600; }
+.bookmark-btn-inline.saved { background: var(--kowhai); color: var(--navy); }
+.bookmark-btn-inline svg { width: 14px; height: 14px; }
+
+/* ============================================================
+   28. TRENDING SIDEBAR WIDGET
+   ============================================================ */
+.trending-widget {
+  background: var(--white); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 18px 16px; margin-bottom: 20px;
+}
+.trending-widget-title {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--jade); font-weight: 600; margin-bottom: 14px; display: flex; align-items: center; gap: 6px;
+}
+.trending-list { display: flex; flex-direction: column; gap: 12px; }
+.trending-item { display: flex; gap: 10px; align-items: flex-start; background: none; border: none; text-align: left; padding: 0; width: 100%; }
+.trending-num { font-family: var(--font-display); font-weight: 700; font-size: 20px; color: var(--line); line-height: 1.1; flex-shrink: 0; width: 20px; }
+.trending-item:hover .trending-num { color: var(--kowhai); }
+.trending-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.trending-heading { font-size: 12.5px; font-weight: 600; line-height: 1.35; color: var(--ink); }
+.trending-item:hover .trending-heading { color: var(--jade); }
+.trending-meta { font-family: var(--font-mono); font-size: 10px; color: var(--ink-soft); }
+
+/* ============================================================
+   29. BACK TO TOP
+   ============================================================ */
+.back-to-top {
+  position: fixed; left: 26px; bottom: 26px; width: 44px; height: 44px; border-radius: 50%;
+  background: var(--navy); color: var(--white); border: none; box-shadow: var(--shadow-lg);
+  display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none;
+  transform: translateY(8px); transition: opacity .2s ease, transform .2s ease; z-index: 29;
+}
+.back-to-top.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.back-to-top svg { width: 18px; height: 18px; }
+@media (max-width: 720px) { .back-to-top { left: 18px; bottom: 84px; width: 40px; height: 40px; } }
+
+/* ============================================================
+   30. NEWSLETTER SIGNUP
+   ============================================================ */
+.newsletter-box {
+  background: var(--navy); color: #fff; border-radius: var(--radius); padding: 26px 28px;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+  margin: 0 0 48px;
+}
+.newsletter-copy { max-width: 420px; }
+.newsletter-heading { font-family: var(--font-display); font-weight: 600; font-size: 20px; margin-bottom: 6px; }
+.newsletter-sub { font-size: 13.5px; color: rgba(255,255,255,0.72); line-height: 1.5; }
+.newsletter-form { display: flex; gap: 8px; flex-wrap: wrap; }
+.newsletter-form input { width: 240px; max-width: 60vw; background: rgba(255,255,255,0.1); border: 1px solid var(--line-navy); color: #fff; border-radius: 100px; padding: 10px 16px; font-size: 13.5px; }
+.newsletter-form input::placeholder { color: rgba(255,255,255,0.5); }
+.newsletter-form input:focus { outline: none; border-color: var(--kowhai); }
+@media (max-width: 720px) {
+  .newsletter-box { padding: 22px 20px; }
+  .newsletter-form input { width: 100%; max-width: 100%; }
+}
+
+/* ============================================================
+   31. BYLINE
+   ============================================================ */
+.byline { font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); }
+
+/* ============================================================
+   32. PRINT STYLES
+   ============================================================ */
+@media print {
+  .masthead, .nav-row, .marquee-banner, .fab, .toast, .cookie-banner, .side-ad,
+  .story-ad, .article-ad, .back-to-top, .share-row, .article-owner-row, .reading-progress,
+  .related-section, .newsletter-box, .back-link, footer { display: none !important; }
+  body { background: #fff; color: #000; }
+  .article-body p { font-size: 13pt; line-height: 1.5; }
+}
+
+/* ============================================================
    25. FOOTER RIGHTS LINE
    ============================================================ */
 .footer-rights {
@@ -554,6 +703,8 @@ body.modal-open { overflow: hidden; }
 </head>
 <body>
 
+<a href="#homeView" class="skip-link">Skip to content</a>
+
 <div class="reading-progress" id="readingProgress" hidden></div>
 
 <header class="masthead" id="masthead">
@@ -574,6 +725,18 @@ body.modal-open { overflow: hidden; }
     </button>
     <div class="masthead-right">
       <span class="nz-clock" id="nzClock"></span>
+      <div class="reader-tools">
+        <div class="text-size-group" role="group" aria-label="Text size">
+          <button type="button" id="textSizeDownBtn" aria-label="Decrease text size">A−</button>
+          <button type="button" id="textSizeUpBtn" aria-label="Increase text size">A+</button>
+        </div>
+        <button type="button" class="icon-toggle-btn" id="savedBtn" aria-label="Saved stories" title="Saved stories">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3.5h10a1 1 0 0 1 1 1V17l-6-3.5L4 17V4.5a1 1 0 0 1 1-1z"/></svg>
+        </button>
+        <button type="button" class="icon-toggle-btn" id="themeToggleBtn" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <svg id="themeIcon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3a7 7 0 1 0 7 7 5.5 5.5 0 0 1-7-7z"/></svg>
+        </button>
+      </div>
     </div>
   </div>
   <div class="nav-row">
@@ -613,14 +776,33 @@ body.modal-open { overflow: hidden; }
       <div id="articleView" hidden></div>
     </div>
 
-    <aside class="side-ad side-ad-right" aria-label="Advertisement">
+    <aside class="side-ad side-ad-right" aria-label="Trending stories and advertisement">
+      <div class="trending-widget" id="trendingWidget" hidden>
+        <div class="trending-widget-title">🔥 Trending now</div>
+        <div class="trending-list" id="trendingList"></div>
+      </div>
       <div class="ad-space">
         <span>ADVERTISEMENT</span>
         <small>160 × 600</small>
       </div>
     </aside>
   </div>
+
+  <div class="newsletter-box" id="newsletterBox">
+    <div class="newsletter-copy">
+      <div class="newsletter-heading">Get the Brief in your inbox</div>
+      <p class="newsletter-sub">A short, honest wrap of the day's stories from around Aotearoa. No spam, unsubscribe any time.</p>
+    </div>
+    <form class="newsletter-form" id="newsletterForm">
+      <input type="email" id="newsletterEmail" placeholder="you@example.com" required aria-label="Email address" />
+      <button type="submit" class="btn btn-primary btn-sm">Subscribe</button>
+    </form>
+  </div>
 </main>
+
+<button class="back-to-top" id="backToTopBtn" aria-label="Back to top">
+  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15V5M4 9l6-6 6 6"/></svg>
+</button>
 
 <footer>
   <div class="footer-top">
@@ -707,6 +889,11 @@ body.modal-open { overflow: hidden; }
         <option>Environment</option>
         <option>Culture</option>
       </select>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="bylineInput">Byline <span class="field-hint">optional</span></label>
+      <input type="text" id="bylineInput" class="text-input" maxlength="60" placeholder="e.g. Staff reporter" />
     </div>
 
     <div class="field">
@@ -853,12 +1040,21 @@ body.modal-open { overflow: hidden; }
       <div class="cookie-info-item">
         <div class="cookie-info-name">nzb_cookie_consent</div>
         <div class="cookie-info-desc">Remembers whether you accepted or declined cookies, so you're not asked again every visit.</div>
-        <div class="cookie-info-meta">Stored regardless of your choice \u2014 needed to respect it \u00B7 expires in 180 days</div>
       </div>
       <div class="cookie-info-item">
         <div class="cookie-info-name">nzb_last_category</div>
         <div class="cookie-info-desc">Remembers the last story category you were browsing, so the site can open there next time.</div>
         <div class="cookie-info-meta">Only set if you accept \u00B7 expires in 180 days \u00B7 never leaves your browser</div>
+      </div>
+      <div class="cookie-info-item">
+        <div class="cookie-info-name">nzb_theme &amp; nzb_font_scale</div>
+        <div class="cookie-info-desc">Remembers your dark/light mode and text size preference so reading is comfortable next visit.</div>
+        <div class="cookie-info-meta">Only set if you accept \u00B7 expires in 180 days \u00B7 never leaves your browser</div>
+      </div>
+      <div class="cookie-info-item">
+        <div class="cookie-info-name">nzb_bookmarks</div>
+        <div class="cookie-info-desc">Stores the story IDs you've saved for later, so your saved list is there when you come back.</div>
+        <div class="cookie-info-meta">Set as soon as you save a story \u00B7 expires in 180 days \u00B7 never leaves your browser</div>
       </div>
     </div>
     <p class="modal-subtitle" style="margin-bottom:18px;">No cookie on this site is used for advertising, cross-site tracking, or analytics, and no data is ever sent to a third party.</p>
@@ -905,6 +1101,12 @@ const marqueeDocRef = doc(db, "settings", "marquee");
    CONSTANTS & STATE
    ============================================================ */
 var CATEGORIES_DEFAULT_ORDER = ['Local','National','Politics','Business','Sport','World','Environment','Culture','General'];
+var COOKIE_CONSENT_NAME = 'nzb_cookie_consent';
+var COOKIE_CATEGORY_NAME = 'nzb_last_category';
+var COOKIE_THEME_NAME = 'nzb_theme';
+var COOKIE_FONT_SCALE_NAME = 'nzb_font_scale';
+var COOKIE_BOOKMARKS_NAME = 'nzb_bookmarks';
+var FONT_SCALE_STEPS = [0.9, 1, 1.1, 1.2, 1.3];
 
 var state = {
   articles: [],
@@ -917,7 +1119,10 @@ var state = {
   pendingImage: null,
   deletePendingId: null,
   marqueeText: '',
-  marqueeActive: false
+  marqueeActive: false,
+  showSavedOnly: false,
+  bookmarks: [],
+  fontScaleIndex: 1
 };
 
 /* ============================================================
@@ -1021,6 +1226,27 @@ function fromLocalDatetimeValue(v){
 }
 
 /* ============================================================
+   COOKIE HELPERS (plain document.cookie \u2014 no localStorage)
+   ============================================================ */
+function setCookie(name, value, days){
+  var expires = '';
+  if (days) {
+    var date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    expires = '; expires=' + date.toUTCString();
+  }
+  document.cookie = name + '=' + encodeURIComponent(value) + expires + '; path=/; SameSite=Lax';
+}
+function getCookie(name){
+  var pattern = new RegExp('(?:^|; )' + name.replace(/([.$?*|{}()\[\]\\\/+^])/g, '\\$1') + '=([^;]*)');
+  var match = document.cookie.match(pattern);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+function eraseCookie(name){
+  document.cookie = name + '=; Max-Age=-1; path=/';
+}
+
+/* ============================================================
    DATA LAYER — now backed by Firestore instead of embedded JSON
    ============================================================ */
 function subscribeToArticles(){
@@ -1074,6 +1300,43 @@ function renderMarquee(){
     refs.marqueeTrackWrap.appendChild(el('span', 'marquee-segment', state.marqueeText));
   }
   updateScrollEffects();
+}
+
+/* ============================================================
+   COOKIE CONSENT BANNER (shown to every visitor on arrival)
+   ============================================================ */
+function initCookieConsent(){
+  var consent = getCookie(COOKIE_CONSENT_NAME);
+  if (consent === 'accepted') {
+    var lastCat = getCookie(COOKIE_CATEGORY_NAME);
+    if (lastCat) { state.filter = lastCat; }
+  } else if (consent !== 'declined') {
+    // No choice recorded yet \u2014 ask, after the page has had a moment to settle.
+    setTimeout(function(){
+      if (refs.cookieBanner) refs.cookieBanner.hidden = false;
+    }, 600);
+  }
+}
+function acceptCookies(){
+  setCookie(COOKIE_CONSENT_NAME, 'accepted', 180);
+  setCookie(COOKIE_CATEGORY_NAME, state.filter, 180);
+  hideCookieBanner();
+  toast('Cookie preferences saved.');
+}
+function declineCookies(){
+  setCookie(COOKIE_CONSENT_NAME, 'declined', 180);
+  eraseCookie(COOKIE_CATEGORY_NAME);
+  hideCookieBanner();
+}
+function hideCookieBanner(){ if (refs.cookieBanner) refs.cookieBanner.hidden = true; }
+function openCookieInfo(){ openModal(refs.cookieInfoModal); }
+function closeCookieInfo(){ closeModal(refs.cookieInfoModal); }
+function forgetCookieChoice(){
+  eraseCookie(COOKIE_CONSENT_NAME);
+  eraseCookie(COOKIE_CATEGORY_NAME);
+  closeCookieInfo();
+  toast('Your cookie choice has been forgotten.');
+  setTimeout(function(){ if (refs.cookieBanner) refs.cookieBanner.hidden = false; }, 400);
 }
 
 /* ============================================================
@@ -1213,6 +1476,166 @@ async function submitMarquee(){
 }
 
 /* ============================================================
+   DARK MODE
+   ============================================================ */
+function applyTheme(theme){
+  document.documentElement.setAttribute('data-theme', theme);
+  if (refs.themeColorMeta) refs.themeColorMeta.setAttribute('content', theme === 'dark' ? '#08141C' : '#0B1F2A');
+  if (refs.themeIcon) {
+    refs.themeIcon.innerHTML = theme === 'dark'
+      ? '<circle cx="10" cy="10" r="4"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.5 4.5l1.4 1.4M14.1 14.1l1.4 1.4M4.5 15.5l1.4-1.4M14.1 5.9l1.4-1.4"/>'
+      : '<path d="M10 3a7 7 0 1 0 7 7 5.5 5.5 0 0 1-7-7z"/>';
+  }
+}
+function initTheme(){
+  var saved = getCookie(COOKIE_THEME_NAME);
+  var theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  applyTheme(theme);
+}
+function toggleTheme(){
+  var current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  var next = current === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+  if (getCookie(COOKIE_CONSENT_NAME) === 'accepted') setCookie(COOKIE_THEME_NAME, next, 180);
+}
+
+/* ============================================================
+   TEXT SIZE
+   ============================================================ */
+function applyFontScale(index){
+  index = Math.max(0, Math.min(FONT_SCALE_STEPS.length - 1, index));
+  state.fontScaleIndex = index;
+  document.documentElement.style.setProperty('--user-font-scale', FONT_SCALE_STEPS[index]);
+  if (refs.textSizeDownBtn) refs.textSizeDownBtn.disabled = index === 0;
+  if (refs.textSizeUpBtn) refs.textSizeUpBtn.disabled = index === FONT_SCALE_STEPS.length - 1;
+  if (getCookie(COOKIE_CONSENT_NAME) === 'accepted') setCookie(COOKIE_FONT_SCALE_NAME, String(index), 180);
+}
+function initFontScale(){
+  var saved = parseInt(getCookie(COOKIE_FONT_SCALE_NAME), 10);
+  applyFontScale(isNaN(saved) ? 1 : saved);
+}
+
+/* ============================================================
+   BOOKMARKS / SAVED STORIES (cookie-backed, no localStorage)
+   ============================================================ */
+function loadBookmarks(){
+  var raw = getCookie(COOKIE_BOOKMARKS_NAME);
+  state.bookmarks = raw ? raw.split(',').filter(Boolean) : [];
+}
+function persistBookmarks(){
+  if (getCookie(COOKIE_CONSENT_NAME) === 'accepted') {
+    setCookie(COOKIE_BOOKMARKS_NAME, state.bookmarks.join(','), 180);
+  }
+}
+function isBookmarked(id){ return state.bookmarks.indexOf(id) !== -1; }
+function toggleBookmark(id){
+  var idx = state.bookmarks.indexOf(id);
+  if (idx === -1) { state.bookmarks.push(id); toast('Saved for later.'); }
+  else { state.bookmarks.splice(idx, 1); toast('Removed from saved stories.'); }
+  persistBookmarks();
+  renderCurrentView();
+}
+function buildBookmarkIcon(filled){
+  return filled
+    ? '<svg viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3.5h10a1 1 0 0 1 1 1V17l-6-3.5L4 17V4.5a1 1 0 0 1 1-1z"/></svg>'
+    : '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3.5h10a1 1 0 0 1 1 1V17l-6-3.5L4 17V4.5a1 1 0 0 1 1-1z"/></svg>';
+}
+function toggleSavedFilter(){
+  state.showSavedOnly = !state.showSavedOnly;
+  state.search = ''; if (refs.searchInput) refs.searchInput.value = '';
+  if (refs.savedBtn) refs.savedBtn.classList.toggle('saved-active', state.showSavedOnly);
+  goHomeSilent();
+  renderHome();
+}
+
+/* ============================================================
+   TRENDING WIDGET (recent + featured stories, sidebar)
+   ============================================================ */
+function renderTrendingWidget(){
+  if (!refs.trendingWidget || !refs.trendingList) return;
+  var vis = visibleArticles().slice().sort(function(a, b){ return new Date(b.date) - new Date(a.date); });
+  var top = vis.slice(0, 5);
+  refs.trendingList.innerHTML = '';
+  if (!top.length) { refs.trendingWidget.hidden = true; return; }
+  refs.trendingWidget.hidden = false;
+  top.forEach(function(a, i){
+    var item = el('button', 'trending-item');
+    item.type = 'button';
+    var num = el('span', 'trending-num', String(i + 1));
+    var text = el('div', 'trending-text');
+    text.appendChild(el('span', 'trending-heading', a.heading));
+    text.appendChild(el('span', 'trending-meta', a.category + ' \u00B7 ' + relativeDate(a.date)));
+    item.append(num, text);
+    item.addEventListener('click', function(){ openArticle(a.id); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    refs.trendingList.appendChild(item);
+  });
+}
+
+/* ============================================================
+   BACK TO TOP
+   ============================================================ */
+function updateBackToTop(){
+  if (!refs.backToTopBtn) return;
+  refs.backToTopBtn.classList.toggle('show', window.scrollY > 500);
+}
+
+/* ============================================================
+   NEWSLETTER SIGNUP
+   ============================================================ */
+async function submitNewsletter(e){
+  e.preventDefault();
+  var email = refs.newsletterEmail.value.trim();
+  var validPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!validPattern.test(email)) { toast('Enter a valid email address.'); return; }
+  try {
+    await addDoc(collection(db, 'subscribers'), { email: email, subscribedAt: new Date().toISOString() });
+    refs.newsletterEmail.value = '';
+    toast('You\u2019re subscribed \u2014 welcome aboard!');
+  } catch(e2){
+    toast('Couldn\u2019t subscribe right now. Try again shortly.');
+  }
+}
+
+/* ============================================================
+   SEO / SOCIAL META (updated per view for good link previews)
+   ============================================================ */
+var DEFAULT_META = {
+  title: 'The New Zealand Brief',
+  desc: 'Clear-eyed, independent news from around Aotearoa.',
+  image: ''
+};
+function setMeta(title, desc, image){
+  document.title = title;
+  if (refs.ogTitleMeta) refs.ogTitleMeta.setAttribute('content', title);
+  if (refs.ogDescMeta) refs.ogDescMeta.setAttribute('content', desc);
+  if (refs.ogImageMeta) refs.ogImageMeta.setAttribute('content', image || '');
+  if (refs.twTitleMeta) refs.twTitleMeta.setAttribute('content', title);
+  if (refs.twDescMeta) refs.twDescMeta.setAttribute('content', desc);
+  if (refs.twImageMeta) refs.twImageMeta.setAttribute('content', image || '');
+  var existingLd = document.getElementById('articleLdJson');
+  if (existingLd) existingLd.remove();
+}
+function setArticleMeta(article){
+  setMeta(article.heading + ' \u2014 The New Zealand Brief', teaserText(article.description), article.image);
+  try {
+    var ld = document.createElement('script');
+    ld.type = 'application/ld+json';
+    ld.id = 'articleLdJson';
+    ld.textContent = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'NewsArticle',
+      headline: article.heading,
+      image: article.image ? [article.image] : undefined,
+      datePublished: article.date,
+      author: { '@type': 'Person', name: article.author || 'Staff reporter' },
+      publisher: { '@type': 'Organization', name: 'The New Zealand Brief' }
+    });
+    document.head.appendChild(ld);
+  } catch(e){ /* ignore */ }
+}
+function resetMeta(){ setMeta(DEFAULT_META.title, DEFAULT_META.desc, DEFAULT_META.image); }
+
+/* ============================================================
    DOM REFERENCES
    ============================================================ */
 var $ = function(id){ return document.getElementById(id); };
@@ -1230,6 +1653,11 @@ function cacheRefs(){
    'statsModal','statsGrid','statsFacts','statsCloseBtn','statsCloseBtn2',
    'marqueeBanner','marqueeTrackWrap','marqueeModal','marqueeTextInput','marqueeCounter',
    'marqueeActiveCheckbox','marqueeGeneralError','marqueeCloseBtn','marqueeCancelBtn','marqueeSaveBtn',
+   'cookieBanner','cookieAcceptBtn','cookieDeclineBtn','cookieLearnMoreBtn','cookieSettingsLink',
+   'cookieInfoModal','cookieInfoCloseBtn','cookieInfoCloseBtn2','cookieForgetBtn',
+   'themeToggleBtn','themeIcon','textSizeUpBtn','textSizeDownBtn','savedBtn',
+   'trendingWidget','trendingList','backToTopBtn','newsletterForm','newsletterEmail',
+   'bylineInput','themeColorMeta','ogTitleMeta','ogDescMeta','ogImageMeta','twTitleMeta','twDescMeta','twImageMeta',
    'toast'
   ].forEach(function(id){ refs[id] = $(id); });
 }
@@ -1366,6 +1794,9 @@ function renderNav(){
 }
 function setFilter(cat){
   state.filter = cat;
+  if (getCookie(COOKIE_CONSENT_NAME) === 'accepted') {
+    setCookie(COOKIE_CATEGORY_NAME, cat, 180);
+  }
   goHomeSilent();
   renderHome();
 }
@@ -1379,9 +1810,10 @@ function goHomeSilent(){
 function getFiltered(){
   var q = state.search.trim().toLowerCase();
   return visibleArticles().filter(function(a){
+    var matchSaved = !state.showSavedOnly || isBookmarked(a.id);
     var matchCat = state.filter === 'All' || a.category === state.filter;
     var matchSearch = !q || a.heading.toLowerCase().indexOf(q) !== -1 || a.description.toLowerCase().indexOf(q) !== -1;
-    return matchCat && matchSearch;
+    return matchSaved && matchCat && matchSearch;
   });
 }
 
@@ -1463,8 +1895,15 @@ function createCard(article){
 
   card.append(imgWrap, body);
 
+  var ownerBar = el('div', 'card-owner-bar');
+  var bmBtn = document.createElement('button');
+  bmBtn.className = 'bookmark-btn' + (isBookmarked(article.id) ? ' saved' : '');
+  bmBtn.type = 'button';
+  bmBtn.innerHTML = buildBookmarkIcon(isBookmarked(article.id));
+  bmBtn.setAttribute('aria-label', isBookmarked(article.id) ? 'Remove from saved stories' : 'Save story for later');
+  bmBtn.addEventListener('click', function(e){ e.stopPropagation(); toggleBookmark(article.id); });
+  ownerBar.appendChild(bmBtn);
   if (state.isOwner) {
-    var ownerBar = el('div', 'card-owner-bar');
     var editBtn = iconButton('edit');
     editBtn.setAttribute('aria-label', 'Edit story');
     editBtn.addEventListener('click', function(e){ e.stopPropagation(); openEditor(article.id); });
@@ -1473,8 +1912,8 @@ function createCard(article){
     delBtn.setAttribute('aria-label', 'Delete story');
     delBtn.addEventListener('click', function(e){ e.stopPropagation(); confirmDelete(article.id); });
     ownerBar.append(editBtn, delBtn);
-    card.appendChild(ownerBar);
   }
+  card.appendChild(ownerBar);
 
   card.addEventListener('click', function(){ openArticle(article.id); });
   card.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openArticle(article.id); } });
@@ -1523,7 +1962,7 @@ function renderHome(){
   renderNav();
 
   var vis = visibleArticles();
-  var showHero = state.filter === 'All' && !state.search.trim() && vis.length > 0;
+  var showHero = state.filter === 'All' && !state.search.trim() && !state.showSavedOnly && vis.length > 0;
   var heroArticle = showHero ? pickHeroFrom(vis) : null;
   var gridList = showHero
     ? vis.filter(function(a){ return !heroArticle || a.id !== heroArticle.id; })
@@ -1537,12 +1976,18 @@ function renderHome(){
     refs.heroSlot.hidden = true;
   }
 
-  var titleText = state.search.trim() ? 'Search results' : (state.filter !== 'All' ? state.filter : 'Latest Stories');
+  var titleText = state.showSavedOnly ? 'Saved stories' : (state.search.trim() ? 'Search results' : (state.filter !== 'All' ? state.filter : 'Latest Stories'));
   refs.sectionTitle.textContent = titleText;
   refs.sectionCount.textContent = vis.length ? (gridList.length + (gridList.length === 1 ? ' story' : ' stories')) : '';
 
   refs.grid.innerHTML = '';
-  if (vis.length === 0) {
+  if (state.showSavedOnly && gridList.length === 0) {
+    refs.grid.hidden = true;
+    refs.emptyState.hidden = false;
+    refs.emptyState.innerHTML = '';
+    refs.emptyState.appendChild(el('h3', null, 'No saved stories yet'));
+    refs.emptyState.appendChild(el('p', null, 'Tap the bookmark icon on any story to save it here for later.'));
+  } else if (vis.length === 0) {
     refs.grid.hidden = true;
     refs.emptyState.hidden = false;
     renderEmptyState(false);
@@ -1560,6 +2005,9 @@ function renderHome(){
       }
     });
   }
+
+  renderTrendingWidget();
+  resetMeta();
 }
 
 /* ============================================================
@@ -1592,12 +2040,16 @@ function renderArticleView(article){
   var dateline = el('span', 'dateline', fmtDateline(article.date));
   var rt = el('span', 'dateline', readTime(article.description));
   meta.append(eyebrow, dot(), dateline, dot(), rt);
+  if (article.author) {
+    meta.append(dot(), el('span', 'byline', article.author));
+  }
   c.appendChild(meta);
 
   var h1 = el('h1', 'article-heading', article.heading);
   c.appendChild(h1);
 
   c.appendChild(buildShareRow(article));
+  setArticleMeta(article);
 
   if (state.isOwner) {
     var ownerRow = el('div', 'article-owner-row');
@@ -1633,7 +2085,13 @@ function buildShareRow(article){
   var shareBtn = el('button', 'btn btn-secondary btn-sm', 'Share this story');
   shareBtn.type = 'button';
   shareBtn.addEventListener('click', function(){ shareArticle(article); });
-  row.append(label, shareBtn);
+  var saveBtn = document.createElement('button');
+  saveBtn.type = 'button';
+  var saved = isBookmarked(article.id);
+  saveBtn.className = 'bookmark-btn-inline' + (saved ? ' saved' : '');
+  saveBtn.innerHTML = buildBookmarkIcon(saved) + '<span>' + (saved ? 'Saved' : 'Save for later') + '</span>';
+  saveBtn.addEventListener('click', function(){ toggleBookmark(article.id); });
+  row.append(label, shareBtn, saveBtn);
   return row;
 }
 
@@ -1692,6 +2150,7 @@ function goHome(){
   state.view = 'home';
   state.currentArticleId = null;
   renderHome();
+  resetMeta();
   window.scrollTo({ top: 0, behavior: 'smooth' });
   updateScrollEffects();
 }
@@ -1723,7 +2182,7 @@ function updateScrollEffects(){
 window.addEventListener('scroll', function(){
   if (scrollTicking) return;
   scrollTicking = true;
-  requestAnimationFrame(function(){ updateScrollEffects(); scrollTicking = false; });
+  requestAnimationFrame(function(){ updateScrollEffects(); updateBackToTop(); scrollTicking = false; });
 }, { passive: true });
 
 /* ============================================================
@@ -1853,6 +2312,7 @@ function openEditor(articleId){
     if (!a) return;
     refs.editorTitle.textContent = 'Edit story';
     refs.headingInput.value = a.heading;
+    refs.bylineInput.value = a.author || '';
     refs.categorySelect.value = a.category || 'General';
     refs.descInput.value = a.description;
     refs.publishDateInput.value = toLocalDatetimeValue(new Date(a.date));
@@ -1864,6 +2324,7 @@ function openEditor(articleId){
   } else {
     refs.editorTitle.textContent = 'Publish a story';
     refs.headingInput.value = '';
+    refs.bylineInput.value = '';
     refs.categorySelect.value = 'General';
     refs.descInput.value = '';
     refs.publishDateInput.value = toLocalDatetimeValue(new Date());
@@ -1885,6 +2346,7 @@ function closeEditor(){
 async function submitEditor(){
   var heading = refs.headingInput.value.trim();
   var description = refs.descInput.value.trim();
+  var author = refs.bylineInput.value.trim();
   var category = refs.categorySelect.value;
   var image = state.pendingImage;
   var isDraft = refs.draftCheckbox.checked;
@@ -1900,7 +2362,7 @@ async function submitEditor(){
 
   var payload = {
     heading: heading, description: description, category: category, image: image,
-    draft: isDraft, featured: isFeatured, date: publishDate
+    draft: isDraft, featured: isFeatured, date: publishDate, author: author
   };
 
   refs.editorSubmitBtn.disabled = true;
@@ -2004,6 +2466,21 @@ function wireEvents(){
   refs.marqueeCloseBtn.addEventListener('click', closeMarqueeEditor);
   refs.marqueeCancelBtn.addEventListener('click', closeMarqueeEditor);
   refs.marqueeSaveBtn.addEventListener('click', submitMarquee);
+
+  refs.cookieAcceptBtn.addEventListener('click', acceptCookies);
+  refs.cookieDeclineBtn.addEventListener('click', declineCookies);
+  refs.cookieLearnMoreBtn.addEventListener('click', openCookieInfo);
+  refs.cookieSettingsLink.addEventListener('click', openCookieInfo);
+  refs.cookieInfoCloseBtn.addEventListener('click', closeCookieInfo);
+  refs.cookieInfoCloseBtn2.addEventListener('click', closeCookieInfo);
+  refs.cookieForgetBtn.addEventListener('click', forgetCookieChoice);
+
+  refs.themeToggleBtn.addEventListener('click', toggleTheme);
+  refs.textSizeUpBtn.addEventListener('click', function(){ applyFontScale(state.fontScaleIndex + 1); });
+  refs.textSizeDownBtn.addEventListener('click', function(){ applyFontScale(state.fontScaleIndex - 1); });
+  refs.savedBtn.addEventListener('click', toggleSavedFilter);
+  refs.backToTopBtn.addEventListener('click', function(){ window.scrollTo({ top: 0, behavior: 'smooth' }); });
+  refs.newsletterForm.addEventListener('submit', submitNewsletter);
 }
 
 /* ============================================================
@@ -2015,6 +2492,10 @@ function init(){
   startClock();
   refs.footerNote.textContent = 'Personal news project \u00B7 \u00A9 ' + new Date().getFullYear();
 
+  initTheme();
+  initFontScale();
+  loadBookmarks();
+
   onAuthStateChanged(auth, function(user){
     state.isOwner = !!user;
     renderOwnerArea();
@@ -2023,7 +2504,9 @@ function init(){
 
   subscribeToArticles();
   subscribeToMarquee();
+  initCookieConsent();
   updateScrollEffects();
+  updateBackToTop();
   animateFern();
 }
 
