@@ -14,7 +14,43 @@
   } catch(e) { document.documentElement.setAttribute('data-theme', 'light'); }
 })();
 </script>
-<title>The New Zealand Brief</title>
+<title id="pageTitle">The New Zealand Brief — Clear-eyed news from around Aotearoa</title>
+
+<!-- ============================================================
+     SEO / SOCIAL META
+     These are updated dynamically per-article by updateMetaTags()
+     in the main script below. The values here are the defaults
+     shown for the homepage and to crawlers that don't run JS.
+     NOTE: replace the URLs below with your real domain if you use
+     a custom domain instead of GitHub Pages.
+     ============================================================ -->
+<meta id="metaDescription" name="description" content="Independent, clear-eyed news and analysis from around Aotearoa New Zealand — local, national, politics, business, sport, world and culture." />
+<link id="canonicalLink" rel="canonical" href="https://dupedogdeving.github.io/TheNewZealandBrief/" />
+<meta name="robots" content="index, follow" />
+
+<meta id="ogType" property="og:type" content="website" />
+<meta property="og:site_name" content="The New Zealand Brief" />
+<meta id="ogTitle" property="og:title" content="The New Zealand Brief — Clear-eyed news from around Aotearoa" />
+<meta id="ogDescription" property="og:description" content="Independent, clear-eyed news and analysis from around Aotearoa New Zealand." />
+<meta id="ogUrl" property="og:url" content="https://dupedogdeving.github.io/TheNewZealandBrief/" />
+<meta id="ogImage" property="og:image" content="https://dupedogdeving.github.io/TheNewZealandBrief/social-share.png" />
+<meta property="og:locale" content="en_NZ" />
+
+<meta id="twitterCard" name="twitter:card" content="summary_large_image" />
+<meta id="twitterTitle" name="twitter:title" content="The New Zealand Brief — Clear-eyed news from around Aotearoa" />
+<meta id="twitterDescription" name="twitter:description" content="Independent, clear-eyed news and analysis from around Aotearoa New Zealand." />
+<meta id="twitterImage" name="twitter:image" content="https://dupedogdeving.github.io/TheNewZealandBrief/social-share.png" />
+
+<script id="ldJsonScript" type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "The New Zealand Brief",
+  "url": "https://dupedogdeving.github.io/TheNewZealandBrief/",
+  "description": "Independent, clear-eyed news and analysis from around Aotearoa New Zealand."
+}
+</script>
+
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%230B1F2A'/%3E%3Cpath d='M32 50 C29 40 27 30 28 20 C28.6 15 31 11 35 9.5' stroke='%23E8A33D' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3Cpath d='M29 34 C24 33 20 30 18 25' stroke='%23E8A33D' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3Cpath d='M30 25 C35 23 39 19 41 14' stroke='%23E8A33D' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1025,6 +1061,12 @@ const marqueeDocRef = doc(db, "settings", "marquee");
 /* ============================================================
    CONSTANTS & STATE
    ============================================================ */
+var SITE_NAME = 'The New Zealand Brief';
+var SITE_TAGLINE = 'Clear-eyed news from around Aotearoa';
+var SITE_DEFAULT_DESCRIPTION = 'Independent, clear-eyed news and analysis from around Aotearoa New Zealand — local, national, politics, business, sport, world and culture.';
+// Base URL used for canonical links, share links and structured data.
+// Computed from the current location so it works on GitHub Pages or a custom domain.
+var SITE_BASE = window.location.origin + window.location.pathname.replace(/index\.html$/, '');
 var CATEGORIES_DEFAULT_ORDER = ['Local','National','Politics','Business','Sport','World','Environment','Culture','General'];
 var COOKIE_CONSENT_NAME = 'nzb_cookie_consent';
 var COOKIE_CATEGORY_NAME = 'nzb_last_category';
@@ -1456,7 +1498,7 @@ function cacheRefs(){
    'marqueeActiveCheckbox','marqueeGeneralError','marqueeCloseBtn','marqueeCancelBtn','marqueeSaveBtn',
    'cookieBanner','cookieAcceptBtn','cookieDeclineBtn','cookieLearnMoreBtn','cookieSettingsLink',
    'cookieInfoModal','cookieInfoCloseBtn','cookieInfoCloseBtn2','cookieForgetBtn',
-   'toast'
+   'toast', 'canonicalLink', 'ldJsonScript'
   ].forEach(function(id){ refs[id] = $(id); });
 }
 
@@ -1713,6 +1755,10 @@ function goHomeSilent(){
   state.currentArticleId = null;
   refs.homeView.hidden = false;
   refs.articleView.hidden = true;
+  if (window.location.search) {
+    try { history.replaceState({}, '', SITE_BASE); } catch(e){}
+  }
+  updateMetaTags(null);
 }
 
 function getFiltered(){
@@ -1977,10 +2023,11 @@ function buildShareRow(article){
 }
 
 async function shareArticle(article){
+  var url = articleUrl(article.id);
   var shareText = article.heading + '\n\n' + teaserText(article.description);
   try {
     if (navigator.share) {
-      await navigator.share({ title: article.heading, text: shareText });
+      await navigator.share({ title: article.heading, text: shareText, url: url });
       return;
     }
   } catch(e){
@@ -1988,13 +2035,13 @@ async function shareArticle(article){
   }
   try {
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      await navigator.clipboard.writeText(shareText);
-      toast('Story copied \u2014 paste it anywhere to share.');
+      await navigator.clipboard.writeText(shareText + '\n' + url);
+      toast('Story link copied \u2014 paste it anywhere to share.');
       return;
     }
   } catch(e){ /* fall through */ }
   try {
-    window.prompt('Copy this story to share it:', shareText);
+    window.prompt('Copy this story to share it:', shareText + '\n' + url);
   } catch(e){
     toast('Sharing isn\u2019t available in this view.');
   }
@@ -2014,34 +2061,149 @@ function buildRelatedSection(list){
   return wrap;
 }
 
-function openArticle(id){
+/* ============================================================
+   SEO / SOCIAL META + STRUCTURED DATA (dynamic, per-view)
+   ============================================================ */
+function absoluteUrl(path){
+  try { return new URL(path, SITE_BASE).href; } catch(e){ return path; }
+}
+function setMetaByAttr(selectorAttr, selectorValue, content){
+  var node = document.head.querySelector('meta[' + selectorAttr + '="' + selectorValue + '"]');
+  if (node) node.setAttribute('content', content);
+}
+function articleUrl(id){
+  return SITE_BASE + '?article=' + encodeURIComponent(id);
+}
+function updateMetaTags(article){
+  var title, description, url, image, type;
+
+  if (article) {
+    title = article.heading + ' \u2014 ' + SITE_NAME;
+    description = teaserText(article.description);
+    url = articleUrl(article.id);
+    image = article.image ? absoluteUrl(article.image) : absoluteUrl('social-share.png');
+    type = 'article';
+  } else {
+    title = SITE_NAME + ' \u2014 ' + SITE_TAGLINE;
+    description = SITE_DEFAULT_DESCRIPTION;
+    url = SITE_BASE;
+    image = absoluteUrl('social-share.png');
+    type = 'website';
+  }
+
+  document.title = title;
+  setMetaByAttr('name', 'description', description);
+  setMetaByAttr('property', 'og:type', type);
+  setMetaByAttr('property', 'og:title', title);
+  setMetaByAttr('property', 'og:description', description);
+  setMetaByAttr('property', 'og:url', url);
+  setMetaByAttr('property', 'og:image', image);
+  setMetaByAttr('name', 'twitter:title', title);
+  setMetaByAttr('name', 'twitter:description', description);
+  setMetaByAttr('name', 'twitter:image', image);
+
+  if (refs.canonicalLink) refs.canonicalLink.setAttribute('href', url);
+
+  if (refs.ldJsonScript) {
+    var data;
+    if (article) {
+      data = {
+        "@context": "https://schema.org",
+        "@type": "NewsArticle",
+        "headline": article.heading,
+        "description": description,
+        "image": [image],
+        "datePublished": article.date,
+        "dateModified": article.date,
+        "articleSection": article.category,
+        "author": { "@type": "Organization", "name": SITE_NAME },
+        "publisher": {
+          "@type": "Organization",
+          "name": SITE_NAME,
+          "logo": { "@type": "ImageObject", "url": absoluteUrl('social-share.png') }
+        },
+        "mainEntityOfPage": { "@type": "WebPage", "@id": url }
+      };
+    } else {
+      data = {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": SITE_NAME,
+        "url": SITE_BASE,
+        "description": description
+      };
+    }
+    refs.ldJsonScript.textContent = JSON.stringify(data);
+  }
+}
+
+/* ============================================================
+   ROUTING (real, shareable, bookmarkable article URLs)
+   Articles live at ?article=<id> and use pushState/popstate so
+   the back/forward buttons and direct links both work.
+   ============================================================ */
+function openArticle(id, opts){
+  opts = opts || {};
   var a = state.articles.find(function(x){ return x.id === id; });
   if (!a) return;
   if (!state.isOwner && !isPublicVisible(a)) return;
   state.view = 'article';
   state.currentArticleId = id;
-  refs.homeView.hidden = true;
-  refs.articleView.hidden = false;
-  renderArticleView(a);
+  renderCurrentView();
+  if (!opts.skipHistory) {
+    var url = articleUrl(id);
+    if (opts.replace) { history.replaceState({ articleId: id }, '', url); }
+    else { history.pushState({ articleId: id }, '', url); }
+  }
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  updateScrollEffects();
 }
 
-function goHome(){
+function goHome(opts){
+  opts = opts || {};
   state.view = 'home';
   state.currentArticleId = null;
-  renderHome();
+  renderCurrentView();
+  if (!opts.skipHistory) {
+    if (opts.replace) { history.replaceState({}, '', SITE_BASE); }
+    else { history.pushState({}, '', SITE_BASE); }
+  }
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  updateScrollEffects();
 }
 
 function renderCurrentView(){
   if (state.view === 'article' && state.currentArticleId) {
     var a = state.articles.find(function(x){ return x.id === state.currentArticleId; });
-    if (a) { renderArticleView(a); return; }
+    if (a && (state.isOwner || isPublicVisible(a))) {
+      refs.homeView.hidden = true;
+      refs.articleView.hidden = false;
+      renderArticleView(a);
+      updateMetaTags(a);
+      updateScrollEffects();
+      return;
+    }
+    // Deep link is stale, deleted, unpublished, or not loaded yet — fall back
+    // to home and quietly clean up the URL so it's not left pointing nowhere.
+    state.view = 'home';
+    state.currentArticleId = null;
+    if (state.articles.length) {
+      try { history.replaceState({}, '', SITE_BASE); } catch(e){}
+    }
   }
+  refs.homeView.hidden = false;
+  refs.articleView.hidden = true;
   renderHome();
+  updateMetaTags(null);
+  updateScrollEffects();
 }
+
+window.addEventListener('popstate', function(){
+  var params = new URLSearchParams(window.location.search);
+  var articleId = params.get('article');
+  state.view = articleId ? 'article' : 'home';
+  state.currentArticleId = articleId || null;
+  renderCurrentView();
+  window.scrollTo({ top: 0 });
+});
 
 var scrollTicking = false;
 function updateScrollEffects(){
@@ -2368,6 +2530,20 @@ function init(){
   loadWeather();
   setInterval(loadWeather, 15 * 60 * 1000);
   refs.footerNote.textContent = 'Personal news project \u00B7 \u00A9 ' + new Date().getFullYear();
+
+  // Deep-link support: if the page was loaded at ?article=<id> (a shared
+  // link, a bookmark, or a search result), open straight to that story
+  // once the article data has loaded. Show a lightweight loading state
+  // immediately so the visit doesn't flash the homepage first.
+  var deepLinkParams = new URLSearchParams(window.location.search);
+  var deepLinkArticleId = deepLinkParams.get('article');
+  if (deepLinkArticleId) {
+    state.view = 'article';
+    state.currentArticleId = deepLinkArticleId;
+    refs.homeView.hidden = true;
+    refs.articleView.hidden = false;
+    refs.articleView.innerHTML = '<div class="empty-state"><h3>Loading story\u2026</h3></div>';
+  }
 
   onAuthStateChanged(auth, function(user){
     state.isOwner = !!user;
