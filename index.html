@@ -80,7 +80,7 @@ ul { list-style: none; margin: 0; padding: 0; }
 .masthead-right { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
 .nz-clock { font-family: var(--font-mono); font-size: 12px; color: rgba(255,255,255,0.7); letter-spacing: 0.03em; white-space: nowrap; }
 
-.owner-area { display: flex; align-items: center; gap: 10px; }
+.owner-area { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .owner-badge { display: flex; align-items: center; gap: 7px; font-family: var(--font-mono); font-size: 12px; color: var(--white); background: rgba(255,255,255,0.08); border: 1px solid var(--line-navy); padding: 6px 10px; border-radius: 100px; }
 .owner-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--kowhai); flex-shrink: 0; }
 .link-btn { background: none; border: none; color: rgba(255,255,255,0.75); font-size: 13px; text-decoration: underline; text-underline-offset: 2px; padding: 4px 2px; }
@@ -242,13 +242,28 @@ main { max-width: 1180px; margin: 0 auto; padding: 36px 24px 80px; }
 .toast[hidden] { display: none; }
 
 /* ============================================================
-   11. FOOTER
+   11. FOOTER — professional, light / white theme
    ============================================================ */
-footer { background: var(--navy); color: rgba(255,255,255,0.65); padding: 42px 24px; margin-top: 40px; }
-.footer-inner { max-width: 1180px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-.footer-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 15px; color: var(--white); }
-.footer-brand .fern-mark { width: 20px; height: 20px; color: var(--kowhai); }
-.footer-note { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.02em; }
+footer { background: var(--white); color: var(--ink-soft); padding: 0; margin-top: 56px; border-top: 1px solid var(--line); }
+.footer-top {
+  max-width: 1180px; margin: 0 auto; padding: 44px 24px 32px;
+  display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 32px;
+}
+.footer-col-brand { display: flex; flex-direction: column; gap: 12px; }
+.footer-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--ink); }
+.footer-brand .fern-mark { width: 22px; height: 22px; color: var(--jade); }
+.footer-tagline { font-size: 13.5px; color: var(--ink-soft); line-height: 1.6; max-width: 320px; }
+.footer-heading { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); font-weight: 600; margin-bottom: 4px; }
+.footer-col { display: flex; flex-direction: column; gap: 10px; }
+.footer-link { background: none; border: none; padding: 0; text-align: left; font-size: 13.5px; color: var(--ink-soft); text-decoration: none; width: fit-content; }
+.footer-link:hover { color: var(--jade); text-decoration: underline; text-underline-offset: 2px; }
+.footer-owner-box { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.footer-inner {
+  max-width: 1180px; margin: 0 auto; padding: 18px 24px 26px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  border-top: 1px solid var(--line);
+}
+.footer-note { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.02em; color: var(--ink-soft); }
 
 /* ============================================================
    AD SPACES
@@ -370,7 +385,8 @@ footer { background: var(--navy); color: rgba(255,255,255,0.65); padding: 42px 2
   .card-teaser { display: none; }
   .fab { right: 18px; bottom: 18px; width: 54px; height: 54px; font-size: 28px; }
   .article-heading { max-width: 100%; }
-  .footer-inner { flex-direction: column; align-items: flex-start; }
+  .footer-top { grid-template-columns: 1fr; padding: 34px 18px 22px; }
+  .footer-inner { flex-direction: column; align-items: flex-start; padding: 16px 18px 22px; }
 }
 @media (max-width: 480px) {
   .grid { grid-template-columns: 1fr; }
@@ -517,14 +533,13 @@ footer { background: var(--navy); color: rgba(255,255,255,0.65); padding: 42px 2
    ============================================================ */
 .footer-rights {
   max-width: 1180px;
-  margin: 18px auto 0;
-  padding-top: 16px;
-  border-top: 1px solid var(--line-navy);
+  margin: 0 auto;
   text-align: center;
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.03em;
-  color: rgba(255,255,255,0.55);
+  color: var(--ink-soft);
+  padding: 16px 24px 26px;
 }
 
 /* ============================================================
@@ -559,7 +574,6 @@ body.modal-open { overflow: hidden; }
     </button>
     <div class="masthead-right">
       <span class="nz-clock" id="nzClock"></span>
-      <div class="owner-area" id="ownerArea"></div>
     </div>
   </div>
   <div class="nav-row">
@@ -609,22 +623,36 @@ body.modal-open { overflow: hidden; }
 </main>
 
 <footer>
-  <div class="footer-inner">
-    <div class="footer-brand">
-      <svg class="fern-mark" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M20 36 C18 28 16 20 17 12 C17.6 8 19 5 22 4" />
-        <path d="M22 4 C24.5 4 26 5.6 25.8 7.8 C25.6 9.7 23.8 10.6 22.2 9.8 C21 9.2 20.8 7.7 21.8 7" />
-        <path d="M18 26 C14.5 25 12 22.8 11 19.5" />
-        <path d="M18.6 20 C22 18.6 24.4 16 25.4 12.8" />
-      </svg>
-      The New Zealand Brief
+  <div class="footer-top">
+    <div class="footer-col-brand">
+      <div class="footer-brand">
+        <svg class="fern-mark" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M20 36 C18 28 16 20 17 12 C17.6 8 19 5 22 4" />
+          <path d="M22 4 C24.5 4 26 5.6 25.8 7.8 C25.6 9.7 23.8 10.6 22.2 9.8 C21 9.2 20.8 7.7 21.8 7" />
+          <path d="M18 26 C14.5 25 12 22.8 11 19.5" />
+          <path d="M18.6 20 C22 18.6 24.4 16 25.4 12.8" />
+        </svg>
+        The New Zealand Brief
+      </div>
+      <p class="footer-tagline">Clear-eyed, independent news from around Aotearoa. Published as a personal news project.</p>
     </div>
-    <div style="display:flex; align-items:center; gap:16px;">
-      <span class="footer-note" id="footerNote"></span>
-      <button class="cookie-settings-link" id="cookieSettingsLink" type="button">Cookie settings</button>
+
+    <div class="footer-col">
+      <span class="footer-heading">Site</span>
+      <a class="footer-link" href="privacy.html">Privacy Policy</a>
+      <button class="footer-link" id="cookieSettingsLink" type="button">Cookie settings</button>
+    </div>
+
+    <div class="footer-col">
+      <span class="footer-heading">Editor</span>
+      <div class="footer-owner-box" id="ownerArea"></div>
     </div>
   </div>
-  <p class="footer-rights">All rights reserved to The New Zealand Brief 2026</p>
+
+  <div class="footer-inner">
+    <span class="footer-note" id="footerNote"></span>
+  </div>
+  <p class="footer-rights">© The New Zealand Brief 2026. All rights reserved.</p>
 </footer>
 
 <button class="fab" id="fabAdd" hidden aria-label="Publish a new story">
@@ -1283,29 +1311,34 @@ function animateFern(){
 }
 
 /* ============================================================
-   OWNER UI (header)
+   OWNER UI (footer)
    ============================================================ */
 function renderOwnerArea(){
   refs.ownerArea.innerHTML = '';
   if (state.isOwner) {
     var badge = el('span', 'owner-badge');
+    badge.style.color = 'var(--ink)';
+    badge.style.background = 'var(--paper-dim)';
+    badge.style.borderColor = 'var(--line)';
     var dotEl = el('span', 'owner-dot');
     badge.appendChild(dotEl);
     badge.appendChild(document.createTextNode('Editing'));
-    var statsBtn = el('button', 'btn btn-outline-invert btn-sm', 'Stats');
+    var statsBtn = el('button', 'btn btn-secondary btn-sm', 'Stats');
     statsBtn.type = 'button';
     statsBtn.addEventListener('click', openStatsModal);
-    var marqueeBtn = el('button', 'btn btn-outline-invert btn-sm', 'Marquee');
+    var marqueeBtn = el('button', 'btn btn-secondary btn-sm', 'Marquee');
     marqueeBtn.type = 'button';
     marqueeBtn.addEventListener('click', openMarqueeEditor);
-    var signOut = el('button', 'link-btn', 'Sign out');
+    var signOut = el('button', 'footer-link', 'Sign out');
+    signOut.type = 'button';
     signOut.addEventListener('click', logout);
     refs.ownerArea.appendChild(badge);
     refs.ownerArea.appendChild(statsBtn);
     refs.ownerArea.appendChild(marqueeBtn);
     refs.ownerArea.appendChild(signOut);
   } else {
-    var signIn = el('button', 'btn btn-outline-invert btn-sm', 'Sign in to edit');
+    var signIn = el('button', 'footer-link', 'Owner sign-in');
+    signIn.type = 'button';
     signIn.addEventListener('click', openLogin);
     refs.ownerArea.appendChild(signIn);
   }
