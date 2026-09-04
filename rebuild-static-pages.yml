@@ -1,0 +1,35 @@
+name: Rebuild static article pages
+
+# Regenerates /articles/<id>/index.html for every published story and
+# refreshes sitemap.xml, then commits the result — so search engines and
+# link-preview bots always see current, real HTML for each story, without
+# you needing to run anything by hand.
+
+on:
+  schedule:
+    - cron: '17 */3 * * *'   # every 3 hours
+  workflow_dispatch: {}      # lets you trigger it manually from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate static article pages + sitemap
+        run: node scripts/generate-static-articles.mjs
+
+      - name: Commit changes if any
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add articles sitemap.xml
+          git diff --cached --quiet || git commit -m "chore: rebuild static article pages"
+          git push
