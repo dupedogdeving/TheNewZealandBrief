@@ -3,7 +3,17 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="color-scheme" content="light" />
+<meta name="color-scheme" content="light dark" />
+<script>
+(function(){
+  try {
+    var saved = localStorage.getItem('nzbrief-theme');
+    var theme = (saved === 'dark' || saved === 'light') ? saved :
+      (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch(e) { document.documentElement.setAttribute('data-theme', 'light'); }
+})();
+</script>
 <title>The New Zealand Brief</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%230B1F2A'/%3E%3Cpath d='M32 50 C29 40 27 30 28 20 C28.6 15 31 11 35 9.5' stroke='%23E8A33D' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3Cpath d='M29 34 C24 33 20 30 18 25' stroke='%23E8A33D' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3Cpath d='M30 25 C35 23 39 19 41 14' stroke='%23E8A33D' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -47,6 +57,7 @@ ul { list-style: none; margin: 0; padding: 0; }
   --kowhai: #E8A33D;
   --kowhai-dark: #C6842A;
   --white: #FFFFFF;
+  --surface: #FFFFFF;
   --line: rgba(20,24,28,0.12);
   --line-navy: rgba(255,255,255,0.16);
   --danger: #B3432D;
@@ -58,6 +69,36 @@ ul { list-style: none; margin: 0; padding: 0; }
   --font-body: 'IBM Plex Sans', -apple-system, sans-serif;
   --font-mono: 'IBM Plex Mono', 'SF Mono', monospace;
 }
+
+/* ============================================================
+   2b. DARK THEME OVERRIDES
+   ============================================================ */
+[data-theme="dark"] {
+  --paper: #12171B;
+  --paper-dim: #1B2227;
+  --surface: #181F24;
+  --ink: #ECEDEE;
+  --ink-soft: #9BA5AC;
+  --line: rgba(255,255,255,0.12);
+  --shadow: 0 10px 28px rgba(0,0,0,0.35);
+  --shadow-lg: 0 20px 48px rgba(0,0,0,0.5);
+}
+body { transition: background-color .2s ease, color .2s ease; }
+[data-theme="dark"] .ad-space,
+[data-theme="dark"] .story-ad,
+[data-theme="dark"] .article-ad {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.14);
+}
+[data-theme="dark"] .skeleton-block,
+[data-theme="dark"] .skeleton-line {
+  background: linear-gradient(90deg, var(--paper-dim) 25%, #232c33 37%, var(--paper-dim) 63%);
+}
+[data-theme="dark"] .spinner { border-color: rgba(255,255,255,0.15); border-top-color: var(--jade); }
+[data-theme="dark"] .select-input {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239BA5AC' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+[data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
 
 .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
@@ -80,7 +121,20 @@ ul { list-style: none; margin: 0; padding: 0; }
 .masthead-right { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
 .nz-clock { font-family: var(--font-mono); font-size: 12px; color: rgba(255,255,255,0.7); letter-spacing: 0.03em; white-space: nowrap; }
 
-.owner-area { display: flex; align-items: center; gap: 10px; }
+.theme-toggle {
+  display: flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; flex-shrink: 0;
+  background: rgba(255,255,255,0.08); border: 1px solid var(--line-navy); border-radius: 50%;
+  color: var(--white); transition: background .15s ease, transform .15s ease;
+}
+.theme-toggle:hover { background: rgba(255,255,255,0.16); }
+.theme-toggle:active { transform: scale(0.92); }
+.theme-toggle svg { width: 17px; height: 17px; }
+.theme-toggle .icon-moon { display: none; }
+[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
+
+.owner-area { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .owner-badge { display: flex; align-items: center; gap: 7px; font-family: var(--font-mono); font-size: 12px; color: var(--white); background: rgba(255,255,255,0.08); border: 1px solid var(--line-navy); padding: 6px 10px; border-radius: 100px; }
 .owner-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--kowhai); flex-shrink: 0; }
 .link-btn { background: none; border: none; color: rgba(255,255,255,0.75); font-size: 13px; text-decoration: underline; text-underline-offset: 2px; padding: 4px 2px; }
@@ -136,7 +190,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 36px 24px 80px; }
 
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 26px; }
 
-.card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; position: relative; transition: transform .18s ease, box-shadow .18s ease; opacity: 0; animation: cardIn .5s ease forwards; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; position: relative; transition: transform .18s ease, box-shadow .18s ease; opacity: 0; animation: cardIn .5s ease forwards; }
 .card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
 .card:focus-visible { outline: 2px solid var(--kowhai); outline-offset: 2px; }
 .card:nth-child(1) { animation-delay: .02s; } .card:nth-child(2) { animation-delay: .06s; } .card:nth-child(3) { animation-delay: .10s; }
@@ -194,7 +248,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 36px 24px 80px; }
 .field-hint { font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft); float: right; font-weight: 400; }
 .text-input, .textarea, .select-input {
   width: 100%; border: 1.5px solid var(--line); border-radius: var(--radius-sm); padding: 11px 13px;
-  font-size: 15px; background: var(--white); color: var(--ink); transition: border-color .15s ease;
+  font-size: 15px; background: var(--surface); color: var(--ink); transition: border-color .15s ease;
 }
 .text-input:focus, .textarea:focus, .select-input:focus { outline: none; border-color: var(--jade); }
 .textarea { resize: vertical; min-height: 140px; line-height: 1.55; font-family: var(--font-body); }
@@ -217,7 +271,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 36px 24px 80px; }
    ============================================================ */
 .modal-overlay { position: fixed; inset: 0; background: rgba(11,19,24,0.56); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
 .modal-overlay[hidden] { display: none; }
-.modal-card { background: var(--white); border-radius: var(--radius); width: 100%; box-shadow: var(--shadow-lg); position: relative; margin: auto; animation: modalIn .22s ease; }
+.modal-card { background: var(--surface); border-radius: var(--radius); width: 100%; box-shadow: var(--shadow-lg); position: relative; margin: auto; animation: modalIn .22s ease; }
 @keyframes modalIn { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 .modal-sm { max-width: 400px; padding: 30px 28px; }
 .modal-md { max-width: 560px; padding: 32px 32px 30px; max-height: 90vh; overflow-y: auto; }
@@ -242,13 +296,28 @@ main { max-width: 1180px; margin: 0 auto; padding: 36px 24px 80px; }
 .toast[hidden] { display: none; }
 
 /* ============================================================
-   11. FOOTER
+   11. FOOTER — professional, light / white theme
    ============================================================ */
-footer { background: var(--navy); color: rgba(255,255,255,0.65); padding: 42px 24px; margin-top: 40px; }
-.footer-inner { max-width: 1180px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-.footer-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 15px; color: var(--white); }
-.footer-brand .fern-mark { width: 20px; height: 20px; color: var(--kowhai); }
-.footer-note { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.02em; }
+footer { background: var(--surface); color: var(--ink-soft); padding: 0; margin-top: 56px; border-top: 1px solid var(--line); }
+.footer-top {
+  max-width: 1180px; margin: 0 auto; padding: 44px 24px 32px;
+  display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 32px;
+}
+.footer-col-brand { display: flex; flex-direction: column; gap: 12px; }
+.footer-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--ink); }
+.footer-brand .fern-mark { width: 22px; height: 22px; color: var(--jade); }
+.footer-tagline { font-size: 13.5px; color: var(--ink-soft); line-height: 1.6; max-width: 320px; }
+.footer-heading { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); font-weight: 600; margin-bottom: 4px; }
+.footer-col { display: flex; flex-direction: column; gap: 10px; }
+.footer-link { background: none; border: none; padding: 0; text-align: left; font-size: 13.5px; color: var(--ink-soft); text-decoration: none; width: fit-content; }
+.footer-link:hover { color: var(--jade); text-decoration: underline; text-underline-offset: 2px; }
+.footer-owner-box { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.footer-inner {
+  max-width: 1180px; margin: 0 auto; padding: 18px 24px 26px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  border-top: 1px solid var(--line);
+}
+.footer-note { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.02em; color: var(--ink-soft); }
 
 /* ============================================================
    AD SPACES
@@ -370,7 +439,8 @@ footer { background: var(--navy); color: rgba(255,255,255,0.65); padding: 42px 2
   .card-teaser { display: none; }
   .fab { right: 18px; bottom: 18px; width: 54px; height: 54px; font-size: 28px; }
   .article-heading { max-width: 100%; }
-  .footer-inner { flex-direction: column; align-items: flex-start; }
+  .footer-top { grid-template-columns: 1fr; padding: 34px 18px 22px; }
+  .footer-inner { flex-direction: column; align-items: flex-start; padding: 16px 18px 22px; }
 }
 @media (max-width: 480px) {
   .grid { grid-template-columns: 1fr; }
@@ -477,6 +547,56 @@ footer { background: var(--navy); color: rgba(255,255,255,0.65); padding: 42px 2
 }
 
 /* ============================================================
+   23b. WEATHER TICKER
+   ============================================================ */
+.weather-ticker {
+  background: var(--navy-soft);
+  border-bottom: 1px solid var(--line-navy);
+  overflow: hidden;
+  position: relative;
+}
+.weather-ticker[hidden] { display: none; }
+.weather-ticker-inner { display: flex; align-items: stretch; }
+.weather-ticker-label {
+  flex-shrink: 0;
+  display: flex; align-items: center;
+  font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--kowhai);
+  background: rgba(0,0,0,0.16);
+  padding: 0 14px;
+  white-space: nowrap;
+}
+.weather-track-wrap {
+  display: flex;
+  width: max-content;
+  animation: weatherScroll 40s linear infinite;
+}
+.weather-track-wrap.paused { animation-play-state: paused; }
+.weather-segment { display: inline-flex; align-items: center; white-space: nowrap; }
+.weather-item {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--font-mono); font-size: 12.5px;
+  padding: 8px 28px 8px 0;
+  color: rgba(255,255,255,0.85);
+}
+.weather-item .wx-icon { font-size: 14px; line-height: 1; }
+.weather-item .wx-city { font-weight: 600; color: var(--white); }
+.weather-item .wx-temp { color: var(--kowhai); font-weight: 600; }
+.weather-item .wx-desc { color: rgba(255,255,255,0.6); }
+@keyframes weatherScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .weather-track-wrap { animation: none; overflow-x: auto; }
+}
+@media (max-width: 720px) {
+  .weather-ticker-label { font-size: 9.5px; padding: 0 10px; }
+  .weather-item { font-size: 11.5px; padding: 7px 18px 7px 0; }
+}
+
+/* ============================================================
    24. OWNER MARQUEE BANNER
    ============================================================ */
 .marquee-banner {
@@ -517,14 +637,13 @@ footer { background: var(--navy); color: rgba(255,255,255,0.65); padding: 42px 2
    ============================================================ */
 .footer-rights {
   max-width: 1180px;
-  margin: 18px auto 0;
-  padding-top: 16px;
-  border-top: 1px solid var(--line-navy);
+  margin: 0 auto;
   text-align: center;
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.03em;
-  color: rgba(255,255,255,0.55);
+  color: var(--ink-soft);
+  padding: 16px 24px 26px;
 }
 
 /* ============================================================
@@ -559,7 +678,10 @@ body.modal-open { overflow: hidden; }
     </button>
     <div class="masthead-right">
       <span class="nz-clock" id="nzClock"></span>
-      <div class="owner-area" id="ownerArea"></div>
+      <button class="theme-toggle" id="themeToggleBtn" type="button" aria-label="Switch to dark mode" aria-pressed="false">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
     </div>
   </div>
   <div class="nav-row">
@@ -567,6 +689,12 @@ body.modal-open { overflow: hidden; }
     <input type="text" class="search-input" id="searchInput" placeholder="Search stories" aria-label="Search stories" />
   </div>
 </header>
+
+<div class="weather-ticker" id="weatherTicker" hidden role="region" aria-label="New Zealand weather">
+  <div class="weather-ticker-inner">
+    <div class="weather-track-wrap" id="weatherTrackWrap"></div>
+  </div>
+</div>
 
 <div class="marquee-banner" id="marqueeBanner" hidden role="region" aria-label="Site announcement">
   <div class="marquee-track-wrap" id="marqueeTrackWrap"></div>
@@ -609,22 +737,36 @@ body.modal-open { overflow: hidden; }
 </main>
 
 <footer>
-  <div class="footer-inner">
-    <div class="footer-brand">
-      <svg class="fern-mark" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M20 36 C18 28 16 20 17 12 C17.6 8 19 5 22 4" />
-        <path d="M22 4 C24.5 4 26 5.6 25.8 7.8 C25.6 9.7 23.8 10.6 22.2 9.8 C21 9.2 20.8 7.7 21.8 7" />
-        <path d="M18 26 C14.5 25 12 22.8 11 19.5" />
-        <path d="M18.6 20 C22 18.6 24.4 16 25.4 12.8" />
-      </svg>
-      The New Zealand Brief
+  <div class="footer-top">
+    <div class="footer-col-brand">
+      <div class="footer-brand">
+        <svg class="fern-mark" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M20 36 C18 28 16 20 17 12 C17.6 8 19 5 22 4" />
+          <path d="M22 4 C24.5 4 26 5.6 25.8 7.8 C25.6 9.7 23.8 10.6 22.2 9.8 C21 9.2 20.8 7.7 21.8 7" />
+          <path d="M18 26 C14.5 25 12 22.8 11 19.5" />
+          <path d="M18.6 20 C22 18.6 24.4 16 25.4 12.8" />
+        </svg>
+        The New Zealand Brief
+      </div>
+      <p class="footer-tagline">Clear-eyed, independent news from around Aotearoa. Published as a personal news project.</p>
     </div>
-    <div style="display:flex; align-items:center; gap:16px;">
-      <span class="footer-note" id="footerNote"></span>
-      <button class="cookie-settings-link" id="cookieSettingsLink" type="button">Cookie settings</button>
+
+    <div class="footer-col">
+      <span class="footer-heading">Site</span>
+      <a class="footer-link" href="privacy.html">Privacy Policy</a>
+      <button class="footer-link" id="cookieSettingsLink" type="button">Cookie settings</button>
+    </div>
+
+    <div class="footer-col">
+      <span class="footer-heading">Editor</span>
+      <div class="footer-owner-box" id="ownerArea"></div>
     </div>
   </div>
-  <p class="footer-rights">All rights reserved to The New Zealand Brief 2026</p>
+
+  <div class="footer-inner">
+    <span class="footer-note" id="footerNote"></span>
+  </div>
+  <p class="footer-rights">© The New Zealand Brief 2026. All rights reserved.</p>
 </footer>
 
 <button class="fab" id="fabAdd" hidden aria-label="Publish a new story">
@@ -825,7 +967,6 @@ body.modal-open { overflow: hidden; }
       <div class="cookie-info-item">
         <div class="cookie-info-name">nzb_cookie_consent</div>
         <div class="cookie-info-desc">Remembers whether you accepted or declined cookies, so you're not asked again every visit.</div>
-        <div class="cookie-info-meta">Stored regardless of your choice \u2014 needed to respect it \u00B7 expires in 180 days</div>
       </div>
       <div class="cookie-info-item">
         <div class="cookie-info-name">nzb_last_category</div>
@@ -877,6 +1018,8 @@ const marqueeDocRef = doc(db, "settings", "marquee");
    CONSTANTS & STATE
    ============================================================ */
 var CATEGORIES_DEFAULT_ORDER = ['Local','National','Politics','Business','Sport','World','Environment','Culture','General'];
+var COOKIE_CONSENT_NAME = 'nzb_cookie_consent';
+var COOKIE_CATEGORY_NAME = 'nzb_last_category';
 
 var state = {
   articles: [],
@@ -993,6 +1136,27 @@ function fromLocalDatetimeValue(v){
 }
 
 /* ============================================================
+   COOKIE HELPERS (plain document.cookie \u2014 no localStorage)
+   ============================================================ */
+function setCookie(name, value, days){
+  var expires = '';
+  if (days) {
+    var date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    expires = '; expires=' + date.toUTCString();
+  }
+  document.cookie = name + '=' + encodeURIComponent(value) + expires + '; path=/; SameSite=Lax';
+}
+function getCookie(name){
+  var pattern = new RegExp('(?:^|; )' + name.replace(/([.$?*|{}()\[\]\\\/+^])/g, '\\$1') + '=([^;]*)');
+  var match = document.cookie.match(pattern);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+function eraseCookie(name){
+  document.cookie = name + '=; Max-Age=-1; path=/';
+}
+
+/* ============================================================
    DATA LAYER — now backed by Firestore instead of embedded JSON
    ============================================================ */
 function subscribeToArticles(){
@@ -1046,6 +1210,43 @@ function renderMarquee(){
     refs.marqueeTrackWrap.appendChild(el('span', 'marquee-segment', state.marqueeText));
   }
   updateScrollEffects();
+}
+
+/* ============================================================
+   COOKIE CONSENT BANNER (shown to every visitor on arrival)
+   ============================================================ */
+function initCookieConsent(){
+  var consent = getCookie(COOKIE_CONSENT_NAME);
+  if (consent === 'accepted') {
+    var lastCat = getCookie(COOKIE_CATEGORY_NAME);
+    if (lastCat) { state.filter = lastCat; }
+  } else if (consent !== 'declined') {
+    // No choice recorded yet \u2014 ask, after the page has had a moment to settle.
+    setTimeout(function(){
+      if (refs.cookieBanner) refs.cookieBanner.hidden = false;
+    }, 600);
+  }
+}
+function acceptCookies(){
+  setCookie(COOKIE_CONSENT_NAME, 'accepted', 180);
+  setCookie(COOKIE_CATEGORY_NAME, state.filter, 180);
+  hideCookieBanner();
+  toast('Cookie preferences saved.');
+}
+function declineCookies(){
+  setCookie(COOKIE_CONSENT_NAME, 'declined', 180);
+  eraseCookie(COOKIE_CATEGORY_NAME);
+  hideCookieBanner();
+}
+function hideCookieBanner(){ if (refs.cookieBanner) refs.cookieBanner.hidden = true; }
+function openCookieInfo(){ openModal(refs.cookieInfoModal); }
+function closeCookieInfo(){ closeModal(refs.cookieInfoModal); }
+function forgetCookieChoice(){
+  eraseCookie(COOKIE_CONSENT_NAME);
+  eraseCookie(COOKIE_CATEGORY_NAME);
+  closeCookieInfo();
+  toast('Your cookie choice has been forgotten.');
+  setTimeout(function(){ if (refs.cookieBanner) refs.cookieBanner.hidden = false; }, 400);
 }
 
 /* ============================================================
@@ -1191,7 +1392,8 @@ var $ = function(id){ return document.getElementById(id); };
 var refs = {};
 function cacheRefs(){
   ['ownerArea','navPills','searchInput','heroSlot','sectionTitle','sectionCount','grid','emptyState',
-   'homeView','articleView','fabAdd','logoBtn','nzClock','footerNote','masthead','readingProgress',
+   'homeView','articleView','fabAdd','logoBtn','nzClock','themeToggleBtn','footerNote','masthead','readingProgress',
+   'weatherTicker','weatherTrackWrap',
    'loginModal','loginTitle','loginSubtitle','emailInput','passwordInput','loginError',
    'loginCancelBtn','loginSubmitBtn','loginCloseBtn',
    'editorModal','editorTitle','headingInput','headingCounter','headingError','categorySelect',
@@ -1202,6 +1404,8 @@ function cacheRefs(){
    'statsModal','statsGrid','statsFacts','statsCloseBtn','statsCloseBtn2',
    'marqueeBanner','marqueeTrackWrap','marqueeModal','marqueeTextInput','marqueeCounter',
    'marqueeActiveCheckbox','marqueeGeneralError','marqueeCloseBtn','marqueeCancelBtn','marqueeSaveBtn',
+   'cookieBanner','cookieAcceptBtn','cookieDeclineBtn','cookieLearnMoreBtn','cookieSettingsLink',
+   'cookieInfoModal','cookieInfoCloseBtn','cookieInfoCloseBtn2','cookieForgetBtn',
    'toast'
   ].forEach(function(id){ refs[id] = $(id); });
 }
@@ -1263,6 +1467,111 @@ function startClock(){
   setInterval(tick, 30000);
 }
 
+/* ============================================================
+   THEME (dark / light mode)
+   ============================================================ */
+function currentTheme(){
+  return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+}
+function applyTheme(theme){
+  document.documentElement.setAttribute('data-theme', theme);
+  var meta = document.querySelector('meta[name="color-scheme"]');
+  if (meta) meta.setAttribute('content', theme === 'dark' ? 'dark light' : 'light dark');
+  if (refs.themeToggleBtn) {
+    refs.themeToggleBtn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    refs.themeToggleBtn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+}
+function toggleTheme(){
+  var next = currentTheme() === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+  try { localStorage.setItem('nzbrief-theme', next); } catch(e){ /* ignore */ }
+}
+function initTheme(){
+  applyTheme(currentTheme());
+  if (window.matchMedia) {
+    var mq = window.matchMedia('(prefers-color-scheme: dark)');
+    var onChange = function(e){
+      var saved = null;
+      try { saved = localStorage.getItem('nzbrief-theme'); } catch(err){ /* ignore */ }
+      if (!saved) applyTheme(e.matches ? 'dark' : 'light');
+    };
+    if (mq.addEventListener) mq.addEventListener('change', onChange);
+    else if (mq.addListener) mq.addListener(onChange);
+  }
+}
+
+/* ============================================================
+   WEATHER TICKER
+   ============================================================ */
+var WEATHER_CITIES = [
+  { name: 'Auckland', lat: -36.8485, lon: 174.7633 },
+  { name: 'Hamilton', lat: -37.7870, lon: 175.2793 },
+  { name: 'Napier', lat: -39.4928, lon: 176.9120 },
+  { name: 'Wellington', lat: -41.2866, lon: 174.7756 },
+  { name: 'Christchurch', lat: -43.5321, lon: 172.6362 },
+  { name: 'Queenstown', lat: -45.0312, lon: 168.6626 },
+  { name: 'Dunedin', lat: -45.8788, lon: 170.5028 }
+];
+var WEATHER_CODES = {
+  0: ['\u2600\uFE0F', 'Clear'], 1: ['\uD83C\uDF24\uFE0F', 'Mostly clear'], 2: ['\u26C5', 'Partly cloudy'], 3: ['\u2601\uFE0F', 'Overcast'],
+  45: ['\uD83C\uDF2B\uFE0F', 'Fog'], 48: ['\uD83C\uDF2B\uFE0F', 'Fog'],
+  51: ['\uD83C\uDF26\uFE0F', 'Light drizzle'], 53: ['\uD83C\uDF26\uFE0F', 'Drizzle'], 55: ['\uD83C\uDF27\uFE0F', 'Heavy drizzle'],
+  56: ['\uD83C\uDF27\uFE0F', 'Freezing drizzle'], 57: ['\uD83C\uDF27\uFE0F', 'Freezing drizzle'],
+  61: ['\uD83C\uDF26\uFE0F', 'Light rain'], 63: ['\uD83C\uDF27\uFE0F', 'Rain'], 65: ['\uD83C\uDF27\uFE0F', 'Heavy rain'],
+  66: ['\uD83C\uDF27\uFE0F', 'Freezing rain'], 67: ['\uD83C\uDF27\uFE0F', 'Freezing rain'],
+  71: ['\uD83C\uDF28\uFE0F', 'Light snow'], 73: ['\uD83C\uDF28\uFE0F', 'Snow'], 75: ['\uD83C\uDF28\uFE0F', 'Heavy snow'], 77: ['\uD83C\uDF28\uFE0F', 'Snow grains'],
+  80: ['\uD83C\uDF26\uFE0F', 'Rain showers'], 81: ['\uD83C\uDF27\uFE0F', 'Rain showers'], 82: ['\u26C8\uFE0F', 'Heavy showers'],
+  85: ['\uD83C\uDF28\uFE0F', 'Snow showers'], 86: ['\uD83C\uDF28\uFE0F', 'Snow showers'],
+  95: ['\u26C8\uFE0F', 'Thunderstorm'], 96: ['\u26C8\uFE0F', 'Thunderstorm'], 99: ['\u26C8\uFE0F', 'Severe storm']
+};
+function wxInfo(code){ return WEATHER_CODES[code] || ['\uD83C\uDF21\uFE0F', '\u2014']; }
+
+function buildWeatherSegment(list){
+  var seg = el('span', 'weather-segment');
+  list.forEach(function(item){
+    var info = wxInfo(item.code);
+    var wrap = el('span', 'weather-item');
+    wrap.appendChild(el('span', 'wx-icon', info[0]));
+    wrap.appendChild(el('span', 'wx-city', item.name));
+    wrap.appendChild(el('span', 'wx-temp', Math.round(item.temp) + '\u00B0C'));
+    wrap.appendChild(el('span', 'wx-desc', info[1]));
+    seg.appendChild(wrap);
+  });
+  return seg;
+}
+function renderWeather(list){
+  if (!refs.weatherTrackWrap || !refs.weatherTicker) return;
+  refs.weatherTrackWrap.innerHTML = '';
+  refs.weatherTrackWrap.appendChild(buildWeatherSegment(list));
+  refs.weatherTrackWrap.appendChild(buildWeatherSegment(list));
+  refs.weatherTicker.hidden = false;
+}
+function loadWeather(){
+  var lats = WEATHER_CITIES.map(function(c){ return c.lat; }).join(',');
+  var lons = WEATHER_CITIES.map(function(c){ return c.lon; }).join(',');
+  var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lats + '&longitude=' + lons +
+    '&current=temperature_2m,weather_code&timezone=Pacific%2FAuckland';
+  fetch(url).then(function(res){
+    if (!res.ok) throw new Error('weather request failed');
+    return res.json();
+  }).then(function(data){
+    var arr = Array.isArray(data) ? data : [data];
+    var list = WEATHER_CITIES.map(function(city, i){
+      var cur = arr[i] && arr[i].current;
+      return {
+        name: city.name,
+        temp: cur ? cur.temperature_2m : null,
+        code: cur ? cur.weather_code : null
+      };
+    }).filter(function(item){ return item.temp !== null && item.temp !== undefined; });
+    if (!list.length) throw new Error('no weather data');
+    renderWeather(list);
+  }).catch(function(){
+    if (refs.weatherTicker) refs.weatherTicker.hidden = true;
+  });
+}
+
 function animateFern(){
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduce) return;
@@ -1283,29 +1592,34 @@ function animateFern(){
 }
 
 /* ============================================================
-   OWNER UI (header)
+   OWNER UI (footer)
    ============================================================ */
 function renderOwnerArea(){
   refs.ownerArea.innerHTML = '';
   if (state.isOwner) {
     var badge = el('span', 'owner-badge');
+    badge.style.color = 'var(--ink)';
+    badge.style.background = 'var(--paper-dim)';
+    badge.style.borderColor = 'var(--line)';
     var dotEl = el('span', 'owner-dot');
     badge.appendChild(dotEl);
     badge.appendChild(document.createTextNode('Editing'));
-    var statsBtn = el('button', 'btn btn-outline-invert btn-sm', 'Stats');
+    var statsBtn = el('button', 'btn btn-secondary btn-sm', 'Stats');
     statsBtn.type = 'button';
     statsBtn.addEventListener('click', openStatsModal);
-    var marqueeBtn = el('button', 'btn btn-outline-invert btn-sm', 'Marquee');
+    var marqueeBtn = el('button', 'btn btn-secondary btn-sm', 'Marquee');
     marqueeBtn.type = 'button';
     marqueeBtn.addEventListener('click', openMarqueeEditor);
-    var signOut = el('button', 'link-btn', 'Sign out');
+    var signOut = el('button', 'footer-link', 'Sign out');
+    signOut.type = 'button';
     signOut.addEventListener('click', logout);
     refs.ownerArea.appendChild(badge);
     refs.ownerArea.appendChild(statsBtn);
     refs.ownerArea.appendChild(marqueeBtn);
     refs.ownerArea.appendChild(signOut);
   } else {
-    var signIn = el('button', 'btn btn-outline-invert btn-sm', 'Sign in to edit');
+    var signIn = el('button', 'footer-link', 'Owner sign-in');
+    signIn.type = 'button';
     signIn.addEventListener('click', openLogin);
     refs.ownerArea.appendChild(signIn);
   }
@@ -1333,6 +1647,9 @@ function renderNav(){
 }
 function setFilter(cat){
   state.filter = cat;
+  if (getCookie(COOKIE_CONSENT_NAME) === 'accepted') {
+    setCookie(COOKIE_CATEGORY_NAME, cat, 180);
+  }
   goHomeSilent();
   renderHome();
 }
@@ -1923,6 +2240,8 @@ function wireEvents(){
     goHome();
   });
 
+  refs.themeToggleBtn.addEventListener('click', toggleTheme);
+
   var searchDebounceTimer = null;
   refs.searchInput.addEventListener('input', function(){
     var val = refs.searchInput.value;
@@ -1971,6 +2290,14 @@ function wireEvents(){
   refs.marqueeCloseBtn.addEventListener('click', closeMarqueeEditor);
   refs.marqueeCancelBtn.addEventListener('click', closeMarqueeEditor);
   refs.marqueeSaveBtn.addEventListener('click', submitMarquee);
+
+  refs.cookieAcceptBtn.addEventListener('click', acceptCookies);
+  refs.cookieDeclineBtn.addEventListener('click', declineCookies);
+  refs.cookieLearnMoreBtn.addEventListener('click', openCookieInfo);
+  refs.cookieSettingsLink.addEventListener('click', openCookieInfo);
+  refs.cookieInfoCloseBtn.addEventListener('click', closeCookieInfo);
+  refs.cookieInfoCloseBtn2.addEventListener('click', closeCookieInfo);
+  refs.cookieForgetBtn.addEventListener('click', forgetCookieChoice);
 }
 
 /* ============================================================
@@ -1979,7 +2306,10 @@ function wireEvents(){
 function init(){
   cacheRefs();
   wireEvents();
+  initTheme();
   startClock();
+  loadWeather();
+  setInterval(loadWeather, 15 * 60 * 1000);
   refs.footerNote.textContent = 'Personal news project \u00B7 \u00A9 ' + new Date().getFullYear();
 
   onAuthStateChanged(auth, function(user){
@@ -1990,6 +2320,7 @@ function init(){
 
   subscribeToArticles();
   subscribeToMarquee();
+  initCookieConsent();
   updateScrollEffects();
   animateFern();
 }
