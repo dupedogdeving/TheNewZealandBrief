@@ -905,6 +905,8 @@ const marqueeDocRef = doc(db, "settings", "marquee");
    CONSTANTS & STATE
    ============================================================ */
 var CATEGORIES_DEFAULT_ORDER = ['Local','National','Politics','Business','Sport','World','Environment','Culture','General'];
+var COOKIE_CONSENT_NAME = 'nzb_cookie_consent';
+var COOKIE_CATEGORY_NAME = 'nzb_last_category';
 
 var state = {
   articles: [],
@@ -1021,6 +1023,27 @@ function fromLocalDatetimeValue(v){
 }
 
 /* ============================================================
+   COOKIE HELPERS (plain document.cookie \u2014 no localStorage)
+   ============================================================ */
+function setCookie(name, value, days){
+  var expires = '';
+  if (days) {
+    var date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    expires = '; expires=' + date.toUTCString();
+  }
+  document.cookie = name + '=' + encodeURIComponent(value) + expires + '; path=/; SameSite=Lax';
+}
+function getCookie(name){
+  var pattern = new RegExp('(?:^|; )' + name.replace(/([.$?*|{}()\[\]\\\/+^])/g, '\\$1') + '=([^;]*)');
+  var match = document.cookie.match(pattern);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+function eraseCookie(name){
+  document.cookie = name + '=; Max-Age=-1; path=/';
+}
+
+/* ============================================================
    DATA LAYER — now backed by Firestore instead of embedded JSON
    ============================================================ */
 function subscribeToArticles(){
@@ -1074,6 +1097,43 @@ function renderMarquee(){
     refs.marqueeTrackWrap.appendChild(el('span', 'marquee-segment', state.marqueeText));
   }
   updateScrollEffects();
+}
+
+/* ============================================================
+   COOKIE CONSENT BANNER (shown to every visitor on arrival)
+   ============================================================ */
+function initCookieConsent(){
+  var consent = getCookie(COOKIE_CONSENT_NAME);
+  if (consent === 'accepted') {
+    var lastCat = getCookie(COOKIE_CATEGORY_NAME);
+    if (lastCat) { state.filter = lastCat; }
+  } else if (consent !== 'declined') {
+    // No choice recorded yet \u2014 ask, after the page has had a moment to settle.
+    setTimeout(function(){
+      if (refs.cookieBanner) refs.cookieBanner.hidden = false;
+    }, 600);
+  }
+}
+function acceptCookies(){
+  setCookie(COOKIE_CONSENT_NAME, 'accepted', 180);
+  setCookie(COOKIE_CATEGORY_NAME, state.filter, 180);
+  hideCookieBanner();
+  toast('Cookie preferences saved.');
+}
+function declineCookies(){
+  setCookie(COOKIE_CONSENT_NAME, 'declined', 180);
+  eraseCookie(COOKIE_CATEGORY_NAME);
+  hideCookieBanner();
+}
+function hideCookieBanner(){ if (refs.cookieBanner) refs.cookieBanner.hidden = true; }
+function openCookieInfo(){ openModal(refs.cookieInfoModal); }
+function closeCookieInfo(){ closeModal(refs.cookieInfoModal); }
+function forgetCookieChoice(){
+  eraseCookie(COOKIE_CONSENT_NAME);
+  eraseCookie(COOKIE_CATEGORY_NAME);
+  closeCookieInfo();
+  toast('Your cookie choice has been forgotten.');
+  setTimeout(function(){ if (refs.cookieBanner) refs.cookieBanner.hidden = false; }, 400);
 }
 
 /* ============================================================
@@ -1230,6 +1290,8 @@ function cacheRefs(){
    'statsModal','statsGrid','statsFacts','statsCloseBtn','statsCloseBtn2',
    'marqueeBanner','marqueeTrackWrap','marqueeModal','marqueeTextInput','marqueeCounter',
    'marqueeActiveCheckbox','marqueeGeneralError','marqueeCloseBtn','marqueeCancelBtn','marqueeSaveBtn',
+   'cookieBanner','cookieAcceptBtn','cookieDeclineBtn','cookieLearnMoreBtn','cookieSettingsLink',
+   'cookieInfoModal','cookieInfoCloseBtn','cookieInfoCloseBtn2','cookieForgetBtn',
    'toast'
   ].forEach(function(id){ refs[id] = $(id); });
 }
@@ -1366,6 +1428,9 @@ function renderNav(){
 }
 function setFilter(cat){
   state.filter = cat;
+  if (getCookie(COOKIE_CONSENT_NAME) === 'accepted') {
+    setCookie(COOKIE_CATEGORY_NAME, cat, 180);
+  }
   goHomeSilent();
   renderHome();
 }
@@ -2004,6 +2069,14 @@ function wireEvents(){
   refs.marqueeCloseBtn.addEventListener('click', closeMarqueeEditor);
   refs.marqueeCancelBtn.addEventListener('click', closeMarqueeEditor);
   refs.marqueeSaveBtn.addEventListener('click', submitMarquee);
+
+  refs.cookieAcceptBtn.addEventListener('click', acceptCookies);
+  refs.cookieDeclineBtn.addEventListener('click', declineCookies);
+  refs.cookieLearnMoreBtn.addEventListener('click', openCookieInfo);
+  refs.cookieSettingsLink.addEventListener('click', openCookieInfo);
+  refs.cookieInfoCloseBtn.addEventListener('click', closeCookieInfo);
+  refs.cookieInfoCloseBtn2.addEventListener('click', closeCookieInfo);
+  refs.cookieForgetBtn.addEventListener('click', forgetCookieChoice);
 }
 
 /* ============================================================
@@ -2023,6 +2096,7 @@ function init(){
 
   subscribeToArticles();
   subscribeToMarquee();
+  initCookieConsent();
   updateScrollEffects();
   animateFern();
 }
