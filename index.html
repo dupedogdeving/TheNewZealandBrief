@@ -1037,7 +1037,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
 import {
   getFirestore, collection, doc, addDoc, updateDoc, deleteDoc,
-  onSnapshot, query, orderBy, setDoc
+  onSnapshot, query, orderBy, setDoc, where
 } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -1251,9 +1251,22 @@ function subscribeToLiveUsers(){
 /* ============================================================
    DATA LAYER — now backed by Firestore instead of embedded JSON
    ============================================================ */
+var unsubscribeArticles = null;
 function subscribeToArticles(){
-  var q = query(articlesCol, orderBy('date', 'desc'));
-  onSnapshot(q, function(snapshot){
+  if (typeof unsubscribeArticles === 'function') { unsubscribeArticles(); }
+  // IMPORTANT: this filter must match firestore.rules exactly (draft == false
+  // for anyone who isn't the authenticated owner). The rule alone can't stop
+  // a client from fetching unfiltered data if the query itself doesn't also
+  // ask for that filter — Firestore rejects list queries that could return
+  // documents the rule wouldn't allow, so this filter is what makes the rule
+  // actually enforceable, not just a UI nicety.
+  var q = state.isOwner
+    ? query(articlesCol, orderBy('date', 'desc'))
+    : query(articlesCol,
+        where('draft', '==', false),
+        where('date', '<=', new Date().toISOString()),
+        orderBy('date', 'desc'));
+  unsubscribeArticles = onSnapshot(q, function(snapshot){
     state.articles = snapshot.docs.map(function(d){
       return Object.assign({ id: d.id }, d.data());
     });
@@ -2550,10 +2563,10 @@ function init(){
     state.liveUsers = 0;
     renderOwnerArea();
     if (state.isOwner) subscribeToLiveUsers();
+    subscribeToArticles();
     renderCurrentView();
   });
 
-  subscribeToArticles();
   subscribeToMarquee();
   initCookieConsent();
   startLiveUserPresence();
