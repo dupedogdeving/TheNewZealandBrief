@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://dupedogdeving.github.io/TheNewZealandBrief/sitemap.xml
