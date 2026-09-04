@@ -1359,7 +1359,13 @@ function subscribeToArticles(){
     renderCurrentView();
   }, function(err){
     console.error('Firestore read failed', err);
-    toast('Couldn\u2019t load stories. Check your connection.');
+    // Surface the real Firestore error (e.g. a missing composite index, or
+    // permission denied) instead of a generic message. This bug only shows
+    // up for signed-out visitors, so gating the detail behind "owner only"
+    // would hide it from the one view where it actually happens — show it
+    // to everyone for now; you can revert to a plain message once fixed.
+    var detail = (err && err.message) ? ' (' + err.message + ')' : '';
+    toast('Couldn\u2019t load stories. Check your connection.' + detail);
   });
 }
 
