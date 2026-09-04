@@ -50,26 +50,63 @@ const OUTPUT_DIR = path.join(REPO_ROOT, 'articles');
 const SITEMAP_PATH = path.join(REPO_ROOT, 'sitemap.xml');
 
 // ---- Fetch published articles from Firestore via the public REST API ----
-// This uses the same public read access the live site already relies on
-// (Firestore security rules restrict this to draft == false documents for
-// unauthenticated requests — see firestore.rules). No credentials needed.
+// This mirrors the exact query the live app uses for anonymous visitors:
+// where('draft','==',false), where('date','<=', now), orderBy('date','desc').
+// Firestore security rules only allow a *list* query to return documents
+// that satisfy the rule's condition (draft == false) if the query itself
+// carries that same filter — an unfiltered request is correctly rejected
+// with 403. So this has to use the structured runQuery endpoint (which
+// supports filters), not the plain "list documents" endpoint.
 async function fetchPublishedArticles() {
-  const url = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/articles?pageSize=300`;
-  const res = await fetch(url);
-  if (!res.ok) {
-    throw new Error(`Firestore REST request failed: ${res.status} ${res.statusText}`);
-  }
-  const body = await res.json();
-  const docs = body.documents || [];
-  const now = new Date();
+  const url = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents:runQuery`;
+  const nowIso = new Date().toISOString();
 
-  return docs
-    .map((d) => ({
-      id: d.name.split('/').pop(),
-      ...firestoreFieldsToObject(d.fields || {}),
-    }))
-    .filter((a) => a.draft !== true && a.date && new Date(a.date) <= now)
-    .sort((a, b) => new Date(b.date) - new Date(a.date));
+  const body = {
+    structuredQuery: {
+      from: [{ collectionId: 'articles' }],
+      where: {
+        compositeFilter: {
+          op: 'AND',
+          filters: [
+            {
+              fieldFilter: {
+                field: { fieldPath: 'draft' },
+                op: 'EQUAL',
+                value: { booleanValue: false },
+              },
+            },
+            {
+              fieldFilter: {
+                field: { fieldPath: 'date' },
+                op: 'LESS_THAN_OR_EQUAL',
+                value: { stringValue: nowIso },
+              },
+            },
+          ],
+        },
+      },
+      orderBy: [{ field: { fieldPath: 'date' }, direction: 'DESCENDING' }],
+      limit: 300,
+    },
+  };
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    throw new Error(`Firestore runQuery failed: ${res.status} ${res.statusText} ${text}`);
+  }
+  const rows = await res.json();
+
+  return rows
+    .filter((row) => row.document) // skip entries with no document (e.g. skipped-results markers)
+    .map((row) => ({
+      id: row.document.name.split('/').pop(),
+      ...firestoreFieldsToObject(row.document.fields || {}),
+    }));
 }
 
 // Minimal Firestore REST "Value" decoder for the field types this app uses.
