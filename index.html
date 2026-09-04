@@ -824,6 +824,14 @@ body.modal-open { overflow: hidden; }
     </div>
 
     <div class="field">
+      <label class="field-label" for="authorSelect">Author</label>
+      <select id="authorSelect" class="select-input">
+        <option value="Mason">Mason</option>
+        <option value="Flynn">Flynn</option>
+      </select>
+    </div>
+
+    <div class="field">
       <label class="field-label" for="publishDateInput">Publish date &amp; time</label>
       <input type="datetime-local" id="publishDateInput" class="text-input" />
       <p class="field-note">Set this in the future to schedule the story — it stays hidden from readers until then.</p>
@@ -1020,6 +1028,9 @@ const marqueeDocRef = doc(db, "settings", "marquee");
 var CATEGORIES_DEFAULT_ORDER = ['Local','National','Politics','Business','Sport','World','Environment','Culture','General'];
 var COOKIE_CONSENT_NAME = 'nzb_cookie_consent';
 var COOKIE_CATEGORY_NAME = 'nzb_last_category';
+var LIVE_USER_COOKIE_NAME = 'nzb_live_user';
+var LIVE_USER_TTL_MS = 2 * 60 * 1000;
+var presenceCol = collection(db, 'presence');
 
 var state = {
   articles: [],
@@ -1032,7 +1043,8 @@ var state = {
   pendingImage: null,
   deletePendingId: null,
   marqueeText: '',
-  marqueeActive: false
+  marqueeActive: false,
+  liveUsers: 0
 };
 
 /* ============================================================
@@ -1154,6 +1166,44 @@ function getCookie(name){
 }
 function eraseCookie(name){
   document.cookie = name + '=; Max-Age=-1; path=/';
+}
+
+/* ============================================================
+   LIVE USERS — anonymous cookie-based presence, owner view only
+   ============================================================ */
+function getOrCreateLiveUserCookie(){
+  var id = getCookie(LIVE_USER_COOKIE_NAME);
+  if (!id) {
+    id = 'visitor_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10);
+    setCookie(LIVE_USER_COOKIE_NAME, id, 30);
+  }
+  return id;
+}
+function startLiveUserPresence(){
+  var visitorId = getOrCreateLiveUserCookie();
+  var presenceRef = doc(db, 'presence', visitorId);
+  function heartbeat(){
+    setDoc(presenceRef, { lastSeen: Date.now() }, { merge: true }).catch(function(err){
+      console.warn('Presence update failed', err);
+    });
+  }
+  heartbeat();
+  setInterval(heartbeat, 30000);
+}
+function subscribeToLiveUsers(){
+  if (!state.isOwner) return;
+  onSnapshot(presenceCol, function(snapshot){
+    var cutoff = Date.now() - LIVE_USER_TTL_MS;
+    var count = 0;
+    snapshot.forEach(function(d){
+      var data = d.data() || {};
+      if (typeof data.lastSeen === 'number' && data.lastSeen >= cutoff) count++;
+    });
+    state.liveUsers = count;
+    renderOwnerArea();
+  }, function(err){
+    console.error('Live user read failed', err);
+  });
 }
 
 /* ============================================================
@@ -1397,7 +1447,7 @@ function cacheRefs(){
    'loginModal','loginTitle','loginSubtitle','emailInput','passwordInput','loginError',
    'loginCancelBtn','loginSubmitBtn','loginCloseBtn',
    'editorModal','editorTitle','headingInput','headingCounter','headingError','categorySelect',
-   'publishDateInput','draftCheckbox','featuredCheckbox',
+   'publishDateInput','authorSelect','draftCheckbox','featuredCheckbox',
    'dropzone','imageInput','dropzoneEmpty','dropzonePreview','previewImg','imageError',
    'descInput','descError','editorGeneralError','editorCancelBtn','editorSubmitBtn','editorCloseBtn',
    'deleteModal','deleteSubtitle','deleteCancelBtn','deleteConfirmBtn',
@@ -1604,6 +1654,10 @@ function renderOwnerArea(){
     var dotEl = el('span', 'owner-dot');
     badge.appendChild(dotEl);
     badge.appendChild(document.createTextNode('Editing'));
+    var liveBadge = el('span', 'owner-badge', 'Live users: ' + String(state.liveUsers));
+    liveBadge.style.color = 'var(--ink)';
+    liveBadge.style.background = 'var(--paper-dim)';
+    liveBadge.style.borderColor = 'var(--line)';
     var statsBtn = el('button', 'btn btn-secondary btn-sm', 'Stats');
     statsBtn.type = 'button';
     statsBtn.addEventListener('click', openStatsModal);
@@ -1614,6 +1668,7 @@ function renderOwnerArea(){
     signOut.type = 'button';
     signOut.addEventListener('click', logout);
     refs.ownerArea.appendChild(badge);
+    refs.ownerArea.appendChild(liveBadge);
     refs.ownerArea.appendChild(statsBtn);
     refs.ownerArea.appendChild(marqueeBtn);
     refs.ownerArea.appendChild(signOut);
@@ -2138,6 +2193,7 @@ function openEditor(articleId){
     refs.editorTitle.textContent = 'Edit story';
     refs.headingInput.value = a.heading;
     refs.categorySelect.value = a.category || 'General';
+    refs.authorSelect.value = a.author || 'Mason';
     refs.descInput.value = a.description;
     refs.publishDateInput.value = toLocalDatetimeValue(new Date(a.date));
     refs.draftCheckbox.checked = !!a.draft;
@@ -2149,6 +2205,7 @@ function openEditor(articleId){
     refs.editorTitle.textContent = 'Publish a story';
     refs.headingInput.value = '';
     refs.categorySelect.value = 'General';
+    refs.authorSelect.value = 'Mason';
     refs.descInput.value = '';
     refs.publishDateInput.value = toLocalDatetimeValue(new Date());
     refs.draftCheckbox.checked = false;
@@ -2314,13 +2371,16 @@ function init(){
 
   onAuthStateChanged(auth, function(user){
     state.isOwner = !!user;
+    state.liveUsers = 0;
     renderOwnerArea();
+    if (state.isOwner) subscribeToLiveUsers();
     renderCurrentView();
   });
 
   subscribeToArticles();
   subscribeToMarquee();
   initCookieConsent();
+  startLiveUserPresence();
   updateScrollEffects();
   animateFern();
 }
