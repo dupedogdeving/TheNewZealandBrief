@@ -4,7 +4,6 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="color-scheme" content="light dark" />
-<meta name="theme-color" content="#0B1F2A" />
 <script>
 (function(){
   try {
@@ -15,43 +14,7 @@
   } catch(e) { document.documentElement.setAttribute('data-theme', 'light'); }
 })();
 </script>
-<title id="pageTitle">The New Zealand Brief — Clear-eyed news from around Aotearoa</title>
-
-<!-- ============================================================
-     SEO / SOCIAL META
-     These are updated dynamically per-article by updateMetaTags()
-     in the main script below. The values here are the defaults
-     shown for the homepage and to crawlers that don't run JS.
-     NOTE: replace the URLs below with your real domain if you use
-     a custom domain instead of GitHub Pages.
-     ============================================================ -->
-<meta id="metaDescription" name="description" content="Independent, clear-eyed news and analysis from around Aotearoa New Zealand — local, national, politics, business, sport, world and culture." />
-<link id="canonicalLink" rel="canonical" href="https://dupedogdeving.github.io/TheNewZealandBrief/" />
-<meta name="robots" content="index, follow" />
-
-<meta id="ogType" property="og:type" content="website" />
-<meta property="og:site_name" content="The New Zealand Brief" />
-<meta id="ogTitle" property="og:title" content="The New Zealand Brief — Clear-eyed news from around Aotearoa" />
-<meta id="ogDescription" property="og:description" content="Independent, clear-eyed news and analysis from around Aotearoa New Zealand." />
-<meta id="ogUrl" property="og:url" content="https://dupedogdeving.github.io/TheNewZealandBrief/" />
-<meta id="ogImage" property="og:image" content="https://dupedogdeving.github.io/TheNewZealandBrief/social-share.png" />
-<meta property="og:locale" content="en_NZ" />
-
-<meta id="twitterCard" name="twitter:card" content="summary_large_image" />
-<meta id="twitterTitle" name="twitter:title" content="The New Zealand Brief — Clear-eyed news from around Aotearoa" />
-<meta id="twitterDescription" name="twitter:description" content="Independent, clear-eyed news and analysis from around Aotearoa New Zealand." />
-<meta id="twitterImage" name="twitter:image" content="https://dupedogdeving.github.io/TheNewZealandBrief/social-share.png" />
-
-<script id="ldJsonScript" type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "The New Zealand Brief",
-  "url": "https://dupedogdeving.github.io/TheNewZealandBrief/",
-  "description": "Independent, clear-eyed news and analysis from around Aotearoa New Zealand."
-}
-</script>
-
+<title>The New Zealand Brief</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%230B1F2A'/%3E%3Cpath d='M32 50 C29 40 27 30 28 20 C28.6 15 31 11 35 9.5' stroke='%23E8A33D' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3Cpath d='M29 34 C24 33 20 30 18 25' stroke='%23E8A33D' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3Cpath d='M30 25 C35 23 39 19 41 14' stroke='%23E8A33D' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -139,14 +102,6 @@ body { transition: background-color .2s ease, color .2s ease; }
 
 .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
-.skip-link {
-  position: fixed; top: -48px; left: 12px; z-index: 300;
-  background: var(--kowhai); color: var(--navy); font-weight: 600; font-size: 14px;
-  padding: 10px 18px; border-radius: var(--radius-sm); text-decoration: none;
-  transition: top .15s ease;
-}
-.skip-link:focus { top: 12px; }
-
 /* ============================================================
    3. HEADER / MASTHEAD
    ============================================================ */
@@ -216,11 +171,9 @@ body { transition: background-color .2s ease, color .2s ease; }
    ============================================================ */
 main { max-width: 1180px; margin: 0 auto; padding: 36px 24px 80px; }
 
-.hero { position: relative; border-radius: var(--radius); overflow: hidden; cursor: pointer; background: var(--navy); box-shadow: var(--shadow); margin-bottom: 48px; transition: box-shadow .25s ease; }
-.hero:hover, .hero:focus-visible { box-shadow: var(--shadow-lg); }
-.hero-media { position: relative; width: 100%; aspect-ratio: 21/10; overflow: hidden; }
-.hero-media img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
-.hero:hover .hero-media img, .hero:focus-visible .hero-media img { transform: scale(1.035); }
+.hero { position: relative; border-radius: var(--radius); overflow: hidden; cursor: pointer; background: var(--navy); box-shadow: var(--shadow); margin-bottom: 48px; }
+.hero-media { position: relative; width: 100%; aspect-ratio: 21/10; }
+.hero-media img { width: 100%; height: 100%; object-fit: cover; }
 .hero-scrim { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(11,31,42,0.94) 0%, rgba(11,31,42,0.55) 40%, rgba(11,31,42,0.05) 75%); }
 .hero-content { position: absolute; left: 0; right: 0; bottom: 0; padding: 34px 36px; color: var(--white); max-width: 760px; }
 .hero-eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--kowhai); margin-bottom: 10px; display: block; }
@@ -278,14 +231,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 36px 24px 80px; }
 
 .article-body { max-width: 700px; display: flex; flex-direction: column; gap: 18px; }
 .article-body p { font-size: 18px; line-height: 1.75; color: var(--ink); }
-.article-body p:first-of-type {
-  font-size: 19px; color: var(--ink);
-}
-.article-body p:first-of-type::first-letter {
-  font-family: var(--font-display); font-weight: 600; font-style: italic;
-  font-size: 3.6em; line-height: 0.78; float: left;
-  padding: 4px 8px 0 0; color: var(--jade);
-}
+.article-body p:first-of-type { font-size: 19px; color: var(--ink); }
 
 /* ============================================================
    7. EMPTY STATE
@@ -701,57 +647,6 @@ footer { background: var(--surface); color: var(--ink-soft); padding: 0; margin-
 }
 
 /* ============================================================
-   27. COMMENTS
-   ============================================================ */
-.comments-section { max-width: 700px; margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--line); }
-.comments-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 18px; }
-.comments-count { font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); }
-.comments-list { display: flex; flex-direction: column; gap: 18px; margin-bottom: 28px; }
-.comments-empty { color: var(--ink-soft); font-size: 14px; }
-.comment-item { display: flex; gap: 12px; position: relative; }
-.comment-avatar {
-  flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%;
-  background: var(--jade); color: var(--white); font-family: var(--font-display); font-weight: 600; font-size: 14px;
-  display: flex; align-items: center; justify-content: center;
-}
-.comment-body { flex: 1; min-width: 0; }
-.comment-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 3px; flex-wrap: wrap; }
-.comment-name { font-weight: 600; font-size: 14px; color: var(--ink); }
-.comment-date { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-soft); }
-.comment-text { font-size: 14.5px; line-height: 1.55; color: var(--ink); white-space: pre-wrap; overflow-wrap: anywhere; }
-.comment-delete { background: none; border: none; font-family: var(--font-mono); font-size: 11px; color: var(--danger); padding: 2px 4px; align-self: flex-start; text-decoration: underline; text-underline-offset: 2px; }
-.comment-form { display: flex; flex-direction: column; }
-.comment-textarea { min-height: 90px; }
-
-/* ============================================================
-   26. NEWSLETTER SIGNUP
-   ============================================================ */
-.newsletter-block {
-  margin-top: 48px;
-  padding: 32px 34px;
-  background: var(--navy);
-  border-radius: var(--radius);
-  display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
-}
-.newsletter-copy h3 {
-  font-family: var(--font-display); font-weight: 600; font-size: 21px; color: var(--white); margin-bottom: 6px;
-}
-.newsletter-copy p { font-size: 14px; color: rgba(255,255,255,0.68); max-width: 380px; }
-.newsletter-form { display: flex; gap: 10px; flex-wrap: wrap; flex-shrink: 0; }
-.newsletter-form .text-input {
-  width: 260px; max-width: 60vw; background: rgba(255,255,255,0.08); border-color: var(--line-navy); color: var(--white);
-}
-.newsletter-form .text-input::placeholder { color: rgba(255,255,255,0.42); }
-.newsletter-form .text-input:focus { border-color: var(--kowhai); }
-.newsletter-status { flex-basis: 100%; font-family: var(--font-mono); font-size: 12.5px; color: var(--kowhai); margin-top: 4px; min-height: 1em; }
-@media (max-width: 720px) {
-  .newsletter-block { padding: 26px 22px; flex-direction: column; align-items: flex-start; }
-  .newsletter-form .text-input { width: 100%; max-width: none; }
-  .newsletter-form { width: 100%; }
-  .newsletter-form .btn { flex: 1; }
-}
-
-/* ============================================================
    13. ACCESSIBILITY & MOTION
    ============================================================ */
 :focus-visible { outline: 2px solid var(--kowhai); outline-offset: 2px; }
@@ -762,8 +657,6 @@ body.modal-open { overflow: hidden; }
 </style>
 </head>
 <body>
-
-<a class="skip-link" href="#mainContent">Skip to main content</a>
 
 <div class="reading-progress" id="readingProgress" hidden></div>
 
@@ -791,10 +684,10 @@ body.modal-open { overflow: hidden; }
       </button>
     </div>
   </div>
-  <nav class="nav-row" aria-label="Story categories">
+  <div class="nav-row">
     <div class="nav-pills" id="navPills"></div>
     <input type="text" class="search-input" id="searchInput" placeholder="Search stories" aria-label="Search stories" />
-  </nav>
+  </div>
 </header>
 
 <div class="weather-ticker" id="weatherTicker" hidden role="region" aria-label="New Zealand weather">
@@ -807,8 +700,7 @@ body.modal-open { overflow: hidden; }
   <div class="marquee-track-wrap" id="marqueeTrackWrap"></div>
 </div>
 
-<main id="mainContent">
-  <h1 class="visually-hidden" id="siteH1">The New Zealand Brief — Clear-eyed news from around Aotearoa</h1>
+<main>
   <div class="page-layout">
     <aside class="side-ad side-ad-left" aria-label="Advertisement">
       <div class="ad-space">
@@ -822,27 +714,14 @@ body.modal-open { overflow: hidden; }
     <div class="hero" id="heroSlot" hidden></div>
     <div class="section-head">
       <h2 id="sectionTitle">Latest Stories</h2>
-      <span class="section-count" id="sectionCount" aria-live="polite"></span>
+      <span class="section-count" id="sectionCount"></span>
     </div>
     <div class="grid" id="grid">
       <article class="card skeleton-card" aria-hidden="true"><div class="card-img-wrap skeleton-block"></div><div class="card-body"><div class="skeleton-line w-40"></div><div class="skeleton-line w-90"></div><div class="skeleton-line w-70"></div></div></article>
       <article class="card skeleton-card" aria-hidden="true"><div class="card-img-wrap skeleton-block"></div><div class="card-body"><div class="skeleton-line w-40"></div><div class="skeleton-line w-90"></div><div class="skeleton-line w-70"></div></div></article>
       <article class="card skeleton-card" aria-hidden="true"><div class="card-img-wrap skeleton-block"></div><div class="card-body"><div class="skeleton-line w-40"></div><div class="skeleton-line w-90"></div><div class="skeleton-line w-70"></div></div></article>
     </div>
-    <div class="empty-state" id="emptyState" aria-live="polite" hidden></div>
-
-    <div class="newsletter-block">
-      <div class="newsletter-copy">
-        <h3>Get the Brief in your inbox</h3>
-        <p>One email when there's something worth reading. No spam, unsubscribe any time.</p>
-      </div>
-      <form class="newsletter-form" id="newsletterForm" novalidate>
-        <label class="visually-hidden" for="newsletterEmail">Email address</label>
-        <input type="email" id="newsletterEmail" class="text-input" placeholder="you@example.com" autocomplete="email" required />
-        <button type="submit" class="btn btn-primary" id="newsletterSubmitBtn">Subscribe</button>
-      </form>
-      <p class="newsletter-status" id="newsletterStatus" role="status" aria-live="polite"></p>
-    </div>
+    <div class="empty-state" id="emptyState" hidden></div>
   </div>
 
       <div id="articleView" hidden></div>
@@ -1068,7 +947,7 @@ body.modal-open { overflow: hidden; }
   </div>
 </div>
 
-<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<div class="toast" id="toast" hidden></div>
 
 <!-- Cookie consent banner -->
 <div class="cookie-banner" id="cookieBanner" hidden role="region" aria-label="Cookie notice">
@@ -1122,7 +1001,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
 import {
   getFirestore, collection, doc, addDoc, updateDoc, deleteDoc,
-  onSnapshot, query, orderBy, setDoc, where
+  onSnapshot, query, orderBy, where, setDoc, Timestamp, getDocs
 } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -1146,12 +1025,6 @@ const marqueeDocRef = doc(db, "settings", "marquee");
 /* ============================================================
    CONSTANTS & STATE
    ============================================================ */
-var SITE_NAME = 'The New Zealand Brief';
-var SITE_TAGLINE = 'Clear-eyed news from around Aotearoa';
-var SITE_DEFAULT_DESCRIPTION = 'Independent, clear-eyed news and analysis from around Aotearoa New Zealand — local, national, politics, business, sport, world and culture.';
-// Base URL used for canonical links, share links and structured data.
-// Computed from the current location so it works on GitHub Pages or a custom domain.
-var SITE_BASE = window.location.origin + window.location.pathname.replace(/index\.html$/, '');
 var CATEGORIES_DEFAULT_ORDER = ['Local','National','Politics','Business','Sport','World','Environment','Culture','General'];
 var COOKIE_CONSENT_NAME = 'nzb_cookie_consent';
 var COOKIE_CATEGORY_NAME = 'nzb_last_category';
@@ -1338,36 +1211,59 @@ function subscribeToLiveUsers(){
    ============================================================ */
 var unsubscribeArticles = null;
 function subscribeToArticles(){
-  if (typeof unsubscribeArticles === 'function') { unsubscribeArticles(); }
-  // IMPORTANT: this filter must match firestore.rules exactly (draft == false
-  // for anyone who isn't the authenticated owner). The rule alone can't stop
-  // a client from fetching unfiltered data if the query itself doesn't also
-  // ask for that filter — Firestore rejects list queries that could return
-  // documents the rule wouldn't allow, so this filter is what makes the rule
-  // actually enforceable, not just a UI nicety.
+  if (unsubscribeArticles) { unsubscribeArticles(); unsubscribeArticles = null; }
   var q = state.isOwner
     ? query(articlesCol, orderBy('date', 'desc'))
-    : query(articlesCol,
+    : query(
+        articlesCol,
         where('draft', '==', false),
-        where('date', '<=', new Date().toISOString()),
-        orderBy('date', 'desc'));
+        where('date', '<=', Timestamp.now()),
+        orderBy('date', 'desc')
+      );
+
   unsubscribeArticles = onSnapshot(q, function(snapshot){
     state.articles = snapshot.docs.map(function(d){
-      return Object.assign({ id: d.id }, d.data());
+      var data = d.data();
+      // Normalize Firestore Timestamp -> ISO string so the rest of the
+      // app's date logic (relativeDate, fmtDateline, etc.) is unchanged.
+      if (data.date && typeof data.date.toDate === 'function') {
+        data.date = data.date.toDate().toISOString();
+      }
+      return Object.assign({ id: d.id }, data);
     });
     renderOwnerArea();
     renderCurrentView();
   }, function(err){
     console.error('Firestore read failed', err);
-    // Surface the real Firestore error (e.g. a missing composite index, or
-    // permission denied) instead of a generic message. This bug only shows
-    // up for signed-out visitors, so gating the detail behind "owner only"
-    // would hide it from the one view where it actually happens — show it
-    // to everyone for now; you can revert to a plain message once fixed.
-    var detail = (err && err.message) ? ' (' + err.message + ')' : '';
-    toast('Couldn\u2019t load stories. Check your connection.' + detail);
+    toast('Couldn\u2019t load stories. Check your connection.');
   });
 }
+
+// ------------------------------------------------------------------
+// ONE-TIME MIGRATION: converts any legacy string `date` fields on
+// existing articles to Firestore Timestamps, which the new security
+// rules require for the `resource.data.date <= request.time` check.
+// Run this once (see console instructions), then remove the call to
+// it in init() below. Safe to run more than once — it skips articles
+// that are already Timestamps.
+// ------------------------------------------------------------------
+async function migrateArticleDatesToTimestamps(){
+  var snap = await getDocs(articlesCol);
+  var migrated = 0;
+  for (var i = 0; i < snap.docs.length; i++) {
+    var d = snap.docs[i];
+    var data = d.data();
+    if (typeof data.date === 'string') {
+      await updateDoc(doc(db, 'articles', d.id), {
+        date: Timestamp.fromDate(new Date(data.date))
+      });
+      migrated++;
+    }
+  }
+  console.log('Migration complete. Converted ' + migrated + ' article(s). Total checked: ' + snap.docs.length + '.');
+  toast('Migration complete \u2014 converted ' + migrated + ' article(s). Check console for details.');
+}
+window.migrateArticleDatesToTimestamps = migrateArticleDatesToTimestamps;
 
 async function createArticle(data){
   await addDoc(articlesCol, data);
@@ -1394,25 +1290,6 @@ function subscribeToMarquee(){
 }
 async function saveMarquee(text, active){
   await setDoc(marqueeDocRef, { text: text, active: active, updatedAt: new Date().toISOString() }, { merge: true });
-}
-
-/* ============================================================
-   NEWSLETTER — writes to a "subscribers" collection, doc id is the
-   lowercased email so re-subscribing is a harmless no-op (merge: true).
-   NOTE: your Firestore rules need to allow `create`/`update` on
-   subscribers/{email} for signed-out users, or this will silently fail
-   with a permission error — see the note left for you at the end of chat.
-   ============================================================ */
-function isValidEmail(value){
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-}
-async function subscribeNewsletter(email){
-  var clean = email.trim().toLowerCase();
-  var docId = clean.replace(/[^a-z0-9@._-]/g, '_');
-  await setDoc(doc(db, 'subscribers', docId), {
-    email: clean,
-    subscribedAt: new Date().toISOString()
-  }, { merge: true });
 }
 function renderMarquee(){
   if (!refs.marqueeBanner || !refs.marqueeTrackWrap) return;
@@ -1607,7 +1484,7 @@ var $ = function(id){ return document.getElementById(id); };
 var refs = {};
 function cacheRefs(){
   ['ownerArea','navPills','searchInput','heroSlot','sectionTitle','sectionCount','grid','emptyState',
-   'homeView','articleView','fabAdd','logoBtn','nzClock','themeToggleBtn','footerNote','masthead','readingProgress','siteH1',
+   'homeView','articleView','fabAdd','logoBtn','nzClock','themeToggleBtn','footerNote','masthead','readingProgress',
    'weatherTicker','weatherTrackWrap',
    'loginModal','loginTitle','loginSubtitle','emailInput','passwordInput','loginError',
    'loginCancelBtn','loginSubmitBtn','loginCloseBtn',
@@ -1621,8 +1498,7 @@ function cacheRefs(){
    'marqueeActiveCheckbox','marqueeGeneralError','marqueeCloseBtn','marqueeCancelBtn','marqueeSaveBtn',
    'cookieBanner','cookieAcceptBtn','cookieDeclineBtn','cookieLearnMoreBtn','cookieSettingsLink',
    'cookieInfoModal','cookieInfoCloseBtn','cookieInfoCloseBtn2','cookieForgetBtn',
-   'newsletterForm','newsletterEmail','newsletterSubmitBtn','newsletterStatus',
-   'toast', 'canonicalLink', 'ldJsonScript'
+   'toast'
   ].forEach(function(id){ refs[id] = $(id); });
 }
 
@@ -1877,14 +1753,8 @@ function setFilter(cat){
 function goHomeSilent(){
   state.view = 'home';
   state.currentArticleId = null;
-  stopCommentsSubscription();
   refs.homeView.hidden = false;
   refs.articleView.hidden = true;
-  if (refs.siteH1) refs.siteH1.hidden = false;
-  if (window.location.search) {
-    try { history.replaceState({}, '', SITE_BASE); } catch(e){}
-  }
-  updateMetaTags(null);
 }
 
 function getFiltered(){
@@ -2066,7 +1936,7 @@ function renderHome(){
     refs.emptyState.hidden = true;
     gridList.forEach(function(a, index){
       refs.grid.appendChild(createCard(a));
-      if ((index + 1) % 4 === 0 && index !== gridList.length - 1) {
+      if ((index + 1) % 3 === 0 && index !== gridList.length - 1) {
         refs.grid.appendChild(createStoryAd());
       }
     });
@@ -2136,9 +2006,6 @@ function renderArticleView(article){
   if (related.length) {
     c.appendChild(buildRelatedSection(related));
   }
-
-  c.appendChild(buildCommentsSection(article));
-  subscribeToComments(article.id);
 }
 
 function buildShareRow(article){
@@ -2152,11 +2019,10 @@ function buildShareRow(article){
 }
 
 async function shareArticle(article){
-  var url = articleUrl(article.id);
   var shareText = article.heading + '\n\n' + teaserText(article.description);
   try {
     if (navigator.share) {
-      await navigator.share({ title: article.heading, text: shareText, url: url });
+      await navigator.share({ title: article.heading, text: shareText });
       return;
     }
   } catch(e){
@@ -2164,31 +2030,22 @@ async function shareArticle(article){
   }
   try {
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      await navigator.clipboard.writeText(shareText + '\n' + url);
-      toast('Story link copied \u2014 paste it anywhere to share.');
+      await navigator.clipboard.writeText(shareText);
+      toast('Story copied \u2014 paste it anywhere to share.');
       return;
     }
   } catch(e){ /* fall through */ }
   try {
-    window.prompt('Copy this story to share it:', shareText + '\n' + url);
+    window.prompt('Copy this story to share it:', shareText);
   } catch(e){
     toast('Sharing isn\u2019t available in this view.');
   }
 }
 
 function getRelatedStories(article){
-  var others = visibleArticles().filter(function(a){ return a.id !== article.id; });
-  var sameCategory = others.filter(function(a){ return a.category === article.category; });
-  if (sameCategory.length >= 3) return sameCategory.slice(0, 3);
-  // Not enough stories in the same category — round out with the most recent
-  // stories from elsewhere on the site rather than showing a thin or empty section.
-  var haveIds = {};
-  sameCategory.forEach(function(a){ haveIds[a.id] = true; });
-  var fillers = others
-    .filter(function(a){ return !haveIds[a.id]; })
-    .sort(function(a, b){ return new Date(b.date) - new Date(a.date); })
-    .slice(0, 3 - sameCategory.length);
-  return sameCategory.concat(fillers);
+  return visibleArticles()
+    .filter(function(a){ return a.id !== article.id && a.category === article.category; })
+    .slice(0, 3);
 }
 function buildRelatedSection(list){
   var wrap = el('div', 'related-section');
@@ -2199,306 +2056,34 @@ function buildRelatedSection(list){
   return wrap;
 }
 
-/* ============================================================
-   COMMENTS — a Firestore subcollection per article: articles/{id}/comments
-   NOTE: your Firestore rules need to allow signed-out `create` on that
-   subcollection (with name/text validated), and `delete` only for the
-   authenticated owner, or posting/moderating will silently fail — see the
-   note left for you at the end of chat.
-   ============================================================ */
-var commentsUnsub = null;
-function stopCommentsSubscription(){
-  if (typeof commentsUnsub === 'function') { commentsUnsub(); commentsUnsub = null; }
-}
-function commentsColFor(articleId){
-  return collection(db, 'articles', articleId, 'comments');
-}
-function subscribeToComments(articleId){
-  stopCommentsSubscription();
-  var q = query(commentsColFor(articleId), orderBy('date', 'asc'));
-  commentsUnsub = onSnapshot(q, function(snapshot){
-    var list = snapshot.docs.map(function(d){ return Object.assign({ id: d.id }, d.data()); });
-    renderCommentsList(list, articleId);
-  }, function(err){
-    console.error('Comments read failed', err);
-  });
-}
-async function postComment(articleId, name, text){
-  await addDoc(commentsColFor(articleId), {
-    name: name.trim().slice(0, 60),
-    text: text.trim().slice(0, 1000),
-    date: new Date().toISOString()
-  });
-}
-async function deleteComment(articleId, commentId){
-  await deleteDoc(doc(db, 'articles', articleId, 'comments', commentId));
-}
-
-function commentInitial(name){
-  var trimmed = (name || '').trim();
-  return trimmed ? trimmed.charAt(0).toUpperCase() : '?';
-}
-function buildCommentItem(comment, articleId){
-  var item = el('div', 'comment-item');
-  var avatar = el('div', 'comment-avatar', commentInitial(comment.name));
-  var body = el('div', 'comment-body');
-  var head = el('div', 'comment-head');
-  head.appendChild(el('span', 'comment-name', comment.name || 'Reader'));
-  head.appendChild(el('span', 'comment-date', relativeDate(comment.date)));
-  body.appendChild(head);
-  body.appendChild(el('p', 'comment-text', comment.text));
-  item.append(avatar, body);
-  if (state.isOwner) {
-    var delBtn = el('button', 'comment-delete', 'Remove');
-    delBtn.type = 'button';
-    delBtn.setAttribute('aria-label', 'Remove comment from ' + (comment.name || 'reader'));
-    delBtn.addEventListener('click', function(){ deleteComment(articleId, comment.id); });
-    item.appendChild(delBtn);
-  }
-  return item;
-}
-function renderCommentsList(list, articleId){
-  var container = $('commentsList');
-  var countEl = $('commentsCount');
-  if (!container) return;
-  container.innerHTML = '';
-  if (countEl) countEl.textContent = list.length ? (list.length + (list.length === 1 ? ' comment' : ' comments')) : '';
-  if (!list.length) {
-    container.appendChild(el('p', 'comments-empty', 'No comments yet \u2014 be the first to say something.'));
-    return;
-  }
-  list.forEach(function(c){ container.appendChild(buildCommentItem(c, articleId)); });
-}
-function buildCommentsSection(article){
-  var wrap = el('div', 'comments-section');
-
-  var head = el('div', 'comments-head');
-  head.appendChild(el('h3', 'related-heading', 'Comments'));
-  var countSpan = el('span', 'comments-count', '');
-  countSpan.id = 'commentsCount';
-  head.appendChild(countSpan);
-  wrap.appendChild(head);
-
-  var list = el('div', 'comments-list');
-  list.id = 'commentsList';
-  var loadingLine = el('p', 'comments-empty', 'Loading comments\u2026');
-  list.appendChild(loadingLine);
-  wrap.appendChild(list);
-
-  var form = document.createElement('form');
-  form.className = 'comment-form';
-  form.noValidate = true;
-
-  var nameField = el('div', 'field');
-  var nameLabel = el('label', 'field-label', 'Name');
-  var nameId = 'commentNameInput';
-  nameLabel.setAttribute('for', nameId);
-  var nameInput = document.createElement('input');
-  nameInput.type = 'text'; nameInput.id = nameId; nameInput.className = 'text-input';
-  nameInput.maxLength = 60; nameInput.placeholder = 'Your name';
-  nameField.append(nameLabel, nameInput);
-
-  var textField = el('div', 'field');
-  var textLabel = el('label', 'field-label', 'Comment');
-  var textId = 'commentTextInput';
-  textLabel.setAttribute('for', textId);
-  var textInput = document.createElement('textarea');
-  textInput.id = textId; textInput.className = 'textarea comment-textarea';
-  textInput.maxLength = 1000; textInput.placeholder = 'Add to the discussion\u2026';
-  textField.append(textLabel, textInput);
-
-  var errorLine = el('p', 'field-error-general', '');
-  errorLine.hidden = true;
-
-  var submitBtn = el('button', 'btn btn-primary', 'Post comment');
-  submitBtn.type = 'submit';
-
-  form.append(nameField, textField, errorLine, submitBtn);
-
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-    var name = nameInput.value.trim();
-    var text = textInput.value.trim();
-    errorLine.hidden = true;
-    if (!name) { errorLine.textContent = 'Add your name.'; errorLine.hidden = false; return; }
-    if (!text) { errorLine.textContent = 'Add a comment before posting.'; errorLine.hidden = false; return; }
-    submitBtn.disabled = true;
-    postComment(article.id, name, text).then(function(){
-      textInput.value = '';
-      toast('Comment posted.');
-    }).catch(function(){
-      errorLine.textContent = 'Couldn\u2019t post your comment. Try again shortly.';
-      errorLine.hidden = false;
-    }).finally(function(){
-      submitBtn.disabled = false;
-    });
-  });
-
-  wrap.appendChild(form);
-  return wrap;
-}
-
-/* ============================================================
-   SEO / SOCIAL META + STRUCTURED DATA (dynamic, per-view)
-   ============================================================ */
-function absoluteUrl(path){
-  try { return new URL(path, SITE_BASE).href; } catch(e){ return path; }
-}
-function setMetaByAttr(selectorAttr, selectorValue, content){
-  var node = document.head.querySelector('meta[' + selectorAttr + '="' + selectorValue + '"]');
-  if (node) node.setAttribute('content', content);
-}
-function articleUrl(id){
-  return SITE_BASE + '?article=' + encodeURIComponent(id);
-}
-function updateMetaTags(article){
-  var title, description, url, image, type;
-
-  if (article) {
-    title = article.heading + ' \u2014 ' + SITE_NAME;
-    description = teaserText(article.description);
-    url = articleUrl(article.id);
-    image = article.image ? absoluteUrl(article.image) : absoluteUrl('social-share.png');
-    type = 'article';
-  } else {
-    title = SITE_NAME + ' \u2014 ' + SITE_TAGLINE;
-    description = SITE_DEFAULT_DESCRIPTION;
-    url = SITE_BASE;
-    image = absoluteUrl('social-share.png');
-    type = 'website';
-  }
-
-  document.title = title;
-  setMetaByAttr('name', 'description', description);
-  setMetaByAttr('property', 'og:type', type);
-  setMetaByAttr('property', 'og:title', title);
-  setMetaByAttr('property', 'og:description', description);
-  setMetaByAttr('property', 'og:url', url);
-  setMetaByAttr('property', 'og:image', image);
-  setMetaByAttr('name', 'twitter:title', title);
-  setMetaByAttr('name', 'twitter:description', description);
-  setMetaByAttr('name', 'twitter:image', image);
-
-  if (refs.canonicalLink) refs.canonicalLink.setAttribute('href', url);
-
-  if (refs.ldJsonScript) {
-    var data;
-    if (article) {
-      data = {
-        "@context": "https://schema.org",
-        "@graph": [
-          {
-            "@type": "NewsArticle",
-            "headline": article.heading,
-            "description": description,
-            "image": [image],
-            "datePublished": article.date,
-            "dateModified": article.date,
-            "articleSection": article.category,
-            "wordCount": wordCount(article.description),
-            "inLanguage": "en-NZ",
-            "author": { "@type": "Person", "name": article.author || SITE_NAME },
-            "publisher": {
-              "@type": "Organization",
-              "name": SITE_NAME,
-              "logo": { "@type": "ImageObject", "url": absoluteUrl('social-share.png') }
-            },
-            "mainEntityOfPage": { "@type": "WebPage", "@id": url }
-          },
-          {
-            "@type": "BreadcrumbList",
-            "itemListElement": [
-              { "@type": "ListItem", "position": 1, "name": SITE_NAME, "item": SITE_BASE },
-              { "@type": "ListItem", "position": 2, "name": article.category, "item": SITE_BASE + '?category=' + encodeURIComponent(article.category) },
-              { "@type": "ListItem", "position": 3, "name": article.heading, "item": url }
-            ]
-          }
-        ]
-      };
-    } else {
-      data = {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": SITE_NAME,
-        "url": SITE_BASE,
-        "description": description
-      };
-    }
-    refs.ldJsonScript.textContent = JSON.stringify(data);
-  }
-}
-
-/* ============================================================
-   ROUTING (real, shareable, bookmarkable article URLs)
-   Articles live at ?article=<id> and use pushState/popstate so
-   the back/forward buttons and direct links both work.
-   ============================================================ */
-function openArticle(id, opts){
-  opts = opts || {};
+function openArticle(id){
   var a = state.articles.find(function(x){ return x.id === id; });
   if (!a) return;
   if (!state.isOwner && !isPublicVisible(a)) return;
   state.view = 'article';
   state.currentArticleId = id;
-  renderCurrentView();
-  if (!opts.skipHistory) {
-    var url = articleUrl(id);
-    if (opts.replace) { history.replaceState({ articleId: id }, '', url); }
-    else { history.pushState({ articleId: id }, '', url); }
-  }
+  refs.homeView.hidden = true;
+  refs.articleView.hidden = false;
+  renderArticleView(a);
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  updateScrollEffects();
 }
 
-function goHome(opts){
-  opts = opts || {};
+function goHome(){
   state.view = 'home';
   state.currentArticleId = null;
-  stopCommentsSubscription();
-  renderCurrentView();
-  if (!opts.skipHistory) {
-    if (opts.replace) { history.replaceState({}, '', SITE_BASE); }
-    else { history.pushState({}, '', SITE_BASE); }
-  }
+  renderHome();
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  updateScrollEffects();
 }
 
 function renderCurrentView(){
   if (state.view === 'article' && state.currentArticleId) {
     var a = state.articles.find(function(x){ return x.id === state.currentArticleId; });
-    if (a && (state.isOwner || isPublicVisible(a))) {
-      refs.homeView.hidden = true;
-      refs.articleView.hidden = false;
-      if (refs.siteH1) refs.siteH1.hidden = true;
-      renderArticleView(a);
-      updateMetaTags(a);
-      updateScrollEffects();
-      return;
-    }
-    // Deep link is stale, deleted, unpublished, or not loaded yet — fall back
-    // to home and quietly clean up the URL so it's not left pointing nowhere.
-    state.view = 'home';
-    state.currentArticleId = null;
-    stopCommentsSubscription();
-    if (state.articles.length) {
-      try { history.replaceState({}, '', SITE_BASE); } catch(e){}
-    }
+    if (a) { renderArticleView(a); return; }
   }
-  refs.homeView.hidden = false;
-  refs.articleView.hidden = true;
-  if (refs.siteH1) refs.siteH1.hidden = false;
   renderHome();
-  updateMetaTags(null);
-  updateScrollEffects();
 }
-
-window.addEventListener('popstate', function(){
-  var params = new URLSearchParams(window.location.search);
-  var articleId = params.get('article');
-  state.view = articleId ? 'article' : 'home';
-  state.currentArticleId = articleId || null;
-  renderCurrentView();
-  window.scrollTo({ top: 0 });
-});
 
 var scrollTicking = false;
 function updateScrollEffects(){
@@ -2687,7 +2272,7 @@ async function submitEditor(){
   var image = state.pendingImage;
   var isDraft = refs.draftCheckbox.checked;
   var isFeatured = refs.featuredCheckbox.checked;
-  var publishDate = fromLocalDatetimeValue(refs.publishDateInput.value).toISOString();
+  var publishDate = Timestamp.fromDate(fromLocalDatetimeValue(refs.publishDateInput.value));
 
   clearEditorErrors();
   var hasError = false;
@@ -2812,25 +2397,6 @@ function wireEvents(){
   refs.cookieInfoCloseBtn.addEventListener('click', closeCookieInfo);
   refs.cookieInfoCloseBtn2.addEventListener('click', closeCookieInfo);
   refs.cookieForgetBtn.addEventListener('click', forgetCookieChoice);
-
-  refs.newsletterForm.addEventListener('submit', function(e){
-    e.preventDefault();
-    var email = refs.newsletterEmail.value;
-    if (!isValidEmail(email)) {
-      refs.newsletterStatus.textContent = 'Enter a valid email address.';
-      return;
-    }
-    refs.newsletterSubmitBtn.disabled = true;
-    refs.newsletterStatus.textContent = 'Subscribing\u2026';
-    subscribeNewsletter(email).then(function(){
-      refs.newsletterStatus.textContent = 'You\u2019re subscribed \u2014 thanks!';
-      refs.newsletterEmail.value = '';
-    }).catch(function(){
-      refs.newsletterStatus.textContent = 'Couldn\u2019t subscribe right now. Try again shortly.';
-    }).finally(function(){
-      refs.newsletterSubmitBtn.disabled = false;
-    });
-  });
 }
 
 /* ============================================================
@@ -2844,21 +2410,6 @@ function init(){
   loadWeather();
   setInterval(loadWeather, 15 * 60 * 1000);
   refs.footerNote.textContent = 'Personal news project \u00B7 \u00A9 ' + new Date().getFullYear();
-
-  // Deep-link support: if the page was loaded at ?article=<id> (a shared
-  // link, a bookmark, or a search result), open straight to that story
-  // once the article data has loaded. Show a lightweight loading state
-  // immediately so the visit doesn't flash the homepage first.
-  var deepLinkParams = new URLSearchParams(window.location.search);
-  var deepLinkArticleId = deepLinkParams.get('article');
-  if (deepLinkArticleId) {
-    state.view = 'article';
-    state.currentArticleId = deepLinkArticleId;
-    refs.homeView.hidden = true;
-    refs.articleView.hidden = false;
-    if (refs.siteH1) refs.siteH1.hidden = true;
-    refs.articleView.innerHTML = '<div class="empty-state"><h3>Loading story\u2026</h3></div>';
-  }
 
   onAuthStateChanged(auth, function(user){
     state.isOwner = !!user;
