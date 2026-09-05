@@ -59,6 +59,11 @@ const SITEMAP_PATH = path.join(REPO_ROOT, 'sitemap.xml');
 // supports filters), not the plain "list documents" endpoint.
 async function fetchPublishedArticles() {
   const url = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents:runQuery`;
+  // `date` is stored as a Firestore Timestamp (see the one-time migration
+  // run from index.html), so the filter value must be a timestampValue,
+  // not a stringValue — a type mismatch here doesn't error, it silently
+  // matches zero documents, which is why this must stay in sync with
+  // whatever type `date` actually is in Firestore.
   const nowIso = new Date().toISOString();
 
   const body = {
@@ -79,7 +84,7 @@ async function fetchPublishedArticles() {
               fieldFilter: {
                 field: { fieldPath: 'date' },
                 op: 'LESS_THAN_OR_EQUAL',
-                value: { stringValue: nowIso },
+                value: { timestampValue: nowIso },
               },
             },
           ],
